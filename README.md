@@ -1,6 +1,6 @@
-<div style="text-align: center;"> <h1>JavaDeveloperBrain</h1> </div>
+<h1 align="center">JavaDeveloperBrain</h1>
 
-<div style="text-align: center;">
+<div align="center">
 
 [![GitHub issues](https://img.shields.io/github/issues/Swayingleaves/JavaDeveloperBrain?style=for-the-badge)](https://github.com/Swayingleaves/JavaDeveloperBrain/issues)
 [![GitHub forks](https://img.shields.io/github/forks/Swayingleaves/JavaDeveloperBrain?style=for-the-badge)](https://github.com/Swayingleaves/JavaDeveloperBrain/network)
@@ -8,7 +8,10 @@
 ![Java进阶](https://img.shields.io/badge/Java-%E8%BF%9B%E9%98%B6-brightgreen?style=for-the-badge)
 
 </div>
-<div style="text-align: center;">Java工程师必备：包含计算机网络知识、JavaSE、JVM、多线程并发、数据库、算法</div>
+
+<p align="center">Java工程师必备：包含计算机网络知识、JavaSE、JVM、多线程并发、数据库、算法</p>
+
+---
 
 > 内容概览
 
