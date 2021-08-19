@@ -264,11 +264,3 @@
 <details>
     <summary><a>项目架构</a></summary>
 </details>
-
-> 更新日志
-
-<details>
-    <summary>2021-08-18</summary>
-
-- 添加知识点目录
-</details>
