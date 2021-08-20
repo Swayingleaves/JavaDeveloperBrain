@@ -71,9 +71,9 @@
 - [IP报文](计算机网络/IP报文.md)  
 - [TCP/IP](计算机网络/TCP_IP.md)
 - [HTTP](计算机网络/http.md)
-- cookie
-- session
-- JWT
+- [cookie](计算机网络/cookie和session.md)
+- [session](计算机网络/cookie和session.md)
+- [JWT](计算机网络/JWT.md)
 - 跨域
 - 在浏览器中输入ur|地址->>显示主页的过程
 - 实现一个长URL转短URL
