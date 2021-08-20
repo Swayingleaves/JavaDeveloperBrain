@@ -9,7 +9,7 @@
 
 </div>
 
-<p align="center">Java工程师必备：包含计算机网络知识、JavaSE、JVM、多线程并发、数据库、算法</p>
+<p align="center">Java工程师必备：包含计算机网络知识、JavaSE、JVM、Spring、Springboot、SpringCloud、Mybatis、多线程并发、netty、MySQL、MongoDB、Elasticsearch、Redis、HBASE、RabbitMQ、RocketMQ、Pulsar、Kafka、Zookeeper、Linux、设计模式、智力题、项目架构、分布式相关、算法、面试题</p>
 
 ---
 
@@ -19,6 +19,7 @@
 - [ ] 将目录里的xMind文件转为md文件 :man_technologist:
 - [ ] 将一些难以文字描述的东东画图
 - [ ] 添加新知识点
+- [ ] 添加新模块:收集面试题和解答他们
  
 # 内容概览
 
