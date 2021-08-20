@@ -74,14 +74,10 @@
 - [cookie](计算机网络/cookie和session.md)
 - [session](计算机网络/cookie和session.md)
 - [JWT](计算机网络/JWT.md)
-- 跨域
-- 在浏览器中输入ur|地址->>显示主页的过程
-- 实现一个长URL转短URL
-- 进制
-- 网络攻击行为
-- CDN
-- 有哪些编码格式(GBK,UTF-8,ISO-),有没有想过为什么会有这么多的编码格式
-- QPS和TPS的区别
+- [跨域](计算机网络/跨域.md)
+- [网络攻击行为](计算机网络/网络攻击行为.md)
+- [CDN](计算机网络/CDN.md)
+- [HTTP面试题](计算机网络/HTTP面试题.md)
 </details>
 
 <details>
