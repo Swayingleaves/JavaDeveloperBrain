@@ -26,9 +26,9 @@
 <details>
 <summary><a>Java-基础部分</a></summary>
 
- - 基本类型
- - 包装类型
- - 关键字
+ - [基本类型](Java-基础/Java类型.md)
+ - [包装类型](Java-基础/Java类型.md)
+ - [关键字](Java-基础/Java关键字.md)
  - object
  - string
  - 数组
@@ -280,4 +280,4 @@
 
 [md code]
 
-[comment]: <> (如果你发现了这行字：快转行吧！！！Java不仅卷，学的东西真TM多，呜呜呜呜~~~~)
+[comment]: <> (如果你发现了这行字：快转行吧！！！Java不仅卷，学的东西还真TM多，呜呜呜呜~~~~)
