@@ -29,14 +29,14 @@
  - [基本类型](Java-基础/Java类型.md)
  - [包装类型](Java-基础/Java类型.md)
  - [关键字](Java-基础/Java关键字.md)
- - object
- - string
- - 数组
- - 继承
- - 反射
- - 异常
- - 泛型
- - 容器
+ - [object](Java-基础/Object.md)
+ - [string](Java-基础/Object.md)
+ - [数组](Java-基础/数组.md)
+ - [继承](Java-基础/继承.md)
+ - [反射](Java-基础/反射.md)
+ - [异常](Java-基础/异常.md)
+ - [泛型](Java-基础/泛型.md)
+ - [容器](Java-基础/容器.md)
  - Java-IO
  - Java长期支持版本新特性 
 </details>
