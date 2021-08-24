@@ -37,8 +37,8 @@
  - [异常](Java-基础/异常.md)
  - [泛型](Java-基础/泛型.md)
  - [容器](Java-基础/容器.md)
- - Java-IO
- - Java长期支持版本新特性 
+ - [Java-IO](Java-基础/JavaIO.md)
+ - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
 </details>
 
 <details>
