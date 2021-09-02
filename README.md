@@ -58,6 +58,7 @@
 
 - [线程](Java-多线程/线程.md)
 - [volatile](Java-多线程/volatile.md)
+- [Java对象头](Java-多线程/Java对象头.md)
 - [锁机制](Java-多线程/锁机制.md)
 - [线程池](Java-多线程/线程池.md)
 - [CAS](Java-多线程/CAS.md)
