@@ -87,7 +87,7 @@
 <details>
     <summary><a>数据库</a></summary>
 
-- MySQL
+- [MySQL](数据库/MySQL.md)
 - MongoDB
 - HBASE
 - Elasticsearch
