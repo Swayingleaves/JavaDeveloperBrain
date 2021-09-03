@@ -1,4 +1,4 @@
-<h1 align="center">JavaDeveloperBrain:seedling:</h1>
+<h1 align="center">JavaDeveloperBrain:mortar_board:</h1>
 
 <div align="center">
 
