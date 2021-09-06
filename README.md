@@ -161,11 +161,11 @@
 <details>
     <summary><a>Mybatis</a></summary>
 
-- 什么是mybatis
-- JDBC执行六步走
-- mybatis执行8步
-- MyBatis整体架构
-- mybatis缓存
+- [什么是mybatis](Mybatis/mybatis.md)
+- [JDBC执行六步走](Mybatis/mybatis.md)
+- [mybatis执行8步](Mybatis/mybatis.md)
+- [MyBatis整体架构](Mybatis/mybatis.md)
+- [mybatis缓存](Mybatis/mybatis.md)
 </details>
 
 <details>
