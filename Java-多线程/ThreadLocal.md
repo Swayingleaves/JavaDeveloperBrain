@@ -15,3 +15,59 @@ ThreadLocalMap
 3. 全链路追踪中的 traceId 或者流程引擎中上下文的传递一般采用 ThreadLocal
 4. Spring 事务管理器采用了 ThreadLocal
 5. Spring MVC 的 RequestContextHolder 的实现使用了 ThreadLocal
+
+举例：
+- 每个线程维护了一个“序列号”
+  ```java
+  public class SerialNum {
+    // The next serial number to be assigned
+    private static int nextSerialNum = 0;
+  
+    private static ThreadLocal serialNum = new ThreadLocal() {
+      protected synchronized Object initialValue() {
+        return new Integer(nextSerialNum++);
+      }
+    };
+  
+    public static int get() {
+      return ((Integer) (serialNum.get())).intValue();
+    }
+  }
+  ```
+- Session的管理
+  ```java
+  private static final ThreadLocal threadSession = new ThreadLocal();  
+    
+  public static Session getSession() throws InfrastructureException {  
+      Session s = (Session) threadSession.get();  
+      try {  
+          if (s == null) {  
+              s = getSessionFactory().openSession();  
+              threadSession.set(s);  
+          }  
+      } catch (HibernateException ex) {  
+          throw new InfrastructureException(ex);  
+      }  
+      return s;  
+  }  
+  
+  ```
+- SimpleDateFormat
+```java
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+ 
+public class DateUtils {
+    public static final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>(){
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd");
+        }
+    };
+}
+
+DateUtils.df.get().format(new Date());
+```
+
+参考文章：
+- https://www.pdai.tech/md/java/thread/java-thread-x-threadlocal.html#java-%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E4%B8%AD%E6%8E%A8%E8%8D%90%E7%9A%84-threadlocal
