@@ -46,7 +46,7 @@
 <details>
 <summary><a>Java-JVM</a></summary>
 
- - [运行时数据区](Java-JVM/运行时数据区.md)
+ - [内存结构](Java-JVM/内存结构.md)
  - [垃圾回收](Java-JVM/垃圾回收.md)
  - [内存分配与回收](Java-JVM/内存分配与回收策略.md)
  - [类加载机制](Java-JVM/类加载机制.md)
