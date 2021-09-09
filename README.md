@@ -146,16 +146,16 @@
 <details>
     <summary><a>Linux</a></summary>
 
-- 文件和目录的操作
-- 查看文件
-- 管理用户
-- 进程管理
-- 打包和压缩文件
-- grep+正则表达式
-- Vi编辑器
-- 权限管理
-- 网络管理
-- cpu 100%怎么排查
+- [文件和目录的操作](Linux/linux.md#文件和目录的操作)
+- [查看文件](Linux/linux.md#查看文件)
+- [管理用户](Linux/linux.md#管理用户)
+- [进程管理](Linux/linux.md#进程管理)
+- [打包和压缩文件](Linux/linux.md#打包和压缩文件)
+- [grep+正则表达式](Linux/linux.md#grep)
+- [Vi编辑器](Linux/linux.md#Vi编辑器)
+- [权限管理](Linux/linux.md#权限管理)
+- [网络管理](Linux/linux.md#网络管理)
+- [cpu100%怎么排查](Linux/linux.md#cpu100%怎么排查)
 </details>
 
 <details>
