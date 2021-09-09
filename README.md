@@ -182,7 +182,7 @@
 <details>
     <summary><a>分布式相关</a></summary>
 
-- 分布式锁
+- [分布式锁](分布式相关/分布式锁.md)
 - 分布式事务
 - CAP理论
 - BASE
