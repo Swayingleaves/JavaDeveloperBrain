@@ -168,10 +168,10 @@
 ### 1、问题复现
 ### 2、第一查看程序运行日志
 ### 3、排查
-- 执行“top”命令 查看CPU最高的进程pid
-- 执行“top -Hp 进程号”命令 查看java进程下的所有线程占CPU的情况。
-- 执行“printf "%x\n 10"命令 把进程号转为16进制，方便在堆栈中查找线程号
-- 执行 “jstack 进程号 | grep 线程ID”
+- 执行“`top`”命令 查看CPU最高的进程pid
+- 执行“`top -Hp 进程号`”命令 查看java进程下的所有线程占CPU的情况。
+- 执行“`printf "%x\n 10`"命令 把进程号转为16进制，方便在堆栈中查找线程号
+- 执行 “`jstack 进程号 | grep 线程ID`”
   - 可以查看线程的状态判断问题
     - NEW,未启动的。不会出现在Dump中。
     - RUNNABLE,在虚拟机内执行的。运行中状态，可能里面还能看到locked字样，表明它获得了某把锁。
@@ -180,4 +180,4 @@
     - TIMED_WATING,有时限的等待另一个线程的特定操作。和WAITING的区别是wait() 等语句加上了时间限制 wait(timeout)。
     - TERMINATED,已退出的。
   - 注意deadlock
-- jmap -dump pid 导出dump文件供一些分析工具分析
+- `jmap -dump pid` 导出dump文件供一些分析工具分析

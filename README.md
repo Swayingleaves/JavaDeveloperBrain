@@ -155,7 +155,7 @@
 - [Vi编辑器](Linux/linux.md#Vi编辑器)
 - [权限管理](Linux/linux.md#权限管理)
 - [网络管理](Linux/linux.md#网络管理)
-- [cpu100%怎么排查](Linux/linux.md#cpu100%怎么排查)
+- [cpu100%怎么排查](Linux/linux.md#cpu100怎么排查)
 </details>
 
 <details>
