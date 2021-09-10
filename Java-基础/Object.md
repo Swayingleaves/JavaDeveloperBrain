@@ -6,11 +6,19 @@
 - 在覆盖 equals() 方法时应当总是覆盖 hashCode() 方法，保证等价的两个对象散列值也相等。
 - hashCode方法实际上必须要完成的一件事情就是，为该equals方法认定为相同的对象返回相同的哈希值
 # toString
+- 一般生成对象字符串
 # clone
 - 浅拷贝
 - 引用一个对象
 - 深拷贝
 - 引用不同对象
+# wait
+- 挂起线程
+# notify
+- 唤醒线程
+# finalize
+- GC时调用，回收资源
+
 # 重写了equals后为什么要重写hashcode，如果不重写，会有什么影响
 - 每个覆盖了equals方法的类中，必须覆盖hashCode。如果不这么做，就违背了hashCode的通用约定。进而导致该类无法结合所以与散列的集合一起正常运作，这里指的是HashMap、HashSet、HashTable、ConcurrentHashMap。
   - hashcode源码注释中的大致意思是：当我们将equals方法重写后有必要将hashCode方法也重写，这样做才能保证不违背hashCode方法中“相同对象必须有相同哈希值”的约定
