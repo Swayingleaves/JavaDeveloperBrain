@@ -111,15 +111,15 @@
 <details>
     <summary><a>Redis</a></summary>
 
-- [特点](Redis/redis.md)
-- [Redis为什么这么快](Redis/redis.md)
-- [常见使用场景](Redis/redis.md)
-- [数据类型](Redis/redis.md)
-- [内存回收策略](Redis/redis.md)
-- [持久化方式](Redis/redis.md)
-- [Redis中的事务](Redis/redis.md)
-- [常问故障场景](Redis/redis.md)
-- [集群](Redis/redis.md)
+- [特点](Redis/redis.md#特点)
+- [Redis为什么这么快](Redis/redis.md#Redis为什么这么快)
+- [常见使用场景](Redis/redis.md#常见使用场景)
+- [数据类型](Redis/redis.md#数据类型)
+- [内存回收策略](Redis/redis.md#内存回收策略)
+- [持久化方式](Redis/redis.md#持久化方式)
+- [Redis中的事务](Redis/redis.md#Redis中的事务)
+- [常问故障场景](Redis/redis.md#常问故障场景)
+- [集群](Redis/redis.md#集群)
 </details>
 
 <details>
