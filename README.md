@@ -198,7 +198,7 @@
 <details>
     <summary><a>数据结构和算法</a></summary>
 
-- 排序
+- [排序算法](数据结构和算法/排序算法.md)
 - 树相关
 - BFS
 - DFS
