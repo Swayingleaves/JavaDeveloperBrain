@@ -1,3 +1,15 @@
+
+* [final](#final)
+  * [不可变的原因](#不可变的原因)
+* [储存数据](#储存数据)
+* [string pool](#string-pool)
+  * [new String("abc")会创建几个对象](#new-stringabc会创建几个对象)
+  * [intern()](#intern)
+  * [str1 + " a nice day"](#str1---a-nice-day)
+  * ["a" + "b" + "c"](#a--b--c)
+* [StringBuilder](#stringbuilder)
+* [StringBuffer](#stringbuffer)
+
 # final
 ## 不可变的原因
 - 可以缓存hash值

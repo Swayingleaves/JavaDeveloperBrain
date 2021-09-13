@@ -1,3 +1,12 @@
+* [equals](#equals)
+* [hashcode](#hashcode)
+* [toString](#tostring)
+* [clone](#clone)
+* [wait](#wait)
+* [notify](#notify)
+* [finalize](#finalize)
+* [重写了equals后为什么要重写hashcode，如果不重写，会有什么影响](#重写了equals后为什么要重写hashcode如果不重写会有什么影响)
+
 # equals
 - 对于基本类型，== 判断两个值是否相等，基本类型没有 equals() 方法。
 - 对于引用类型，== 判断两个变量是否引用同一个对象，而 equals() 判断引用的对象是否等价。
