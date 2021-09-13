@@ -1,3 +1,19 @@
+
+* [mybatis](#mybatis)
+    * [什么是mybatis](#什么是mybatis)
+    * [JDBC执行六步走](#jdbc执行六步走)
+    * [mybatis执行8步](#mybatis执行8步)
+        * [步骤](#步骤)
+    * [MyBatis 整体架构](#mybatis-整体架构)
+        * [基础支持层](#基础支持层)
+        * [核心处理层](#核心处理层)
+    * [mybatis缓存](#mybatis缓存)
+        * [一级缓存（Local Cache）](#一级缓存local-cache)
+    * [一级缓存配置](#一级缓存配置)
+        * [二级缓存](#二级缓存)
+        * [mybatis封装参数执行SQL](#mybatis封装参数执行sql)
+
+
 # mybatis
 
 ## 什么是mybatis
