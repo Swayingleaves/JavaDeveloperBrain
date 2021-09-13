@@ -1,3 +1,15 @@
+
+* [springboot](#springboot)
+  * [springboot启动流程](#springboot启动流程)
+    * [启动类上注解：@SpringBootApplication](#启动类上注解springbootapplication)
+      * [@SpringBootConfiguration](#springbootconfiguration)
+      * [@EnableAutoConfiguration](#enableautoconfiguration)
+      * [@ComponentScan](#componentscan)
+    * [启动类中的main方法：org.springframework.boot.SpringApplication#run(java.lang.Class&lt;?&gt;, java.lang.String...)](#启动类中的main方法orgspringframeworkbootspringapplicationrunavalangstring)
+  * [怎么让Spring把Body变成一个对象](#怎么让spring把body变成一个对象)
+  * [SpringBoot的starter实现原理是什么？](#springboot的starter实现原理是什么)
+
+
 # springboot
 ## springboot启动流程
 ### 启动类上注解：@SpringBootApplication
