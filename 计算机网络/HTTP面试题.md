@@ -1,3 +1,15 @@
+
+* [<a href="#">在浏览器中输入url地址 -&gt;&gt; 显示主页的过程</a>](#在浏览器中输入url地址---显示主页的过程)
+* [<a href="#">QPS和TPS的区别</a>](#qps和tps的区别)
+* [<a href="#">有哪些编码格式(GBK,UTF-8,ISO-),有没有想过为什么会有这么多的编码格式</a>](#有哪些编码格式gbkutf-8iso-有没有想过为什么会有这么多的编码格式)
+* [<a href="#">实现一个长URL转短URL</a>](#实现一个长url转短url)
+* [<a href="#">Https的CA证书放了什么，公钥放在CA里吗？</a>](#https的ca证书放了什么公钥放在ca里吗)
+* [<a href="#">CA证书是在客户端还是服务器 </a>](#ca证书是在客户端还是服务器-)
+* [<a href="#">四次握手time_wait原因、后果、解决方式</a>](#四次握手time_wait原因后果解决方式)
+* [<a href="#">tcp怎么实现可靠传输</a>](#tcp怎么实现可靠传输)
+* [<a href="#">Http中的Keep-aLive，http长连接如何实现的。</a>](#http中的keep-alivehttp长连接如何实现的)
+
+
 # [在浏览器中输入url地址 ->> 显示主页的过程](#)
 - DNS解析
   - 域名到ip的映射
