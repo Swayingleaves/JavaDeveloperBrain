@@ -1,3 +1,12 @@
+
+* [ThreadLocal](#threadlocal)
+  * [原理](#原理)
+    * [线程局部变量](#线程局部变量)
+    * [只在当前线程拥有，绝对的线程安全](#只在当前线程拥有绝对的线程安全)
+    * [一个线程内可以存在多个 ThreadLocal 对象，所以其实是 ThreadLocal 内部维护了一个 Map](#一个线程内可以存在多个-threadlocal-对象所以其实是-threadlocal-内部维护了一个-map)
+  * [使用场景](#使用场景)
+
+
 # ThreadLocal
 ## 原理
 #### 线程局部变量
