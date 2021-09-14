@@ -66,3 +66,5 @@
 - 详细看springmvc的处理流程
 ## SpringBoot的starter实现原理是什么？
 原理就是因为在@EnableAutoConfiguration注解，会自动的扫描jar包下的META-INF/spring.factories文件的配置类，写在这里面的类都是需要被自动加载的
+
+
