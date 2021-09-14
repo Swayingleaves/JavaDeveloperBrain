@@ -8,6 +8,7 @@
   * [手动释放ThreadLocal遗留存储?你怎么去设计/实现？](#手动释放threadlocal遗留存储你怎么去设计实现)
   * [弱引用导致内存泄漏，那为什么key不设置为强引用](#弱引用导致内存泄漏那为什么key不设置为强引用)
   * [线程执行结束后会不会自动清空Entry的value](#线程执行结束后会不会自动清空entry的value)
+  * [threadlocal如果不remove，出问题了怎么补救？](#threadlocal如果不remove出问题了怎么补救)
 * [参考文章：](#参考文章)
 
 
@@ -94,6 +95,8 @@ DateUtils.df.get().format(new Date());
 ## 线程执行结束后会不会自动清空Entry的value
 事实上，当currentThread执行结束后， threadLocalMap变得不可达从而被回收，Entry等也就都被回收了，但这个环境就要求不对Thread进行复用，但是我们项目中经常会复用线程来提高性能， 所以currentThread一般不会处于终止状态。
 
+## threadlocal如果不remove，出问题了怎么补救？
+threadLocal和thread是绑定的，生命周期相同，那么，kill掉这个线程可以释放ThreadLocalMap
 
 # 参考文章：
 - https://www.pdai.tech/md/java/thread/java-thread-x-threadlocal.html#java-%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E4%B8%AD%E6%8E%A8%E8%8D%90%E7%9A%84-threadlocal
