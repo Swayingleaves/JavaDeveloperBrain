@@ -469,6 +469,21 @@ setbit 、getbit 、bitcount、bitop
   5. `volatile-random`：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，随机移除某个key。
   6. `volatile-ttl`：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的key优先移除。
 ### redis的设置过期时间底层原理
+redis针对TTL时间有专门的dict进行存储，就是redisDb当中的dict *expires字段，dict顾名思义就是一个hashtable，key为对应的rediskey，value为对应的TTL时间。
+```
+typedef struct redisDb {
+    dict *dict;                 /* The keyspace for this DB */
+    dict *expires;              /* Timeout of keys with a timeout set */
+    ...
+}
+```
+过期键的判断
+
+通过查询过期字典，检查下面的条件判断是否过期
+
+- 检查给定的键是否在过期字典中，如果存在就获取键的过期时间
+- 检查当前 UNIX 时间戳是否大于键的过期时间，是就过期，否则未过期
+
 ## 持久化方式
 ### RDB快照
 - 当条件满足时 Redis会将某个时间点的数据集保存到一个 RDB文件中，数据的读取和恢复都可以直接通过该文件
@@ -712,4 +727,8 @@ Redis内部内置了序号 0-16383 个槽位，每个槽位可以用来存储一
 - 如果槽位为65536，发送心跳信息的消息头达8k，发送的心跳包过于庞大。
 - redis的集群主节点数量基本不可能超过1000个。集群节点越多，心跳包的消息体内携带的数据越多。如果节点过1000个，也会导致网络拥堵。因此redis作者，不建议redis cluster节点数量超过1000个。 那么，对于节点数在1000以内的redis cluster集群，16384个槽位够用了。没有必要拓展到65536个。
 - 槽位越小，节点少的情况下，压缩率高。
+
+
+# 参考文章
+- https://www.jianshu.com/p/53083f5f2ddc
 
