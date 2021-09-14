@@ -5,6 +5,10 @@
     * [只在当前线程拥有，绝对的线程安全](#只在当前线程拥有绝对的线程安全)
     * [一个线程内可以存在多个 ThreadLocal 对象，所以其实是 ThreadLocal 内部维护了一个 Map](#一个线程内可以存在多个-threadlocal-对象所以其实是-threadlocal-内部维护了一个-map)
   * [使用场景](#使用场景)
+  * [手动释放ThreadLocal遗留存储?你怎么去设计/实现？](#手动释放threadlocal遗留存储你怎么去设计实现)
+  * [弱引用导致内存泄漏，那为什么key不设置为强引用](#弱引用导致内存泄漏那为什么key不设置为强引用)
+  * [线程执行结束后会不会自动清空Entry的value](#线程执行结束后会不会自动清空entry的value)
+* [参考文章：](#参考文章)
 
 
 # ThreadLocal
@@ -78,5 +82,19 @@ public class DateUtils {
 DateUtils.df.get().format(new Date());
 ```
 
-参考文章：
+## 手动释放ThreadLocal遗留存储?你怎么去设计/实现？
+包装其父类remove方法为静态方法，如果是spring项目， 可以借助于bean的声明周期， 在拦截器的afterCompletion阶段进行调用。
+
+## 弱引用导致内存泄漏，那为什么key不设置为强引用
+
+如果key设置为强引用， 当threadLocal实例释放后， threadLocal=null， 但是threadLocal会有强引用指向threadLocalMap，threadLocalMap.Entry又强引用threadLocal， 这样会导致threadLocal不能正常被GC回收。
+
+弱引用虽然会引起内存泄漏， 但是也有set、get、remove方法操作对null key进行擦除的补救措施， 方案上略胜一筹。
+
+## 线程执行结束后会不会自动清空Entry的value
+事实上，当currentThread执行结束后， threadLocalMap变得不可达从而被回收，Entry等也就都被回收了，但这个环境就要求不对Thread进行复用，但是我们项目中经常会复用线程来提高性能， 所以currentThread一般不会处于终止状态。
+
+
+# 参考文章：
 - https://www.pdai.tech/md/java/thread/java-thread-x-threadlocal.html#java-%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E4%B8%AD%E6%8E%A8%E8%8D%90%E7%9A%84-threadlocal
+- https://www.cnblogs.com/javazhiyin/p/11834121.html
