@@ -57,6 +57,9 @@
      - [IdentityHashMap](Java-基础/容器.md#identityhashmap)
      - [WeakHashMap](Java-基础/容器.md#weakhashmap)
  - [Java-IO](Java-基础/JavaIO.md)
+   - [文件io](Java-基础/JavaIO.md#文件io)
+   - [网络io](Java-基础/JavaIO.md#网络io)
+   - [NIO](Java-基础/JavaIO.md#nio)
  - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
 </details>
 
@@ -115,12 +118,12 @@
     <summary><a>消息队列</a></summary>
 
 - [为什么使用消息队列](消息队列/mq常见面试题.md#为什么要使用消息队列)
-- [Redis](消息队列/redismq.md)
-- [RabbitMQ](消息队列/rabbitmq.md)
-- [RocketMQ](消息队列/rocketmq.md)
-- [Kafka](消息队列/kafka.md)
-- [Zookeeper](消息队列/zookeeper.md)
-- [pulsar](消息队列/pulsar.md)
+- [Redis](消息队列/Redis.md)
+- [RabbitMQ](消息队列/RabbitMQ.md)
+- [RocketMQ](消息队列/RocketMQ.md)
+- [Kafka](消息队列/Kafka.md)
+- [Zookeeper](消息队列/Zookeeper.md)
+- [pulsar](消息队列/Pulsar.md)
 - [常见面试题](消息队列/mq常见面试题.md)
 </details>
 
