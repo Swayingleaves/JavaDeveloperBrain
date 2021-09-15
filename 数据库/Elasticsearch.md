@@ -1,3 +1,4 @@
+
 * [Elasticsearch](#elasticsearch)
   * [es的特点](#es的特点)
   * [应用场景](#应用场景)
@@ -7,6 +8,10 @@
     * [文档(document)](#文档document)
     * [映射(mapping)](#映射mapping)
     * [倒排索引](#倒排索引)
+      * [Posting List](#posting-list)
+      * [Term Dictionary](#term-dictionary)
+      * [Term Index](#term-index)
+      * [FST(finite-state transducer有限状态转换器)](#fstfinite-state-transducer有限状态转换器)
   * [集群](#集群)
     * [基本概念](#基本概念)
       * [节点(Node)](#节点node)
@@ -27,6 +32,11 @@
     * [冷热分离](#冷热分离)
     * [document设计](#document设计)
     * [禁止直接分页](#禁止直接分页)
+  * [es的分词器有哪些](#es的分词器有哪些)
+  * [es为什么这么快](#es为什么这么快)
+* [参考文章](#参考文章)
+
+
 # Elasticsearch
 ## es的特点
 elasticsearch 是一个兼有搜索引擎和NoSQL数据库功能的开源系统，基于Java/Lucene构建，可以用于全文搜索，结构化搜索以及近实时分析。可以说Lucene是当今最先进，最高效的全功能开源搜索引擎框架
@@ -50,6 +60,32 @@ ElasticSearch把数据存放到一个或者多个索引(indices)中。如果用�
 - 正向索引一般都是文档1->关键词1 位置->关键词2 位置
 - 倒排索引是 关键词1->文档1 位置  ->文档2 位置
 - 在搜索引擎中，每个文档都有一个对应的文档 ID，文档内容被表示为一系列关键词的集合。例如，文档 1 经过分词，提取了 20 个关键词，每个关键词都会记录它在文档中出现的次数和出现位置。那么，倒排索引就是关键词到文档 ID 的映射，每个关键词都对应着一系列的文件，这些文件中都出现了关键词。
+#### Posting List
+上面所说的文章的ID就是被放在一个int的数组，存储了所有符合某个term的文档id，实际上，除此之外还包含：文档的数量、词条在每个文档中出现的次数、出现的位置、每个文档的长度、所有文档的平均长度等，在计算相关度时使用
+#### Term Dictionary
+假设我们有很多个 term，比如：
+
+`Carla,Sara,Elin,Ada,Patty,Kate,Selena`
+
+如果按照这样的顺序排列，找出某个特定的 term 一定很慢，因为 term 没有排序，需要全部过滤一遍才能找出特定的 term。排序之后就变成了：
+
+`Ada,Carla,Elin,Kate,Patty,Sara,Selena`
+
+再使用二分查找可以用 logN 次磁盘查找得到目标。
+
+#### Term Index
+但是磁盘的随机读操作仍然是非常昂贵的（一次 random access 大概需要 10ms 的时间）。所以尽量少的读磁盘，有必要把一些数据缓存到内存里。但是整个 term dictionary 本身又太大了，无法完整地放到内存里。于是就有了 term index。term index 有点像一本字典的大的章节表。比如：
+```java
+A 开头的 term ……………. Xxx 页
+C 开头的 term ……………. Yyy 页
+E 开头的 term ……………. Zzz 页
+```
+如果所有的 term 都是英文字符的话，可能这个 term index 就真的是 26 个英文字符表构成的了。但是实际的情况是，term 未必都是英文字符，term 可以是任意的 byte 数组。而且 26 个英文字符也未必是每一个字符都有均等的 term，比如 x 字符开头的 term 可能一个都没有，而 s 开头的 term 又特别多。实际的 term index 是一棵 trie 树：
+![](../img/数据库/elasticsearch/trem-index.png)
+
+例子是一个包含 "A", "to", "tea", "ted", "ten", "i", "in", 和 "inn" 的 trie 树。这棵树不会包含所有的 term，它包含的是 term 的一些前缀。通过 term index 可以快速地定位到 term dictionary 的某个 offset，然后从这个位置再往后顺序查找。
+#### FST(finite-state transducer有限状态转换器)
+实际上，Lucene 内部的 Term Index 是用的「变种的」trie前缀树，即 FST 。FST 比 trie树好在哪？trie树只共享了前缀，而 FST 既共享前缀也共享后缀，更加的节省空间。
 ## 集群
 ### 基本概念
 #### 节点(Node)
@@ -158,3 +194,14 @@ es 的搜索引擎严重依赖于底层的 filesystem cache ，你如果给 file
 把查询字段放入es即可，其他的全量数据存入数据库，比如hbase，常见的场景就是es存索引，HBASE存数据全部字段
 ### 禁止直接分页
 拉下才能查看下一页，用上一页的scroll  id
+
+## es的分词器有哪些
+- ik分词器
+- jeba分词器
+
+## es为什么这么快
+- 倒排索引
+
+
+# 参考文章
+- https://blog.csdn.net/qq_34820803/article/details/104798716
