@@ -97,14 +97,13 @@
 <details>
     <summary><a>消息队列</a></summary>
 
-- [为什么使用消息队列](消息队列/mq.md#为什么使用消息队列)
-- 常见的消息队列
-    - [Redis](消息队列/mq.md#Redis)
-    - [RabbitMQ](消息队列/mq.md#RabbitMQ)
-    - [RocketMQ](消息队列/mq.md#RocketMQ)
-    - [Kafka](消息队列/mq.md#Kafka)
-    - [Zookeeper](消息队列/mq.md#Zookeeper)
-    - [pulsar](消息队列/mq.md#pulsar)
+- [为什么使用消息队列](消息队列/mq常见面试题.md#为什么要使用消息队列)
+- [Redis](消息队列/redismq.md)
+- [RabbitMQ](消息队列/rabbitmq.md)
+- [RocketMQ](消息队列/rocketmq.md)
+- [Kafka](消息队列/kafka.md)
+- [Zookeeper](消息队列/zookeeper.md)
+- [pulsar](消息队列/pulsar.md)
 - [常见面试题](消息队列/mq常见面试题.md)
 </details>
 
