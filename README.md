@@ -184,7 +184,6 @@
 <details>
     <summary><a>Netty</a></summary>
 
-- [I0模型](Netty/netty.md#io模型)
 - [重要的组件](Netty/netty.md#重要的组件)
 - [netty的使用示例](Netty/netty.md#netty的使用示例)
 - [TCP粘包/拆包问题](Netty/netty.md#tcp粘包拆包问题)
@@ -206,6 +205,7 @@
     <summary><a>容器技术</a></summary>
 
 - [docker](容器技术/docker.md)
+- k8s
 </details>
 
 <details>
@@ -320,3 +320,7 @@
 [md code]
 
 [comment]: <> (如果你发现了这行字：快转行吧！！！Java不仅卷，学的东西还真TM多，呜呜呜呜~~~~)
+
+### 最后
+不积跬步无以至千里
+![](img/邓宁克鲁格效应.png)
