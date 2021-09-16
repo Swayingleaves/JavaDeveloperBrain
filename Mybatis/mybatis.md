@@ -12,7 +12,7 @@
     * [一级缓存配置](#一级缓存配置)
         * [二级缓存](#二级缓存)
         * [mybatis封装参数执行SQL](#mybatis封装参数执行sql)
-
+    * [mybatis中$和#的区别](#mybatis中和的区别)
 
 # mybatis
 
@@ -296,3 +296,7 @@ public Object getNamedParams(Object[] args) {
   }
 ```
 参数封装完毕，调用 `result = rowCountResult(sqlSession.insert(command.getName(), param));`，并执行SQL获取结果，封装结果返回
+
+## mybatis中$和#的区别
+- `#{}` mybatis生成sql时会使用占位符 ? 替换，并使用预编译，能有效的防止SQL注入
+- `${}` 生成SQL时直接设置值

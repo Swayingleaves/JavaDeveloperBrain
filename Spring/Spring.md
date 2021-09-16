@@ -134,6 +134,7 @@ AbstractApplicationContext 中的refresh()方法是启动加载整个容器的�
   - 初始化 Initialization
   - 销毁 Destruction
 ### bean的作用域
+//TODO  
 ### 循环依赖问题
 ![](../img/spring/循环依赖.png)
 				
