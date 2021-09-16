@@ -3,6 +3,9 @@
     * [概念介绍](#概念介绍)
     * [架构图](#架构图)
     * [exchange类型](#exchange类型)
+        * [Direct](#direct)
+        * [Fanout](#fanout)
+        * [Topic](#topic)
     * [RabbitMQ 消息持久化](#rabbitmq-消息持久化)
     * [集群](#集群)
     * [交换器无法根据自身类型和路由键找到符合条件队列时，会如何处理？](#交换器无法根据自身类型和路由键找到符合条件队列时会如何处理)
@@ -38,16 +41,19 @@
 ## 架构图
 ![](../img/消息队列/rabbitmq/架构图.png)
 ## exchange类型
-- Direct
-  ![](../img/消息队列/rabbitmq/exchange-direct.png)
-  点对点模式，根据route_key精确匹配
-- Fanout
-  ![](../img/消息队列/rabbitmq/exchange-fanout.png)
-  广播模式，将消息发送到与该exchange绑定的所有queue上
-- Topic
-  ![](../img/消息队列/rabbitmq/exchange-topic.png)
-    - 模式匹配，根据route_key模式匹配
-    - 以上图中的配置为例，routingKey=”quick.orange.rabbit”的消息会同时路由到Q1与Q2，routingKey=”lazy.orange.fox”的消息会路由到Q1，routingKey=”lazy.brown.fox”的消息会路由到Q2，routingKey=”lazy.pink.rabbit”的消息会路由到Q2（只会投递给Q2一次，虽然这个routingKey与Q2的两个bindingKey都匹配）；routingKey=”quick.brown.fox”、routingKey=”orange”、routingKey=”quick.orange.male.rabbit”的消息将会被丢弃，因为它们没有匹配任何bindingKey。
+### Direct
+![](../img/消息队列/rabbitmq/exchange-direct.png)
+  
+点对点模式，根据route_key精确匹配
+### Fanout
+![](../img/消息队列/rabbitmq/exchange-fanout.png)
+  
+广播模式，将消息发送到与该exchange绑定的所有queue上
+### Topic
+![](../img/消息队列/rabbitmq/exchange-topic.png)
+
+- 模式匹配，根据route_key模式匹配
+- 以上图中的配置为例，routingKey=”quick.orange.rabbit”的消息会同时路由到Q1与Q2，routingKey=”lazy.orange.fox”的消息会路由到Q1，routingKey=”lazy.brown.fox”的消息会路由到Q2，routingKey=”lazy.pink.rabbit”的消息会路由到Q2（只会投递给Q2一次，虽然这个routingKey与Q2的两个bindingKey都匹配）；routingKey=”quick.brown.fox”、routingKey=”orange”、routingKey=”quick.orange.male.rabbit”的消息将会被丢弃，因为它们没有匹配任何bindingKey。
 ## RabbitMQ 消息持久化
 - 默认情况下重启服务器会导致消息丢失
 - 持久化需要满足如下三个条件才可以恢复 RabbitMQ 的数据

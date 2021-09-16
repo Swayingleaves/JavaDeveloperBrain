@@ -22,6 +22,10 @@
 - [ ] 添加新知识点 :man_technologist:
 - [ ] 添加新模块:收集面试题和解答他们:man_technologist:
 - [ ] 优化知识点描述，现在有些知识点真的只是记下来了，但是没有整理导致别人看起来很乱不知所云 :man_technologist:
+
+
+# 知识点梳理
+![](img/Java.png)
  
 # 内容概览
 
@@ -169,6 +173,13 @@
 - [权限管理](Linux/linux.md#权限管理)
 - [网络管理](Linux/linux.md#网络管理)
 - [cpu100%怎么排查](Linux/linux.md#cpu100怎么排查)
+- [用户空间与内核空间](Linux/linux.md#用户空间与内核空间)
+- [进程切换](Linux/linux.md#进程切换)
+- [进程的阻塞](Linux/linux.md#进程的阻塞)
+- [文件描述符fd](Linux/linux.md#文件描述符fd)
+- [缓存 I/O](Linux/linux.md#缓存-io)
+- [IO模型](Linux/linux.md#io模型)
+- [select、poll、epoll](Linux/linux.md#selectpollepoll)
 </details>
 
 <details>
