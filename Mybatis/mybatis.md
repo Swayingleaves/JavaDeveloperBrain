@@ -1,8 +1,8 @@
 
 * [mybatis](#mybatis)
     * [什么是mybatis](#什么是mybatis)
-    * [JDBC执行六步走](#jdbc执行六步走)
-    * [mybatis执行8步](#mybatis执行8步)
+    * [JDBC执行六步骤](#jdbc执行六步骤)
+    * [mybatis执行8步骤](#mybatis执行8步骤)
         * [步骤](#步骤)
     * [MyBatis 整体架构](#mybatis-整体架构)
         * [基础支持层](#基础支持层)
@@ -21,7 +21,7 @@
 MyBatis 是一款旨在帮助开发人员屏蔽底层重复性原生 JDBC 代码的持久化框架，其支持通过映射文件配置或注解将 ResultSet 映射为 Java 对象。相对于其它 ORM 框架，MyBatis 更为轻量级，支持定制化 SQL
 和动态 SQL，方便优化查询性能，同时包含了良好的缓存机制
 
-## JDBC执行六步走
+## JDBC执行六步骤
 
 - 注册驱动
 - 获取Connection连接
@@ -31,7 +31,7 @@ MyBatis 是一款旨在帮助开发人员屏蔽底层重复性原生 JDBC 代码
 - 释放资源
   ![](../img/mybatis/jdbc执行6步走.png)
 
-## mybatis执行8步
+## mybatis执行8步骤
 
 ![](../img/mybatis/mybatis执行8步走.png)
 ![](../img/mybatis/mybatis执行8步走2.png)

@@ -68,7 +68,7 @@
 
  - [内存结构](Java-JVM/内存结构.md)
  - [垃圾回收](Java-JVM/垃圾回收.md)
- - [内存分配与回收](Java-JVM/内存分配与回收策略.md)
+ - [内存分配与回收策略](Java-JVM/内存分配与回收策略.md)
  - [类加载机制](Java-JVM/类加载机制.md)
  - [JVM调优](Java-JVM/JVM调优.md)
  - [Java即时编译](Java-JVM/Java即时编译.md)
@@ -175,8 +175,8 @@
     <summary><a>Mybatis</a></summary>
 
 - [什么是mybatis](Mybatis/mybatis.md)
-- [JDBC执行六步走](Mybatis/mybatis.md)
-- [mybatis执行8步](Mybatis/mybatis.md)
+- [JDBC执行六步骤](Mybatis/mybatis.md)
+- [mybatis执行8步骤](Mybatis/mybatis.md)
 - [MyBatis整体架构](Mybatis/mybatis.md)
 - [mybatis缓存](Mybatis/mybatis.md)
 </details>
