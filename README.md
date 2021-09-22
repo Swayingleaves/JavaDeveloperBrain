@@ -319,6 +319,12 @@
 - [订单延迟](商城类问题/商城类问题.md#订单延时取消怎么做)
 </details>
 
+<details>
+    <summary><a>python</a></summary>
+
+- [如何离线移植依赖包](Python/Python.md)
+</details>
+
 # 知识点梳理
 点击查看：[知识点大图](img/Java.png)
 
