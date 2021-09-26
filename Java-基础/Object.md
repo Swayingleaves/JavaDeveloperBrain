@@ -1,3 +1,4 @@
+
 * [equals](#equals)
 * [hashcode](#hashcode)
 * [toString](#tostring)

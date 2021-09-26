@@ -96,7 +96,7 @@
 - [UDP报文](计算机网络/UDP报文.md)
 - [IP报文](计算机网络/IP报文.md)  
 - [TCP/IP](计算机网络/TCP_IP.md)
-- [HTTP](计算机网络/http.md)
+- [HTTP](计算机网络/HTTP.md)
 - [cookie](计算机网络/cookie和session.md)
 - [session](计算机网络/cookie和session.md)
 - [JWT](计算机网络/JWT.md)
@@ -234,9 +234,7 @@
 <details>
     <summary><a>设计模式</a></summary>
 
-- 简单工厂模式
-- 工厂模式
-- 抽象工厂模式
+- [工厂模式](设计模式/工厂模式.md)
 - [单例模式](设计模式/单例模式.md)
 - 建造者模式
 - 原型模式

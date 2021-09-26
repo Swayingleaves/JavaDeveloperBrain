@@ -1,30 +1,34 @@
 
 * [特点](#特点)
 * [方法](#方法)
-    * [get](#get)
-    * [head](#head)
-    * [post](#post)
-    * [put](#put)
-    * [patch](#patch)
-    * [delete](#delete)
-    * [options](#options)
-    * [connect](#connect)
-    * [trace](#trace)
+  * [get](#get)
+  * [head](#head)
+  * [post](#post)
+  * [put](#put)
+  * [patch](#patch)
+  * [delete](#delete)
+  * [options](#options)
+  * [connect](#connect)
+  * [trace](#trace)
 * [状态码](#状态码)
-    * [1XX](#1xx)
-    * [2XX](#2xx)
-    * [3XX](#3xx)
-    * [4XX](#4xx)
-    * [5XX](#5xx)
+  * [1XX](#1xx)
+  * [2XX](#2xx)
+  * [3XX](#3xx)
+  * [4XX](#4xx)
+  * [5XX](#5xx)
 * [HTTPS](#https)
-    * [什么是HTTPS](#什么是https)
-    * [端口](#端口)
-    * [https解决的问题](#https解决的问题)
-    * [HTTPS加密过程](#https加密过程)
+  * [什么是HTTPS](#什么是https)
+  * [端口](#端口)
+  * [https解决的问题](#https解决的问题)
+  * [HTTPS加密过程](#https加密过程)
 * [Https的CA证书放了什么，公钥放在CA里吗？](#https的ca证书放了什么公钥放在ca里吗)
 * [CA证书是在客户端还是服务器](#ca证书是在客户端还是服务器)
 * [HTTP1.1和HTTP1.0的主要区别](#http11和http10的主要区别)
 * [HTTP2.0和HTTP1.x的区别](#http20和http1x的区别)
+* [http的request和response格式](#http的request和response格式)
+  * [request](#request)
+  * [response](#response)
+* [参考文章](#参考文章)
 
 # 特点
 无状态
@@ -186,10 +190,58 @@ HTTP1.0最早在网页中使用是在1996年，那个时候只是使用一些较
 - [服务端推送
   - HTTP2.0也具有server push功能
 
+# http的request和response格式
+## request
+Http Request包括三部分：请求行（request-line），请求头（headers）和请求体（request-body）
 
+例如下面是一个POST请求：
+```html
+1. GET /search?hl=zh-CN&source=hp&q=domety&aq=f&oq= HTTP/1.1 
+2. Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/vnd.ms-powerpoint, 
+3. application/msword, application/x-silverlight, application/x-shockwave-flash, */*  
+4. Referer: <a href="http://www.google.cn/">http://www.google.cn/</a>  
+5. Accept-Language: zh-cn  
+6. Accept-Encoding: gzip, deflate  
+7. User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)  
+8. Host: <a href="http://www.google.cn">www.google.cn</a>  
+9. Connection: Keep-Alive  
+10. Cookie: PREF=ID=80a06da87be9ae3c:U=f7167333e2c3b714:NW=1:TM=1261551909:LM=1261551917:S=ybYcq2wpfefs4V9g; 
+11.  
+12. NID=ojj8d-IygaEtSxLgaJmq&jid=jsaudu9hdha
+```
+- 第1行：请求行（request-line）
+- 第2-10行：请求头（headers）
+- 第11行：空行
+- 第12行：请求体（request-body）
 
+GET请求的参数数据不会放在请求体里，而是在url中,例如：
+`http://www.google.cn/search?hl=zh-CN&source=hp&q=domety&aq=f&oq=`
+## response
+Http Response也包括三部分：响应状态行，响应头和响应体
 
-
+例子：
+```html
+1. HTTP/1.1 200 OK
+2. Date: Sat, 31 Dec 2005 23:59:59 GMT
+3. Content-Type: text/html;charset=ISO-8859-1
+4. Content-Length: 122
+5.
+6. ＜html＞
+7. ＜head＞
+8. ＜title＞Wrox Homepage＜/title＞
+9. ＜/head＞
+10. ＜body＞
+11. ＜!-- body goes here --＞
+12. ＜/body＞
+13. ＜/html＞
+```
+- 第1行：响应状态行，http版本和状态码
+- 第2-4行：键值对
+- 第5行：空行
+- 第6-13：响应体
+# 参考文章
+- https://www.cnblogs.com/biyeymyhjob/archive/2012/07/28/2612910.html
+- https://www.jianshu.com/p/0e593400d85b
   
 
 
