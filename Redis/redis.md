@@ -391,9 +391,58 @@ zskiplist 表示跳跃表结构
 ```shell
 ZADD key score1 member1 [score2 member2]
 ```
+- ZRNAK 查看排名
+```shell
+ZRNAK key member
+```
+- ZREVRNAK 查看排名(倒序) 最大的返回是0
+```shell
+ZREVRNAK key member
+```
 - ZRANGE 通过索引区间返回有序集合指定区间内的成员
 ```shell
 ZRANGE key start stop [WITHSCORES]
+
+## 查看前10名，sorce排序
+127.0.0.1:6379> zrange test 0 10
+1) "xiaoming"
+2) "xiaohong"
+3) "xiaogang"
+4) "xinxin"
+5) "ghg"
+6) "dahua"
+```
+- ZREVRANGE 通过索引区间返回有序集合指定区间内的成员(倒序)
+```shell
+ZREVRANGE key start stop [WITHSCORES]
+
+## 查看前10名，sorce倒序
+127.0.0.1:6379> zrevrange test 0 10
+1) "dahua"
+2) "ghg"
+3) "xinxin"
+4) "xiaogang"
+5) "xiaohong"
+6) "xiaoming"
+```
+- ZREVRANGE 获取所有member的排名
+```shell
+ZREVRANGE key 0 -1
+
+127.0.0.1:6379> zrevrange test 0 -1
+1) "dahua"
+2) "ghg"
+3) "xinxin"
+4) "xiaogang"
+5) "xiaohong"
+6) "xiaoming"
+```
+- ZSCORE 获取member的分数
+```shell
+ZSCORE key member
+
+127.0.0.1:6379> ZSCORE test dahua
+"104"
 ```
 - ZREM 移除有序集合中的一个或多个成员
 ```shell

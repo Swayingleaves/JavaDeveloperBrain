@@ -228,7 +228,7 @@
 - 贪心算法
 - 动态规划
 - 分治思想
-- [LRU](数据结构和算法/LRU和LFU.md#lru)
+- [LRU和LFU](数据结构和算法/LRU和LFU.md#lru)
 </details>
 
 <details>
@@ -282,6 +282,10 @@
 - [gRPC](场景设计/场景设计.md#gRPC)
 - [一个优秀的RPC框架需要考虑的问题](场景设计/场景设计.md#一个优秀的RPC框架需要考虑的问题)
 - [什么是DDD](场景设计/场景设计.md#什么是ddd)
+- [Java实现生产者消费者](场景设计/场景设计.md#java实现生产者消费者)
+- [Java实现BlockQueue](场景设计/场景设计.md#java实现blockqueue)
+- [解决哈希冲突的方法](场景设计/场景设计.md#解决哈希冲突的方法)
+- [排行榜设计](场景设计/场景设计.md#排行榜设计)
 </details>
 
 <details>
