@@ -444,6 +444,13 @@ ZSCORE key member
 127.0.0.1:6379> ZSCORE test dahua
 "104"
 ```
+- ZCRAD 获取zset key的大小
+```shell
+ZCRAD key
+
+127.0.0.1:6379> zcard test
+(integer) 6
+```
 - ZREM 移除有序集合中的一个或多个成员
 ```shell
 ZREM key member [member ...]
