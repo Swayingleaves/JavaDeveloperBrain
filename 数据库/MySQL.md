@@ -57,6 +57,7 @@
     * [MyISAM的索引](#myisam的索引)
     * [InnoDB的索引](#innodb的索引)
     * [主键和唯一索引的区别](#主键和唯一索引的区别)
+  * [联合索引的底层组织方式](#联合索引的底层组织方式)
   * [事务](#事务)
     * [ACID](#acid)
       * [原子性（Atomicity，或称不可分割性）](#原子性atomicity或称不可分割性)
@@ -67,6 +68,13 @@
     * [redo log（重做日志）](#redo-log重做日志)
     * [undo log（回滚日志）](#undo-log回滚日志)
   * [二进制日志( binlog )](#二进制日志-binlog-)
+  * [redo log和binlog的区别](#redo-log和binlog的区别)
+  * [redo log和binlog一致性问题](#redo-log和binlog一致性问题)
+    * [先写binlog还是先写redo log的呢？](#先写binlog还是先写redo-log的呢)
+      * [假设一：先写redo log再写binlog](#假设一先写redo-log再写binlog)
+      * [假设二：先写binlog再写redo log](#假设二先写binlog再写redo-log)
+    * [MySQL的内部XA（两阶段提交）](#mysql的内部xa两阶段提交)
+    * [总结](#总结)
   * [锁](#锁)
     * [行级锁](#行级锁)
     * [表级锁](#表级锁)
@@ -109,8 +117,12 @@
 - `执行器`
   - 首先，肯定是要判断权限，就是有没有权限执行这条SQL。工作中可能会对某些客户端进行权限控制
   - 如果有权限，就打开表继续执行。打开表的时候，执行器就会根据表的引擎定义，去使用这个引擎提供的接口
+
+最终对结果集进行过滤、排序以及键值对的比较等
+- cpu密集型
 ## 	储存引擎
 复制数据的存储和提取，是真正与底层物理文件打交道的组件。 数据本质是存储在磁盘上的，通过特定的存储引擎对数据进行有组织的存放并根据业务需要对数据进行提取。存储引擎的架构模式是插件式的，支持Innodb，MyIASM、Memory等多个存储引擎。现在最常用的存储引擎是Innodb，它从mysql5.5.5版本开始成为了默认存储引擎
+- io密集型
 ## 	物理文件层
 存储数据库真正的表数据、日志等。物理文件包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等
 ## SQL优化
@@ -553,6 +565,15 @@ InnoDB的主键索引与行记录是存储在一起的，故叫做聚集索引�
 - 主键列不允许空值，而唯一性索引列允许空值
   - 注意唯一索引的null值会使唯一索引失效，一般设置为不为空或者空字符串`''`
 
+## 联合索引的底层组织方式
+数据：
+![](../img/数据库/MySQL/联合索引1.png)
+
+现在建立联合索引(b,c,d)
+
+bcd联合索引在B+树上的结构图：
+![](../img/数据库/MySQL/联合索引2.png)
+
 ## 事务
 事务是由存储引擎实现的
 ### ACID
@@ -703,6 +724,55 @@ InnoDB的主键索引与行记录是存储在一起的，故叫做聚集索引�
   - `MIXED`
     - 基于 STATMENT 和 ROW 两种模式的混合复制( mixed-based replication, MBR )，一般的复制使用 STATEMENT 模式保存 binlog ，对于 STATEMENT 模式无法复制的操作使用 ROW 模式保存 binlog
 - 日志格式通过 binlog-format 指定
+
+## redo log和binlog的区别
+- redo log和binlog的产生方式不同。redo log是在物理存储引擎层产生，而binlog是在MySQL数据库的Server层产生的，并且binlog不仅针对InnoDB存储引擎，MySQL数据库中的任何存储引擎对数据库的更改都会产生binlog。
+- redo log和binlog的记录形式不同。MySQL Server层产生的binlog记录的是一种逻辑日志，即通过SQL语句的方式来记录数据库的修改；而InnoDB层产生的redo log是一种物理格式日志，其记录的是对于磁盘中每一个数据页的修改。
+- redo log和binlog记录的时间点不同。binlog只是在事务提交完成后进行一次写入，而redo log则是在事务进行中不断地被写入，redo log并不是随着事务提交的顺序进行写入的，这也就是说在redo log 中针对一个事务会有多个不连续的记录日志。
+
+## redo log和binlog一致性问题
+binlog和redo log都是在事务提交阶段记录的。这时我们不禁会有一些疑问：
+
+- 是先写binlog还是先写redo log的呢？
+- 写binlog和redo log的顺序对于数据库系统的持久性和主从复制会不会产生影响？
+- 如果有影响，MySQL又是怎么做到binlog和redo log的一致性的呢？
+
+带着这些问题，我深入地研究了MySQL中binlog和redo log的一致性问题。
+
+### 先写binlog还是先写redo log的呢？
+#### 假设一：先写redo log再写binlog
+想象一下，如果数据库系统在写完一个事务的redo log时发生crash，而此时这个事务的binlog还没有持久化。在数据库恢复后，主库会根据redo log中去完成此事务的重做，主库中就有可这个事务的数据。但是，由于此事务并没有产生binlog，即使主库恢复后，关于此事务的数据修改也不会同步到从库上，这样就产生了主从不一致的错误。
+#### 假设二：先写binlog再写redo log
+想象一下，如果数据库系统在写完一个事务的binlog时发生crash，而此时这个事务的redo log还没有持久化，或者说此事务的redo log还没记录完（至少没有记录commit log）。在数据库恢复后，从库会根据主库中记录的binlog去回放此事务的数据修改。但是，由于此事务并没有产生完整提交的redo log，主库在恢复后会回滚该事务，这样也会产生主从不一致的错误。
+
+通过上面的假设和分析，我们可以看出，不管是先写redo log还是先写binlog，都有可能会产生主从不一致的错误，那么MySQL又是怎么做到binlog和redo log的一致性的呢？
+### MySQL的内部XA（两阶段提交）
+XA-2PC (two phase commit, 两阶段提交 )
+
+XA是由X/Open组织提出的分布式事务的规范。XA规范主要定义了(全局)事务管理器(TM: Transaction Manager)和(局部)资源管理器(RM: Resource Manager)之间的接口。XA为了实现分布式事务，将事务的提交分成了两个阶段：也就是2PC (tow phase commit)，XA协议就是通过将事务的提交分为两个阶段来实现分布式事务。
+- prepare 阶段：第一阶段，事务管理器向所有涉及到的数据库服务器发出prepare"准备提交"请求，数据库收到请求后执行数据修改和日志记录等处理，处理完成后只是把事务的状态改成"可以提交",然后把结果返回给事务管理器.
+- commit 阶段：事务管理器收到回应后进入第二阶段，如果在第一阶段内有任何一个数据库的操作发生了错误，或者事务管理器收不到某个数据库的回应，则认为事务失败，回撤所有数据库的事务。数据库服务器收不到第二阶段的确认提交请求，也会把"可以提交"的事务回撤。如果第一阶段中所有数据库都提交成功，那么事务管理器向数据库服务器发出"确认提交"请求，数据库服务器把事务的"可以提交"状态改为"提交完成"状态，然后返回应答。
+
+MySQL中的XA实现分为：外部XA和内部XA。前者是指我们通常意义上的分布式事务实现；后者是指单台MySQL服务器中，Server层作为TM(事务协调者)，而服务器中的多个数据库实例作为RM，而进行的一种分布式事务，也就是MySQL跨库事务；也就是一个事务涉及到同一条MySQL服务器中的两个innodb数据库(因为其它引擎不支持XA)。
+
+**内部XA的额外功能**
+
+在MySQL内部，在事务提交时利用两阶段提交(内部XA的两阶段提交)很好地解决了上面提到的binlog和redo log的一致性问题：
+
+- 第一阶段： InnoDB Prepare阶段。此时SQL已经成功执行，并生成事务ID(xid)信息及redo和undo的内存日志。此阶段InnoDB会写事务的redo log，但要注意的是，此时redo log只是记录了事务的所有操作日志，并没有记录提交（commit）日志，因此事务此时的状态为Prepare。此阶段对binlog不会有任何操作。
+- 第二阶段：commit 阶段，这个阶段又分成两个步骤。第一步写binlog（先调用write()将binlog内存日志数据写入文件系统缓存，再调用fsync()将binlog文件系统缓存日志数据永久写入磁盘）；第二步完成事务的提交（commit），此时在redo log中记录此事务的提交日志（增加commit 标签）。
+可以看出，此过程中是先写redo log再写binlog的。但需要注意的是，在第一阶段并没有记录完整的redo log（不包含事务的commit标签），而是在第二阶段记录完binlog后再写入redo log的commit 标签。还要注意的是，在这个过程中是以第二阶段中binlog的写入与否作为事务是否成功提交的标志。
+
+通过上述MySQL内部XA的两阶段提交就可以解决binlog和redo log的一致性问题。数据库在上述任何阶段crash，主从库都不会产生不一致的错误。
+
+此时的崩溃恢复过程如下：
+
+- 如果数据库在记录此事务的binlog之前和过程中发生crash。数据库在恢复后认为此事务并没有成功提交，则会回滚此事务的操作。与此同时，因为在binlog中也没有此事务的记录，所以从库也不会有此事务的数据修改。
+- 如果数据库在记录此事务的binlog之后发生crash。此时，即使是redo log中还没有记录此事务的commit 标签，数据库在恢复后也会认为此事务提交成功（因为在上述两阶段过程中，binlog写入成功就认为事务成功提交了）。它会扫描最后一个binlog文件，并提取其中的事务ID（xid），InnoDB会将那些状态为Prepare的事务（redo log没有记录commit 标签）的xid和Binlog中提取的xid做比较，如果在Binlog中存在，则提交该事务，否则回滚该事务。这也就是说，binlog中记录的事务，在恢复时都会被认为是已提交事务，会在redo log中重新写入commit标志，并完成此事务的重做（主库中有此事务的数据修改）。与此同时，因为在binlog中已经有了此事务的记录，所有从库也会有此事务的数据修改。
+
+### 总结
+上述利用两阶段提交解决了事务提交时binlog和redo log的一致性问题，此过程的实现是在MySQL 5.6 之前。但是此过程存在严重缺陷：此过程中为了保证MySQL Server层binlog的写入顺序和InnoDB层的事务提交顺序是一致的，MySQL数据库内部使用了prepare_commit_mutex这个锁。但是在启用了这个锁之后，并不能并发写入binlog，从而导致了group commit失效。这个问题在MySQL 5.6中的Binary Log Group Commit（BLGC）得到解决。
+
 ## 锁
 ### 行级锁
 加在数据行(row)上的锁，行级锁是粒度最低的锁，发生锁冲突的概率也最低、并发度最高。但是加锁慢、开销大，容易发生死锁现象
@@ -815,3 +885,5 @@ _表: 学号, 姓名, 年龄, 学院名称, 学院电话_
 - https://cloud.tencent.com/developer/article/1704743
 - https://zhuanlan.zhihu.com/p/73035620
 - https://www.jianshu.com/p/c6483ded042d
+- https://juejin.cn/post/6844904073955639304
+- https://blog.csdn.net/huangjw_806/article/details/100927097

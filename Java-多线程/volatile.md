@@ -13,6 +13,9 @@
     * [如何实现](#如何实现)
   * [禁止指令重排](#禁止指令重排)
     * [如何实现](#如何实现-1)
+* [volatile解决可见性的代码](#volatile解决可见性的代码)
+* [验证volatile不具备原子性](#验证volatile不具备原子性)
+* [参考文章](#参考文章)
 
 # 前提了解
 ## 机器内存模型
@@ -87,6 +90,90 @@ JMM是一种抽象概念并不存在，他描述是一种规则，JMM中所有�
 | StoreStore | Store1;StoreStore;Store2 | 在Store2及其后的写操作执行前，保证Store1的写操作已刷新到主内存 |
 | LoadStore | Load1;LoadStore;Store2 | 在Store2及其后的写操作执行前，保证Load1的读操作已读取结束 |
 | StoreLoad | Store1;StoreLoad;Load2 | 保证store1的写操作已刷新到主内存之后，load2及其后的读操作才能执行 |
-                        
-                            
-                                
+
+# volatile解决可见性的代码
+```java
+public class TestVolatile {
+    public static void main(String[] args) {
+        ThreadDemo td = new ThreadDemo();
+        new Thread(td).start();
+        while (true) {
+            if (td.isFlag()) {
+                System.out.println("------------------");
+                break;
+            }
+        }
+    }
+}
+
+class ThreadDemo implements Runnable {
+    private boolean flag = false;
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+        }
+        flag = true;
+        System.out.println("flag=" + isFlag());
+
+    }
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+}
+
+// 此时输出： 并且陷入死循环
+    flag=true
+
+//修改代码
+// 给变量加上volatile关键字，实现内存可见性
+private volatile boolean flag = false;
+
+输出：
+        flag=true
+        ------------------
+
+        Process finished with exit code 0
+
+```
+# 验证volatile不具备原子性
+```java
+public class TestVolatile1 {
+    public static void main(String[] args) {
+        myData myData=new myData();
+        for (int i = 0; i <20 ; i++) {
+            new Thread(()->{
+                for (int j = 0; j <1000 ; j++) {
+                    myData.addPlusPlus();
+                }
+            },String.valueOf(i)).start();
+        }
+        while (Thread.activeCount()>2){ //使用IntelliJ IDEA的读者请注意，
+       // 在IDEA中运行这段程序，会由于IDE自动创建一条名为Monito rCtrl-Break的线程,所以为2
+            Thread.yield();//当前线程由执行态变为就绪态，让出cpu
+        }
+        System.out.println(myData.num);
+    }
+}
+
+class myData{
+     volatile int num=0;
+    public void addPlusPlus(){
+        this.num++;
+    }
+}
+
+```
+每次结果都不一样，并且不是20000，说明不具有原子性。
+
+这里我们得出一个结论 num++ 在多线程下是不安全的
+尽管用了volatile 第三步能够及时写入到内存。但是它不具备原子性，比如线程A从栈中取出i,此时完成了自增，发生了线程调度，此时线程B取出栈的值，尽管线程A里的值发生了更改，但是还未写到栈里，此时线程B操作的还是之前的值。这就证明了volatile不具备原子性。
+
+可以使用AtomicInteger解决
+# 参考文章
+- https://blog.csdn.net/jerry11112/article/details/106870835
