@@ -139,8 +139,5 @@ class LRUCache {
 }
 
 ```
-
-# LFU
-
 # 文章参考
-- https://leetcode-cn.com/problems/lru-cache/
+- https://leetcode-cn.com/problems/lru-cache/solution/lruhuan-cun-ji-zhi-by-leetcode-solution/

@@ -228,7 +228,8 @@
 - 贪心算法
 - 动态规划
 - 分治思想
-- [LRU和LFU](数据结构和算法/LRU和LFU.md#lru)
+- [LRU](数据结构和算法/LRU.md)
+- [LFU](数据结构和算法/LFU.md)
 </details>
 
 <details>
