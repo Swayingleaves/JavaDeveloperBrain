@@ -1,187 +1,143 @@
-# LFU
-## 方法一：哈希表 + 平衡二叉树
+
+# LRU
+
+运用你所掌握的数据结构，设计和实现一个LRU (最近最少使用) 缓存机制 。
+实现 LRUCache 类：
+
+LRUCache(int capacity) 以正整数作为容量capacity 初始化 LRU 缓存
+int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+void put(int key, int value)如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。
+
+
+自定义双链表+hashmap
 ```java
-class LFUCache {
-    // 缓存容量，时间戳
-    int capacity, time;
-    Map<Integer, Node> key_table;
-    TreeSet<Node> S;
+public class LRUCache {
+    class Node {
+        int key;
+        int value;
+        Node prev;
+        Node next;
 
-    public LFUCache(int capacity) {
+        public Node() {
+        }
+
+        public Node(int _key, int _value) {
+            key = _key;
+            value = _value;
+        }
+    }
+
+    private Map<Integer, Node> cache = new HashMap<Integer, Node>();
+    private int size;
+    private int capacity;
+    private Node head, tail;
+
+    public LRUCache(int capacity) {
+        this.size = 0;
         this.capacity = capacity;
-        this.time = 0;
-        key_table = new HashMap<Integer, Node>();
-        S = new TreeSet<Node>();
+        // 使用伪头部和伪尾部节点
+        head = new Node();
+        tail = new Node();
+        head.next = tail;
+        tail.prev = head;
     }
-    
+
     public int get(int key) {
-        if (capacity == 0) {
+        Node node = cache.get(key);
+        if (node == null) {
             return -1;
         }
-        // 如果哈希表中没有键 key，返回 -1
-        if (!key_table.containsKey(key)) {
-            return -1;
-        }
-        // 从哈希表中得到旧的缓存
-        Node cache = key_table.get(key);
-        // 从平衡二叉树中删除旧的缓存
-        S.remove(cache);
-        // 将旧缓存更新
-        cache.cnt += 1;
-        cache.time = ++time;
-        // 将新缓存重新放入哈希表和平衡二叉树中
-        S.add(cache);
-        key_table.put(key, cache);
-        return cache.value;
+        // 如果 key 存在，先通过哈希表定位，再移到头部
+        moveToHead(node);
+        return node.value;
     }
-    
+
     public void put(int key, int value) {
-        if (capacity == 0) {
-            return;
-        }
-        if (!key_table.containsKey(key)) {
-            // 如果到达缓存容量上限
-            if (key_table.size() == capacity) {
-                // 从哈希表和平衡二叉树中删除最近最少使用的缓存
-                key_table.remove(S.first().key);
-                S.remove(S.first());
+        Node node = cache.get(key);
+        if (node == null) {
+            // 如果 key 不存在，创建一个新的节点
+            Node newNode = new Node(key, value);
+            // 添加进哈希表
+            cache.put(key, newNode);
+            // 添加至双向链表的头部
+            addToHead(newNode);
+            ++size;
+            if (size > capacity) {
+                // 如果超出容量，删除双向链表的尾部节点
+                Node tail = removeTail();
+                // 删除哈希表中对应的项
+                cache.remove(tail.key);
+                --size;
             }
-            // 创建新的缓存
-            Node cache = new Node(1, ++time, key, value);
-            // 将新缓存放入哈希表和平衡二叉树中
-            key_table.put(key, cache);
-            S.add(cache);
         } else {
-            // 这里和 get() 函数类似
-            Node cache = key_table.get(key);
-            S.remove(cache);
-            cache.cnt += 1;
-            cache.time = ++time;
-            cache.value = value;
-            S.add(cache);
-            key_table.put(key, cache);
+            // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
+            node.value = value;
+            moveToHead(node);
         }
     }
-}
 
-class Node implements Comparable<Node> {
-    int cnt, time, key, value;
-
-    Node(int cnt, int time, int key, int value) {
-        this.cnt = cnt;
-        this.time = time;
-        this.key = key;
-        this.value = value;
+    private void addToHead(Node node) {
+        node.prev = head;
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
     }
 
-    public boolean equals(Object anObject) {
-        if (this == anObject) {
-            return true;
-        }
-        if (anObject instanceof Node) {
-            Node rhs = (Node) anObject;
-            return this.cnt == rhs.cnt && this.time == rhs.time;
-        }
-        return false;
+    private void removeNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
     }
 
-    public int compareTo(Node rhs) {
-        return cnt == rhs.cnt ? time - rhs.time : cnt - rhs.cnt;
+    private void moveToHead(Node node) {
+        removeNode(node);
+        addToHead(node);
     }
 
-    public int hashCode() {
-        return cnt * 1000000007 + time;
+    private Node removeTail() {
+        Node res = tail.prev;
+        removeNode(res);
+        return res;
     }
 }
 ```
-## 方法二：双哈希表
+LinkedHashMap实现
 ```java
-class LFUCache {
-    int minfreq, capacity;
-    Map<Integer, Node> key_table;
-    Map<Integer, LinkedList<Node>> freq_table;
-
-    public LFUCache(int capacity) {
-        this.minfreq = 0;
+class LRUCache {
+    int capacity;
+    LinkedHashMap<Integer,Integer> map = new LinkedHashMap<>();
+    
+    public LRUCache(int capacity) {
         this.capacity = capacity;
-        key_table = new HashMap<Integer, Node>();;
-        freq_table = new HashMap<Integer, LinkedList<Node>>();
     }
     
     public int get(int key) {
-        if (capacity == 0) {
-            return -1;
+        if(map.containsKey(key)){
+            make(key);
+            return map.get(key);
         }
-        if (!key_table.containsKey(key)) {
-            return -1;
-        }
-        Node node = key_table.get(key);
-        int val = node.val, freq = node.freq;
-        freq_table.get(freq).remove(node);
-        // 如果当前链表为空，我们需要在哈希表中删除，且更新minFreq
-        if (freq_table.get(freq).size() == 0) {
-            freq_table.remove(freq);
-            if (minfreq == freq) {
-                minfreq += 1;
-            }
-        }
-        // 插入到 freq + 1 中
-        LinkedList<Node> list = freq_table.getOrDefault(freq + 1, new LinkedList<Node>());
-        list.offerFirst(new Node(key, val, freq + 1));
-        freq_table.put(freq + 1, list);
-        key_table.put(key, freq_table.get(freq + 1).peekFirst());
-        return val;
+        return -1;
+    }
+
+    public void make(int key){
+        int value =map.get(key);
+        map.remove(key);
+        map.put(key,value);
     }
     
     public void put(int key, int value) {
-        if (capacity == 0) {
+        if(map.containsKey(key)){
+            map.put(key,value);
+            make(key);
             return;
         }
-        if (!key_table.containsKey(key)) {
-            // 缓存已满，需要进行删除操作
-            if (key_table.size() == capacity) {
-                // 通过 minFreq 拿到 freq_table[minFreq] 链表的末尾节点
-                Node node = freq_table.get(minfreq).peekLast();
-                key_table.remove(node.key);
-                freq_table.get(minfreq).pollLast();
-                if (freq_table.get(minfreq).size() == 0) {
-                    freq_table.remove(minfreq);
-                }
-            }
-            LinkedList<Node> list = freq_table.getOrDefault(1, new LinkedList<Node>());
-            list.offerFirst(new Node(key, value, 1));
-            freq_table.put(1, list);
-            key_table.put(key, freq_table.get(1).peekFirst());
-            minfreq = 1;
-        } else {
-            // 与 get 操作基本一致，除了需要更新缓存的值
-            Node node = key_table.get(key);
-            int freq = node.freq;
-            freq_table.get(freq).remove(node);
-            if (freq_table.get(freq).size() == 0) {
-                freq_table.remove(freq);
-                if (minfreq == freq) {
-                    minfreq += 1;
-                }
-            }
-            LinkedList<Node> list = freq_table.getOrDefault(freq + 1, new LinkedList<Node>());
-            list.offerFirst(new Node(key, value, freq + 1));
-            freq_table.put(freq + 1, list);
-            key_table.put(key, freq_table.get(freq + 1).peekFirst());
+        if(map.size() == capacity){
+             int key1 = map.keySet().iterator().next();
+             map.remove(key1);
         }
+        map.put(key,value);
     }
 }
 
-class Node {
-    int key, val, freq;
-
-    Node(int key, int val, int freq) {
-        this.key = key;
-        this.val = val;
-        this.freq = freq;
-    }
-}
 ```
-
 # 文章参考
-- https://leetcode-cn.com/problems/lfu-cache/solution/lfuhuan-cun-by-leetcode-solution/
+- https://leetcode-cn.com/problems/lru-cache/solution/lruhuan-cun-ji-zhi-by-leetcode-solution/
