@@ -114,6 +114,10 @@
 - `FactoryBean`
 #### 源码解析
 AbstractApplicationContext 中的refresh()方法是启动加载整个容器的关键方法
+
+方法在容器启动时会加载,方法为 
+- org.springframework.boot.SpringApplication#run
+- org.springframework.boot.SpringApplication#refreshContext
 ```java
 @Override
 public void refresh() throws BeansException, IllegalStateException {
