@@ -123,53 +123,41 @@ AbstractApplicationContext 中的refresh()方法是启动加载整个容器的�
 public void refresh() throws BeansException, IllegalStateException {
     // 1. 首先是一个synchronized加锁，当然要加锁，不然你先调一次refresh()然后这次还没处理完又调一次，就会乱套了；
     synchronized (this.startupShutdownMonitor) {
-        // 2. 接着往下看prepareRefresh();这个方法是做准备工作的，记录容器的启动时间、标记“已启动”状态、处理配置文件中的占位符，可以点进去看看，这里就不多说了。
-        // Prepare this context for refreshing.
+        // 2. 这个方法是做准备工作的，记录容器的启动时间、标记“已启动”状态、处理配置文件中的占位符，可以点进去看看，这里就不多说了。
         prepareRefresh();
         
-        // 3. 下一步ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();这个就很重要了，这一步是把配置文件解析成一个个Bean，并且注册到BeanFactory中，注意这里只是注册进去，并没有初始化。先继续往下看，等会展开这个方法详细解读
-        // Tell the subclass to refresh the internal bean factory.
+        // 3. 这个就很重要了，这一步是把配置文件解析成一个个Bean，并且注册到BeanFactory中，注意这里只是注册进去，并没有初始化。先继续往下看，等会展开这个方法详细解读
         ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-        //4. 然后是prepareBeanFactory(beanFactory);这个方法的作用是：设置 BeanFactory 的类加载器，添加几个 BeanPostProcessor，手动注册几个特殊的 bean，这里都是spring里面的特殊处理，然后继续往下看
-        // Prepare the bean factory for use in this context.
+        //4. 这个方法的作用是：设置 BeanFactory 的类加载器，添加几个 BeanPostProcessor，手动注册几个特殊的 bean，这里都是spring里面的特殊处理，然后继续往下看
         prepareBeanFactory(beanFactory);
 
         try {
-            // 5. postProcessBeanFactory(beanFactory);方法是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化，具体的子类可以在这步的时候添加一些特殊的 BeanFactoryPostProcessor 的实现类，来完成一些其他的操作。
-            // Allows post-processing of the bean factory in context subclasses.
+            // 5. 方法是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化，具体的子类可以在这步的时候添加一些特殊的 BeanFactoryPostProcessor 的实现类，来完成一些其他的操作。
             postProcessBeanFactory(beanFactory);
 
-            // 6. 接下来是invokeBeanFactoryPostProcessors(beanFactory);这个方法是调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法；
-            // Invoke factory processors registered as beans in the context.
+            // 6. 接下来是这个方法是调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法；
             invokeBeanFactoryPostProcessors(beanFactory);
 
-            // 7. 然后是registerBeanPostProcessors(beanFactory);这个方法注册 BeanPostProcessor 的实现类，和上面的BeanFactoryPostProcessor 是有区别的，这个方法调用的其实是PostProcessorRegistrationDelegate类的registerBeanPostProcessors方法；这个类里面有个内部类BeanPostProcessorChecker，BeanPostProcessorChecker里面有两个方法postProcessBeforeInitialization和postProcessAfterInitialization，这两个方法分别在 Bean 初始化之前和初始化之后得到执行。然后回到refresh()方法中继续往下看
-            // Register bean processors that intercept bean creation.
+            // 7. 然后这个方法注册 BeanPostProcessor 的实现类，和上面的BeanFactoryPostProcessor 是有区别的，这个方法调用的其实是PostProcessorRegistrationDelegate类的registerBeanPostProcessors方法；这个类里面有个内部类BeanPostProcessorChecker，BeanPostProcessorChecker里面有两个方法postProcessBeforeInitialization和postProcessAfterInitialization，这两个方法分别在 Bean 初始化之前和初始化之后得到执行。然后回到refresh()方法中继续往下看
             registerBeanPostProcessors(beanFactory);
             
-            // 8. initMessageSource();方法是初始化当前 ApplicationContext 的 MessageSource，国际化处理，继续往下
-            // Initialize message source for this context.
+            // 8. 方法是初始化当前 ApplicationContext 的 MessageSource，国际化处理，继续往下
             initMessageSource();
 
-            // 9. initApplicationEventMulticaster();方法初始化当前 ApplicationContext 的事件广播器继续往下
-            // Initialize event multicaster for this context.
+            // 9. 方法初始化当前 ApplicationContext 的事件广播器继续往下
             initApplicationEventMulticaster();
 
-            // 10. onRefresh();方法初始化一些特殊的 Bean（在初始化 singleton beans 之前）；继续往下
-            // Initialize other special beans in specific context subclasses.
+            // 10. 方法初始化一些特殊的 Bean（在初始化 singleton beans 之前）；继续往下
             onRefresh();
 
-            // 11. registerListeners();方法注册事件监听器，监听器需要实现 ApplicationListener 接口；继续往下
-            // Check for listener beans and register them.
+            // 11. 方法注册事件监听器，监听器需要实现 ApplicationListener 接口；继续往下
             registerListeners();
 
-            // 12. 重点到了：finishBeanFactoryInitialization(beanFactory);初始化所有的 singleton beans（单例bean），懒加载（non-lazy-init）的除外，这个方法也是等会细说
-            // Instantiate all remaining (non-lazy-init) singletons.
+            // 12. 重点到了 初始化所有的 singleton beans（单例bean），懒加载（non-lazy-init）的除外，这个方法也是等会细说
             finishBeanFactoryInitialization(beanFactory);
 
-            // 13. finishRefresh();方法是最后一步，广播事件，ApplicationContext 初始化完成
-            // Last step: publish corresponding event.
+            // 13. 方法是最后一步，广播事件，ApplicationContext 初始化完成
             finishRefresh();
         }
 
