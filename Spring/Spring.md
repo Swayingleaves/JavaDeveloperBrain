@@ -81,11 +81,14 @@
 ### 测试(Test)
 - `spring-test` 主要为测试提供支持的，通过 JUnit 和 TestNG 组件支持单元测试和集成测试。它提供了一致性地加载和缓存 Spring 上下文，也提供了用于单独测试代码的模拟对象（mock object）
 ## IOC
-### IOC和DI的概念
-#### IOC (控制反转)
-说简单点就是当我们使用对象调用一个方法或者类时，不再由我们主动去创建这个类的对象，控制权交给spring框架。说复杂点就是资源（组件）不再由使用资源双方进行管理，而是由不使用资源的第三方统一管理，这样带来的好处。第一，资源的集中管理，实现资源的可配置和易管理。第二，降低了使用资源双方的依赖程度，也就是我们说的耦合度
-#### DI (依赖注入)
-由spring框架主动创建被调用类的对象，然后把这个对象注入到我们自己的类中，使得我们可以直接使用它
+### IOC是什么？
+
+IOC（Inverse of Contro）控制反转，有时候也被称为DI（Dependency injection）依赖注入，它是一种降低对象耦合关系的一种设计思想。
+
+2004年，Martin Fowler探讨了一个问题，既然IOC是控制反转，那么到底是哪些方面的控制被反转了呢？，经过详细地分析和论证后，他得出了答案：获得依赖对象的过程被反转了。控制被反转之后，获得依赖对象的过程由自身管理变为了由IOC容器主动注入。于是，他给“控制反转”取了一个更合适的名字叫做“依赖注入（Dependency Injection）”。他的这个答案，实际上给出了实现IOC的方法：注入。所谓依赖注入就是：由IOC容器在运行期间，动态地将某种依赖关系注入到对象之中。
+
+控制反转（IOC）是一种思想，而依赖注入（Dependency Injection）则是实现这种思想的方法。
+
 ### 使用IOC的好处
 - 不用自己组装，拿来就用。
 - 享受单例的好处，效率高，不浪费空间
@@ -113,9 +116,55 @@
   - 相当于丰富了beanfactory的功能，这里理解为上下文就好
 - `FactoryBean`
 #### 源码解析
-AbstractApplicationContext 中的refresh()方法是启动加载整个容器的关键方法
+首先抛开其他组件的启动，我们只需要引入spring-context就可以启动一个容器了
+```xml
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-context</artifactId>
+</dependency>
+```
+而在springboot出来之前最常见的加载bean的方式是读取配置文件
+```java
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationfile.xml");
+}
+```
+这里ApplicationContext是一个接口，最要的实现类有：
+- ClassPathXmlApplicationContext 需要一个 xml 配置文件在系统中的路径
+- FileSystemXmlApplicationContext 需要一个 xml 配置文件在系统中的路径
+- AnnotationConfigApplicationContext 基于注解，大势所趋
 
-方法在容器启动时会加载,方法为 
+下面的分析都基于 ClassPathXmlApplicationContext 进行分析，因为比较好理解点
+
+在 resources 目录新建一个配置文件，文件名随意，通常叫 application.xml 或 application-xxx.xml就可以了,对应的类实现一个：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-autowire="byName">
+ 
+    <bean id="messageService" class="com.javadoop.example.MessageServiceImpl"/>
+</beans>
+```
+main
+```java
+public class App {
+    public static void main(String[] args) {
+        // 用我们的配置文件来启动一个 ApplicationContext
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application.xml");
+ 
+        System.out.println("context 启动成功");
+ 
+        // 从 context 中取出我们的 Bean，而不是用 new MessageServiceImpl() 这种方式
+        MessageService messageService = context.getBean(MessageService.class);
+        // 这句将输出: hello world
+        System.out.println(messageService.getMessage());
+    }
+}
+```
+在构造方法中的refresh()方法是启动加载整个容器的关键方法
+
+方法在springboot容器启动时也会加载,方法为 
 - org.springframework.boot.SpringApplication#run
 - org.springframework.boot.SpringApplication#refreshContext
 ```java
@@ -168,6 +217,7 @@ public void refresh() throws BeansException, IllegalStateException {
             }
 
             // Destroy already created singletons to avoid dangling resources.
+            // 销毁已经初始化的 singleton 的 Beans，以免有些 bean 会一直占用资源
             destroyBeans();
 
             // Reset 'active' flag.
@@ -186,18 +236,78 @@ public void refresh() throws BeansException, IllegalStateException {
 }
 ```
 ### Spring bean的生命周期
+Spring Bean的生命周期分为四个阶段和多个扩展点。扩展点又可以分为影响多个Bean和影响单个Bean。整理如下：
+
+四个阶段
 - 实例化 Instantiation
 - 属性赋值 Populate
 - 初始化 Initialization
 - 销毁 Destruction
+
+多个扩展点
+
+- 影响多个Bean
+  - BeanPostProcessor(作用于初始化阶段的前后)
+  - InstantiationAwareBeanPostProcessor(作用于实例化阶段的前后)
+- 影响单个Bean
+  - Aware(Aware类型的接口的作用就是让我们能够拿到Spring容器中的一些资源)
+    - Aware Group1
+      - BeanNameAware
+      - BeanClassLoaderAware
+      - BeanFactoryAware
+    - Aware Group2
+      - EnvironmentAware
+      - EmbeddedValueResolverAware(实现该接口能够获取Spring EL解析器，用户的自定义注解需要支持spel表达式的时候可以使用)
+      - ApplicationContextAware(ResourceLoaderAware\ApplicationEventPublisherAware\MessageSourceAware)
+  - 生命周期(实例化和属性赋值都是Spring帮助我们做的，能够自己实现的有初始化和销毁两个生命周期阶段)
+    - InitializingBean
+    - DisposableBean
+
 ### bean的作用域
-//TODO  
+Spring Bean 中所说的作用域，在配置文件中即是“scope”
+
+在面向对象程序设计中作用域一般指对象或变量之间的可见范围。
+
+而在Spring容器中是指其创建的Bean对象相对于其他Bean对象的请求可见范围。
+
+在Spring 容器当中，一共提供了5种作用域类型，在配置文件中，通过属性scope来设置bean的作用域范围
+
+#### singleton
+```xml
+<bean id="userInfo" class="cn.lovepi.UserInfo" scope="singleton"></bean>
+```
+当Bean的作用域为singleton的时候,Spring容器中只会存在一个共享的Bean实例，所有对Bean的请求只要id与bean的定义相匹配，则只会返回bean的同一实例。单一实例会被存储在单例缓存中，为Spring的缺省作用域。
+#### prototype
+```xml
+<bean id="userInfo" class="cn.lovepi.UserInfo" scope=" prototype "></bean>
+```
+每次对该Bean请求的时候，Spring IoC都会创建一个新的作用域。
+
+对于有状态的Bean应该使用prototype，对于无状态的Bean则使用singleton
+#### request
+```xml
+<bean id="userInfo" class="cn.lovepi.UserInfo" scope=" request "></bean>
+```
+Request作用域针对的是每次的Http请求，Spring容器会根据相关的Bean的
+
+定义来创建一个全新的Bean实例。而且该Bean只在当前request内是有效的。
+#### session
+```xml
+<bean id="userInfo" class="cn.lovepi.UserInfo" scope=" session "></bean>
+```
+针对http session起作用，Spring容器会根据该Bean的定义来创建一个全新的Bean的实例。而且该Bean只在当前http session内是有效的。
+#### global session
+```xml
+<bean id="userInfo" class="cn.lovepi.UserInfo" scope="globalSession"></bean>
+```
+类似标准的http session作用域，不过仅仅在基于portlet的web应用当中才有意义。Portlet规范定义了全局的Session的概念。他被所有构成某个portlet外部应用中的各种不同的portlet所共享。在global session作用域中所定义的bean被限定于全局的portlet session的生命周期范围之内。
+
 ### 循环依赖问题
 ![](../img/spring/循环依赖.png)
 				
 ## AOP
 ### AOP原理
-AOP实际上就是OOP的补充，将代码横向抽取成一个独立的模块，再织入到目标方法中
+原理是在IOC过程中，创建bean实例时，最后都会对bean进行处理来实现增强，对于AOP来说就是创建代理类
 - 底层是动态代理技术
   - JDK动态代理(基于接口)
   - CBLib动态代理(基于类)
@@ -338,3 +448,8 @@ public class AccountController {
 
 # 参考文章
 - https://www.jianshu.com/p/5e7c0713731f
+- https://blog.csdn.net/nuomizhende45/article/details/81158383
+- https://www.cnblogs.com/javazhiyin/p/10905294.html
+- https://www.jianshu.com/p/1dec08d290c1
+- https://blog.csdn.net/icarus_wang/article/details/51586776
+- https://cloud.tencent.com/developer/article/1512235
