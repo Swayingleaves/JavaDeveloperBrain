@@ -1,10 +1,10 @@
 
 * [MySQL](#mysql)
   * [架构](#架构)
-  * [客户端](#客户端)
-  * [server层](#server层)
-  * [储存引擎](#储存引擎)
-  * [物理文件层](#物理文件层)
+    * [客户端](#客户端)
+    * [server层](#server层)
+    * [储存引擎](#储存引擎)
+    * [物理文件层](#物理文件层)
   * [SQL优化](#sql优化)
     * [explain](#explain)
     * [属性](#属性)
@@ -67,7 +67,7 @@
           * [读未提交：read uncommitted](#读未提交read-uncommitted)
           * [读已提交：read committed](#读已提交read-committed)
           * [可重复读：repeatable read](#可重复读repeatable-read)
-          * [串行化：serializable](#串行化serializable)
+      * [串行化：serializable](#串行化serializable)
       * [持久性（Durability）](#持久性durability)
   * [事务日志](#事务日志)
     * [redo log（重做日志）](#redo-log重做日志)
@@ -107,9 +107,9 @@
 # MySQL
 ## 架构
 ![](../img/数据库/MySQL/MySQL架构.png)
-## 客户端
+### 客户端
 各种语言都提供了连接mysql数据库的方法，比如jdbc、php、go等，可根据选择 的后端开发语言选择相应的方法或框架连接mysql
-## 	server层
+### server层
 包括连接器、查询缓存、分析器、优化器、执行器等，涵盖mysql的大多数核心服务功能，以及所有的内置函数（例如日期、世家、数 学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等
 - `连接器` 连接器负责来自客户端的连接、获取用户权限、维持和管理连接
 - `查询缓存`
@@ -125,10 +125,10 @@
 
 最终对结果集进行过滤、排序以及键值对的比较等
 - cpu密集型
-## 	储存引擎
+### 储存引擎
 复制数据的存储和提取，是真正与底层物理文件打交道的组件。 数据本质是存储在磁盘上的，通过特定的存储引擎对数据进行有组织的存放并根据业务需要对数据进行提取。存储引擎的架构模式是插件式的，支持Innodb，MyIASM、Memory等多个存储引擎。现在最常用的存储引擎是Innodb，它从mysql5.5.5版本开始成为了默认存储引擎
 - io密集型
-## 	物理文件层
+### 物理文件层
 存储数据库真正的表数据、日志等。物理文件包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等
 ## SQL优化
 ### explain
