@@ -134,6 +134,8 @@
 ### explain
 Explain 用来分析 SELECT 查询语句，开发人员可以通过分析 Explain 结果来优化查询语句
 ### 属性
+![](../img/数据库/MySQL/explain.png)
+![](../img/数据库/MySQL/explain2.png)
 - `id`: SELECT 查询的标识符. 每个 SELECT 都会自动分配一个唯一的标识符.
   - SQL执行的顺序的标识,SQL从大到小的执行
     1. id相同时，执行顺序由上至下
