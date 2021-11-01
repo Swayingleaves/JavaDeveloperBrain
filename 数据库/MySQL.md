@@ -151,7 +151,7 @@ Explain 用来分析 SELECT 查询语句，开发人员可以通过分析 Explai
   - `DEPENDENT SUBQUERY`: 子查询中的第一个 SELECT, 取决于外面的查询. 即子查询依赖于外层查询的结果.
 - `table`: 查询的是哪个表
 - `partitions`: 匹配的分区
-- `type`: 表示MySQL在表中找到所需行的方式，又称“访问类型” ，效率：`ALL < index < range ~ index_merge < ref < eq_ref < const < system < NULL`
+- `type`: 表示MySQL在表中找到所需行的方式，又称“访问类型” ，效率：`NULL > system > const > eq_ref > ref > rabge ~ index_merge > index > ALL`
   - `NULL`: MySQL在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成
   - `system`: 表中只有一条数据. 这个类型是特殊的 const 类型.
   - `const`: 针对主键或唯一索引的等值查询扫描, 最多只返回一行数据. const 查询速度非常快, 因为它仅仅读取一次即可.
