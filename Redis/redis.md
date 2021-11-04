@@ -79,6 +79,7 @@
   * [集群收缩](#集群收缩)
 * [redis cluster为什么没有使用一致性hash算法，而是使用了哈希槽预分片？](#redis-cluster为什么没有使用一致性hash算法而是使用了哈希槽预分片)
 * [redis的hash槽为什么是16384(2^14)个卡槽，而不是65536(2^16)个？](#redis的hash槽为什么是16384214个卡槽而不是65536216个)
+* [redis索引](#redis索引)
 * [参考文章](#参考文章)
 
 
@@ -785,6 +786,40 @@ Redis内部内置了序号 0-16383 个槽位，每个槽位可以用来存储一
 - redis的集群主节点数量基本不可能超过1000个。集群节点越多，心跳包的消息体内携带的数据越多。如果节点过1000个，也会导致网络拥堵。因此redis作者，不建议redis cluster节点数量超过1000个。 那么，对于节点数在1000以内的redis cluster集群，16384个槽位够用了。没有必要拓展到65536个。
 - 槽位越小，节点少的情况下，压缩率高。
 
+# redis索引
+Redis并不支持索引，需要自己来维护
+
+对于非范围唯一索引，我们可以简单的把索引存为k-v即可
+
+对于范围索引或非唯一索引，则要使用redis 的 zset来实现。
+
+举例一个传统的用户系统例子
+```java
+uid 用户id
+name 用户名
+credit 用户积分
+type 类型
+```
+可以直接放到一个hashset中
+```shell
+hmset usr:1 uid 1 name aaa credit 10 type 0
+hmset usr:2 uid 2 name bbb credit 20 type 1
+```
+通过uid检索很快，但是如果要查询type=1的用户，则只能全扫描！
+
+在关系数据库中，我们可以简单在type上建立索引
+```sql
+select * from usr where type=1
+```
+这样的SQL就可以高效执行了。redis中需要我们自己再维护一个zset
+```shell
+zadd usr.index.type 0 0:1
+zadd usr.index.type 0 1:2
+```
+注意,所有权重都设置成0,这样可以直接按值检索,然后可以通过
+```shell
+zrangebylex usr.index.type [1: (1;
+```
 
 # 参考文章
 - https://www.jianshu.com/p/53083f5f2ddc
