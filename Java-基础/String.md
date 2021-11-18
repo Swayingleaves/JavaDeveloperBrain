@@ -22,7 +22,7 @@
 # 储存数据
 - Java8内部使用char数组储存数据
   - `private final char value[];`
-- Java9后职业byte数组同时使用coder来标识使用哪种编码
+- Java9后使用byte数组同时使用coder来标识使用哪种编码
   - `private final byte[] value;`
   - `private final byte coder;`
 # string pool
@@ -37,7 +37,8 @@
 个字符串引用。intern() 首先把 s1 引用的字符串放到 String Pool 中，然后返回这个字符串引用。因此 s3 和 s4 引用
 的是同一个字符串。
 String s1 = new String("aaa"); 
-String s2 = new String("aaa"); System.out.println(s1 == s2); // false String s3 = s1.intern(); 
+String s2 = new String("aaa"); System.out.println(s1 == s2); // false 
+String s3 = s1.intern(); 
 String s4 = s1.intern(); System.out.println(s3 == s4); // true
 如果是采用 "bbb" 这种字面量的形式创建字符串，会自动地将字符串放入 String Pool 中。
 String s5 = "bbb"; 
