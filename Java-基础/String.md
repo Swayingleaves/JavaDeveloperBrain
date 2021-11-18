@@ -45,7 +45,7 @@ String s5 = "bbb";
 String s6 = "bbb"; System.out.println(s5 == s6); // true
 ```
 ### str1 + " a nice day"
-- new StringBuilder().append(str1).append(" a nice day");
+- 编译为 new StringBuilder().append(str1).append(" a nice day");
 - 但是如果str1被final修饰，此变量会在初始化时加载到常量池，所以会直接变为str1的值"value"+"a nice day"
 ### "a" + "b" + "c"
 编译优化不会创建对象
