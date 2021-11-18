@@ -231,7 +231,7 @@ final Node<K,V>[] resize() {
         //新数组大小为阈值
         newCap = oldThr;
     else {               // zero initial threshold signifies using defaults
-        原数组阈值为0，则新数组的大小和阈值为默认
+        //原数组阈值为0，则新数组的大小和阈值为默认
         newCap = DEFAULT_INITIAL_CAPACITY;
         newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
     }
@@ -383,6 +383,9 @@ if (hiTail != null) {
 - 2、为什么是红黑树？
   - AVL树是完全平衡二叉树，在节点插入时、删除时都会调整树结构来平衡，因此会消耗更多的时间
   - 虽然AVL的查找时间由于树高度更低而更快，但是插入和删除花费时间比红黑树更长，在hashmap这种情况下更适用红黑树
+### 为什么不是B+树
+- b+树的特点是矮胖，这样叶子结点可以存储大量数据，减少磁盘IO，并不是说不可以，但是相对应用场景来讲，用红黑树更加适合
+
 ## LinkedHashMap
 - 底层是散列表+红黑树+双向链表，父类是HashMap
 - 允许为null，插入有序
@@ -895,6 +898,7 @@ transfer 大致做了以下几件事件:
 - https://mp.weixin.qq.com/s/H6lxTfpedzzDz2QXihhdmw
 - https://segmentfault.com/a/1190000023308658
 - https://blog.csdn.net/weixin_39797532/article/details/112337531
+- https://pdai.tech/md/java/collection/java-collection-all.html
 
 
 
