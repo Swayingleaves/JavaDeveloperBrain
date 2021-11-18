@@ -358,9 +358,9 @@ SUNION key1 [key2]
 
 zskiplistNode 表示跳跃表节点结构
 - ele是个SDS，是有序集合的值element。
-- Score是double结构，存储分数值。
-- Backward，后退指针，指向列表前一个node
-- Level [ ]数组，表示一个节点可以有多个层
+- score是double结构，存储分数值。
+- backward，后退指针，指向列表前一个node
+- level [ ]数组，表示一个节点可以有多个层
   - 数组里面的项是zskiplistLevel结构，可以看到，每一层都有一个跳跃指针forward
   - 跨度span，顾名思义，就是用来记录跨度的，相邻的节点跨度为1。
   - 注意：跨度的用处是用来计算某个节点在跳跃表中的排位的，zset的排序按score从小到大排序。比如我查找到node7，通过将沿途的所有跨度累加，我们可以得到其排在列表中的序列
