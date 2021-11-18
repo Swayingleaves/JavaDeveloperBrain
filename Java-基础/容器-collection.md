@@ -23,6 +23,7 @@
 * [参考文章](#参考文章)
 
 # Collection
+![](../img/基础/Java容器类关系图.png)
 # List
 - 实现了Collection接口
 - List接口特性：是有序的，元素是可重复的

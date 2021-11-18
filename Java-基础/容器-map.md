@@ -36,6 +36,7 @@
 * [参考文章](#参考文章)
 
 # Map
+![](../img/基础/Java容器类关系图.png)
 ## HashMap
 - 存储的结构是key-value键值对，不像Collection是单列集合
 - 阅读Map前最好知道什么是散列表和红黑树
