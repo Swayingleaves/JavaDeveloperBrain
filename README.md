@@ -26,9 +26,9 @@
 
 # 内容概览
 
-<details>
-<summary><a>Java-基础部分</a></summary>
-
+[comment]: <> (<details><summary></summary>)
+[comment]: <> (</details>)
+## <a>Java-基础部分</a>
  - [基本类型](Java-基础/Java类型.md)
  - [包装类型](Java-基础/Java类型.md)
  - [关键字](Java-基础/Java关键字.md)
@@ -62,10 +62,8 @@
    - [网络io](Java-基础/JavaIO.md#网络io)
    - [NIO](Java-基础/JavaIO.md#nio)
  - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
-</details>
 
-<details>
-<summary><a>Java-JVM</a></summary>
+## <a>Java-JVM</a>
 
  - [内存结构](Java-JVM/内存结构.md)
  - [垃圾回收](Java-JVM/垃圾回收.md)
@@ -73,23 +71,19 @@
  - [类加载机制](Java-JVM/类加载机制.md)
  - [JVM调优](Java-JVM/JVM调优.md)
  - [Java即时编译](Java-JVM/Java即时编译.md)
-</details>
+ 
+## <a>Java-多线程</a>
 
-<details>
-    <summary><a>Java-多线程</a></summary>
+ - [线程](Java-多线程/线程.md)
+ - [volatile](Java-多线程/volatile.md)
+ - [Java对象头](Java-多线程/Java对象头.md)
+ - [锁机制](Java-多线程/锁机制.md)
+ - [线程池](Java-多线程/线程池.md)
+ - [CAS](Java-多线程/CAS.md)
+ - [AQS](Java-多线程/AQS.md)
+ - [ThreadLocal](Java-多线程/ThreadLocal.md)
 
-- [线程](Java-多线程/线程.md)
-- [volatile](Java-多线程/volatile.md)
-- [Java对象头](Java-多线程/Java对象头.md)
-- [锁机制](Java-多线程/锁机制.md)
-- [线程池](Java-多线程/线程池.md)
-- [CAS](Java-多线程/CAS.md)
-- [AQS](Java-多线程/AQS.md)
-- [ThreadLocal](Java-多线程/ThreadLocal.md)
-</details>
-
-<details>
-    <summary><a>计算机网络</a></summary>
+## <a>计算机网络</a>
 
 - [网络协议分层](计算机网络/网络协议分层.md)
 - [TCP报文](计算机网络/TCP报文.md)
@@ -104,19 +98,15 @@
 - [网络攻击行为](计算机网络/网络攻击行为.md)
 - [CDN](计算机网络/CDN.md)
 - [HTTP面试题](计算机网络/HTTP面试题.md)
-</details>
 
-<details>
-    <summary><a>数据库</a></summary>
+## <a>数据库</a>
 
 - [MySQL](数据库/MySQL.md)
 - [MongoDB](数据库/MySQL.md)
 - [HBASE](数据库/Hbase.md)
 - [Elasticsearch](数据库/Elasticsearch.md)
-</details>
 
-<details>
-    <summary><a>消息队列</a></summary>
+## <a>消息队列</a>
 
 - [为什么使用消息队列](消息队列/mq常见面试题.md#为什么要使用消息队列)
 - [Redis](消息队列/Redis.md)
@@ -126,10 +116,8 @@
 - [Zookeeper](消息队列/Zookeeper.md)
 - [pulsar](消息队列/Pulsar.md)
 - [常见面试题](消息队列/mq常见面试题.md)
-</details>
 
-<details>
-    <summary><a>Redis</a></summary>
+## <a>Redis</a>
 
 - [特点](Redis/redis.md#特点)
 - [Redis为什么这么快](Redis/redis.md#Redis为什么这么快)
@@ -140,25 +128,19 @@
 - [Redis中的事务](Redis/redis.md#redis-中的事务)
 - [常问故障场景](Redis/redis.md#常问故障场景)
 - [集群](Redis/redis.md#集群)
-</details>
 
-<details>
-    <summary><a>Spring</a></summary>
+## <a>Spring</a>
 
 - [Spring](Spring/Spring.md)
 - [SpringMVC](Spring/SpringMVC.md)
 - [SpringBoot](Spring/Springboot.md)
-</details>
 
-<details>
-    <summary><a>Springcloud</a></summary>
+## <a>Springcloud</a>
 
 - [SpringCloud](SpringCloud/springcloud.md#springcloud)
 - [SpringCloudAlibaba](SpringCloud/springcloud.md#springcloudalibaba)
-</details>
 
-<details>
-    <summary><a>Linux</a></summary>
+## <a>Linux</a>
 
 - [文件和目录的操作](Linux/linux.md#文件和目录的操作)
 - [查看文件](Linux/linux.md#查看文件)
@@ -177,47 +159,37 @@
 - [缓存 I/O](Linux/linux.md#缓存-io)
 - [IO模型](Linux/linux.md#io模型)
 - [select、poll、epoll](Linux/linux.md#selectpollepoll)
-</details>
 
-<details>
-    <summary><a>Mybatis</a></summary>
+## <a>Mybatis</a>
 
 - [什么是mybatis](Mybatis/mybatis.md)
 - [JDBC执行六步骤](Mybatis/mybatis.md)
 - [mybatis执行8步骤](Mybatis/mybatis.md)
 - [MyBatis整体架构](Mybatis/mybatis.md)
 - [mybatis缓存](Mybatis/mybatis.md)
-</details>
 
-<details>
-    <summary><a>Netty</a></summary>
+## <a>Netty</a>
 
 - [重要的组件](Netty/netty.md#重要的组件)
 - [netty的使用示例](Netty/netty.md#netty的使用示例)
 - [TCP粘包/拆包问题](Netty/netty.md#tcp粘包拆包问题)
 - [解编码技术](Netty/netty.md#解编码技术)
 - [高性能的原因](Netty/netty.md#高性能的原因)
-</details>
 
-<details>
-    <summary><a>分布式相关</a></summary>
+## <a>分布式相关</a>
 
 - [分布式锁](分布式相关/分布式锁.md)
 - [分布式事务](分布式相关/分布式事务.md)
 - [CAP理论](分布式相关/CAP.md)
 - [BASE](分布式相关/BASE.md)
 - [一致性算法](分布式相关/一致性算法.md)
-</details>
 
-<details>
-    <summary><a>容器技术</a></summary>
+## <a>容器技术</a>
 
 - [docker](容器技术/docker.md)
 - k8s
-</details>
 
-<details>
-    <summary><a>数据结构和算法</a></summary>
+## <a>数据结构和算法</a>
 
 - [排序算法](数据结构和算法/排序算法.md)
 - 树相关
@@ -231,10 +203,8 @@
 - [LRU](数据结构和算法/LFU.md)
 - [LFU](数据结构和算法/LRU.md)
 - [加减乘除](数据结构和算法/加减乘除.md)
-</details>
 
-<details>
-    <summary><a>设计模式</a></summary>
+## <a>设计模式</a>
 
 - [工厂模式](设计模式/工厂模式.md)
 - [单例模式](设计模式/单例模式.md)
@@ -257,18 +227,14 @@
 - 访问者模式
 - 中介者模式
 - 解释器模式
-</details>
 
-<details>
-    <summary><a>职业规划和学习习惯</a></summary>
+## <a>职业规划和学习习惯</a>
 
 - [项目中遇到的问题](职业规划和学习习惯/职业规划和学习习惯.md#项目中遇到的问题)
 - [职业规划](职业规划和学习习惯/职业规划和学习习惯.md#职业规划)
 - [平时规则](职业规划和学习习惯/职业规划和学习习惯.md#平时规则)
-</details>
 
-<details>
-    <summary><a>场景设计</a></summary>
+## <a>场景设计</a>
 
 - [有A、B两个大文件，每个文件几十G,而内存只有4G,其中A文件存放学号+姓名，而B文件存放学号+分数，要求生成文件C，存放姓名和分数。怎么实现?](场景设计/场景设计.md)
 - [秒杀系统怎么设计](场景设计/场景设计.md#秒杀系统怎么设计)
@@ -288,10 +254,8 @@
 - [Java实现BlockQueue](场景设计/场景设计.md#java实现blockqueue)
 - [解决哈希冲突的方法](场景设计/场景设计.md#解决哈希冲突的方法)
 - [排行榜设计](场景设计/场景设计.md#排行榜设计)
-</details>
 
-<details>
-    <summary><a>智力题</a></summary>
+## <a>智力题</a>
 
 - [100只试管里有-只是有毒的，现在有10个小白鼠，如何最快速地判断出那只试管有毒](智力题/智力题.md)
 - [共1000瓶药水，其中I瓶有毒药。已知小白鼠喝毒药一天内死若想在一天内找到毒药，最少需要几只小白鼠?](智力题/智力题.md)
@@ -303,34 +267,25 @@
 - [你有两个罐子，50个红色弹球，50个蓝色弹球，如何将这100个球放入到两个罐子，随机选出一个罐子取出的球为红球的概率最大?](智力题/智力题.md)
 - [抢30是双人游戏，游戏规则是:第一个人喊"1"或"2"，第二个人要接着往下喊一个或两个数，然后再轮到第一个人。 两人轮流进行下去。最后喊30的人获胜。问喊数字的最佳策略。](智力题/智力题.md)
 - [某人进行10次打靶，每次打靶可能的得分为0到10分，10次打靶共得90分的可能性有多少种](智力题/智力题.md)
-</details>
 
-<details>
-    <summary><a>项目架构</a></summary>
-</details>
-
-<details>
-    <summary><a>面试解答</a></summary>
+## <a>项目架构</a>
+- TODO
+## <a>面试解答</a>
 
 - [面试解答6月牛客](面试解答/面试解答2021-06.md)
 - [面试解答7月牛客](面试解答/面试解答2021-07.md)
 - [面试解答9月牛客](面试解答/面试解答2021-09.md)
 - [面试解答10月牛客](面试解答/面试解答2021-10.md)
-</details>
 
-<details>
-    <summary><a>商城类问题</a></summary>
+## <a>商城类问题</a>
 
 - [秒杀](商城类问题/商城类问题.md#秒杀)
 - [超卖](商城类问题/商城类问题.md#如何解决超卖问题)
 - [订单延迟](商城类问题/商城类问题.md#订单延时取消怎么做)
-</details>
 
-<details>
-    <summary><a>python</a></summary>
+## <a>python</a>
 
 - [如何离线移植依赖包](Python/Python.md)
-</details>
 
 # 知识点梳理
 点击查看：[知识点大图](img/Java.png)
