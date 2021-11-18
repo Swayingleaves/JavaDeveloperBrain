@@ -33,8 +33,11 @@
 | Boolean  | TRUE FALSE | 
 | Character  | [0, 127] | 
 
-### 包装类型的equals
+## 包装类型的equals
 - 包装类的equals首先会判断是否是本类型如果不是直接返回false
 - 否则比较值
 - 装箱其实就是调用了 包装类的valueOf()方法，拆箱其实就是调用了 xxxValue()方法。`Integer i = 10 等价于 Integer i = Integer.valueOf(10)
   int n = i 等价于 int n = i.intValue()`; 
+
+## 判断创建多少个对象
+因为大多包装类型都用cache，在判断时考虑是否超出了cache范围，否则会创建新对象
