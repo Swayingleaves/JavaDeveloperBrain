@@ -33,7 +33,7 @@
  - [包装类型](Java-基础/Java类型.md)
  - [关键字](Java-基础/Java关键字.md)
  - [object](Java-基础/Object.md)
- - [string](Java-基础/Object.md)
+ - [string](Java-基础/String.md)
  - [数组](Java-基础/数组.md)
  - [继承](Java-基础/继承.md)
  - [反射](Java-基础/反射.md)
