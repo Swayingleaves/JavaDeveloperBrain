@@ -58,7 +58,8 @@ String s6 = "bbb"; System.out.println(s5 == s6); // true
 - 线程安全
   - 方法被synchronized修饰
 - 速度慢
-- 大量字符串操作使用他们
+
+大量字符串操作使用他们
   - 操作少量的数据: 适用 String
   - 单线程操作字符串缓冲区下操作大量数据: 适用 StringBuilder
   - 多线程操作字符串缓冲区下操作大量数据: 适用 StringBuffer
