@@ -117,6 +117,7 @@ static final int tableSizeFor(int cap) {
 5. 插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold，如果超过，进行扩容。
 
 ![](../img/hashmap/HashMap插入流程.png)
+
 #### 插入代码
 ```java
 
