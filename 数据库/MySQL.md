@@ -132,7 +132,7 @@
 存储数据库真正的表数据、日志等。物理文件包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等
 ## SQL优化
 ### explain
-Explain 用来分析 SELECT 查询语句，开发人员可以通过分析 Explain 结果来优化查询语句
+Explain 可以用来分析select、update、delete、insert等语句，开发人员可以通过分析 Explain 结果来优化查询语句
 ### 属性
 ![](../img/数据库/MySQL/explain.png)
 ![](../img/数据库/MySQL/explain2.png)
