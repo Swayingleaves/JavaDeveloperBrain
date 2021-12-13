@@ -173,6 +173,9 @@ Explain 可以用来分析select、update、delete、insert等语句，开发人
   - `Using where`:列数据是从仅仅使用了索引中的信息而没有读取实际的行动的表返回的，这发生在对表的全部的请求列都是同一个索引的部分的时候，表示mysql服务器将在存储引擎检索行后再进行过滤
   - `Using temporary`：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询
   - `Using filesort`：MySQL中无法利用索引完成的排序操作称为“文件排序”
+    - 在使用order by关键字的时候，如果待排序的内容不能由所使用的索引直接完成排序的话，MySQL有可能就要进行文件排序
+    - filesort是通过相应的排序算法将取得的数据在内存中进行排序，所使用的内存区域也就是通过sort_buffer_size 系统变量所设置的排序区。这个排序区是每个Thread 独享的，可能同一时刻在MySQL 中存在多个 sort buffer 内存区域
+    - 比如 SELECT id FROM testing WHERE room_number=1000 ORDER BY id ;只有ID索引，explain可能出现using where;using filesort就是无法直接使用索引完成排序，如果加上room_number索引，则结果只有using where
   - `Using join buffer`：改值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进能。
   - `Impossible where`：这个值强调了where语句会导致没有符合条件的行。
   - `Select tables optimized away`：这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行
@@ -894,3 +897,4 @@ _表: 学号, 姓名, 年龄, 学院名称, 学院电话_
 - https://www.jianshu.com/p/c6483ded042d
 - https://juejin.cn/post/6844904073955639304
 - https://blog.csdn.net/huangjw_806/article/details/100927097
+- https://juejin.cn/post/6844903439760097294
