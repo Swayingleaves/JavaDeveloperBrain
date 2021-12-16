@@ -64,8 +64,7 @@ cZxid 就是 Create ZXID，表示节点被创建时的事务ID。
 ctime 就是 Create Time，表示节点创建时间。
 mZxid 就是 Modified ZXID，表示节点最后一次被修改时的事务ID。
 mtime 就是 Modified Time，表示节点最后一次被修改的时间。
-pZxid 表示该节点的子节点列表最后一次被修改时的事务 ID。只有子节点列表变更才会更新 pZxid，子
-节点内容变更不会更新。
+pZxid 表示该节点的子节点列表最后一次被修改时的事务 ID。只有子节点列表变更才会更新 pZxid，子节点内容变更不会更新。
 cversion 表示子节点的版本号。
 dataVersion 表示内容版本号。
 aclVersion 标识acl版本
