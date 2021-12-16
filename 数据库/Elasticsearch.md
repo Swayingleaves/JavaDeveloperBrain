@@ -12,17 +12,21 @@
       * [Term Dictionary](#term-dictionary)
       * [Term Index](#term-index)
       * [FST(finite-state transducer有限状态转换器)](#fstfinite-state-transducer有限状态转换器)
-  * [集群](#集群)
-    * [基本概念](#基本概念)
-      * [节点(Node)](#节点node)
-      * [集群(Cluster)](#集群cluster)
-      * [分片索引(Shard)](#分片索引shard)
-      * [索引副本(Replica)](#索引副本replica)
-    * [集群简单原理](#集群简单原理)
-    * [集群详解](#集群详解)
-      * [集群节点](#集群节点)
-      * [节点发现](#节点发现)
-      * [Master选举](#master选举)
+* [集群](#集群)
+  * [基本概念](#基本概念)
+    * [节点(Node)](#节点node)
+    * [集群(Cluster)](#集群cluster)
+    * [分片索引(Shard)](#分片索引shard)
+    * [索引副本(Replica)](#索引副本replica)
+  * [集群简单原理](#集群简单原理)
+  * [集群详解](#集群详解)
+    * [集群节点](#集群节点)
+    * [节点发现](#节点发现)
+    * [Master选举](#master选举)
+      * [master选举谁发起，什么时候发起？](#master选举谁发起什么时候发起)
+      * [当需要选举master时，选举谁？](#当需要选举master时选举谁)
+      * [什么时候选举成功？](#什么时候选举成功)
+      * [选举怎么保证不脑裂？](#选举怎么保证不脑裂)
   * [插入数据流程](#插入数据流程)
     * [储存](#储存)
   * [查询数据流程](#查询数据流程)
@@ -35,7 +39,6 @@
   * [es的分词器有哪些](#es的分词器有哪些)
   * [es为什么这么快](#es为什么这么快)
 * [参考文章](#参考文章)
-
 
 # Elasticsearch
 ## es的特点
@@ -86,19 +89,19 @@ E 开头的 term ……………. Zzz 页
 例子是一个包含 "A", "to", "tea", "ted", "ten", "i", "in", 和 "inn" 的 trie 树。这棵树不会包含所有的 term，它包含的是 term 的一些前缀。通过 term index 可以快速地定位到 term dictionary 的某个 offset，然后从这个位置再往后顺序查找。
 #### FST(finite-state transducer有限状态转换器)
 实际上，Lucene 内部的 Term Index 是用的「变种的」trie前缀树，即 FST 。FST 比 trie树好在哪？trie树只共享了前缀，而 FST 既共享前缀也共享后缀，更加的节省空间。
-## 集群
-### 基本概念
-#### 节点(Node)
+# 集群
+## 基本概念
+### 节点(Node)
 一个es实例即为一个节点，一台机器可以有多个节点，正常使用下每个实例都应该会部署在不同的机器上
-#### 集群(Cluster)
+### 集群(Cluster)
 一个ES集群由多个节点（node）组成， 每个集群都有一个共同的集群名称最为标识
-#### 分片索引(Shard)
+### 分片索引(Shard)
 如果我们的索引数据量很大，超过硬件存放单个文件的限制，就会影响查询请求的速度，ES引入了分片技术。一个分片本身就是一个完成的搜索引擎，文档存储在分片中，而分片会被分配到集群中的各个节点中，随着集群的扩大和缩小，ES会自动的将分片在节点之间进行迁移，以保证集群能保持一种平衡
-#### 索引副本(Replica)
+### 索引副本(Replica)
 副本（replica shard）就是shard的冗余备份，它的主要作用
 - 冗余备份，防止数据丢失；
 - shard异常时负责容错和负载均衡；
-### 集群简单原理
+## 集群简单原理
 ![](../img/数据库/elasticsearch/es数据流程.png)
 - es的数据流程为index -> type -> mapping -> document -> field。
 - index被拆分为多个shard
@@ -106,8 +109,8 @@ E 开头的 term ……………. Zzz 页
   - 不同的shard又有备份replica
 - ES 集群多个节点，会自动选举一个节点为 master 节点，这个 master 节点其实就是干一些管理的工作的，比如维护索引元数据、负责切换 primary shard 和 replica shard 身份等。要是 master 节点宕机了，那么会重新选举一个节点为 master 节点。
 - 如果是非 master 节点宕机了，那么会由 master 节点，让那个宕机节点上的 primary shard 的身份转移到其他机器上的 replica shard。接着你要是修复了那个宕机机器，重启了之后，master 节点会控制将缺失的 replica shard 分配过去，同步后续修改的数据之类的，让集群恢复正常。
-### 集群详解
-#### 集群节点
+## 集群详解
+### 集群节点
 - 首先，一个Elasticsearch集群(下面简称ES集群)是由许多节点(Node)构成的，Node可以有不同的类型，通过以下配置，可以产生四种不同类型的Node
   ```shell
   conf/elasticsearch.yml:
@@ -116,30 +119,30 @@ E 开头的 term ……………. Zzz 页
   ```
 - 当node.master为true时，其表示这个node是一个master的候选节点，可以参与选举在ES的文档中常被称作master-eligible node
 - 当node.data为true时，这个节点作为一个数据节点，会存储分配在该node上的shard的数据并负责这些shard的写入、查询等
-#### 节点发现
+### 节点发现
 ZenDiscovery是ES自己实现的一套用于节点发现和选主等功能的模块，没有依赖Zookeeper等工具，提供单播和多播两种发现方式，主要职责是集群中节点的发现以及选举Master节点
 - `多播也叫组播` 指一个节点可以向多台机器发送请求。生产环境中ES不建议使用这种方式，对于一个大规模的集群，组播会产生大量不必要的通信
 - `单播` 当一个节点加入一个现有集群，或者组建一个新的集群时，请求发送到一台机器。当一个节点联系到单播列表中的成员时，它就会得到整个集群所有节点的状态，然后它会联系Master节点，并加入集群
-#### Master选举
+### Master选举
 上面提到，集群中可能会有多个master-eligible node，此时就要进行master选举，保证只有一个当选master。如果有多个node当选为master，则集群会出现脑裂，脑裂会破坏数据的一致性，导致集群行为不可控，产生各种非预期的影响
 
 为了避免产生脑裂，ES采用了常见的分布式系统思路，保证选举出的master被多数派(quorum)的master-eligible node认可，以此来保证只有一个master
 - quorum可以配置是一个阈值比如配置为2，则代表2个即为多数
 
-master选举谁发起，什么时候发起？
+#### master选举谁发起，什么时候发起？
 - master选举当然是由master-eligible节点发起，当一个master-eligible节点发现满足以下条件时发起选举
   - 该master-eligible节点的当前状态不是master。
   - 该master-eligible节点通过ZenDiscovery模块的ping操作询问其已知的集群其他节点，没有任何节点连接到master。
   - 包括本节点在内，当前已有超过minimum_master_nodes个节点没有连接到master。
 
-当需要选举master时，选举谁？
+#### 当需要选举master时，选举谁？
 - 当clusterStateVersion越大，优先级越高。这是为了保证新Master拥有最新的clusterState(即集群的meta)，避免已经commit的meta变更丢失。因为Master当选后，就会以这个版本的clusterState为基础进行更新。(一个例外是集群全部重启，所有节点都没有meta，需要先选出一个master，然后master再通过持久化的数据进行meta恢复，再进行meta同步)。
 - 当clusterStateVersion相同时，节点的Id越小，优先级越高。即总是倾向于选择Id小的Node，这个Id是节点第一次启动时生成的一个随机字符串。之所以这么设计，应该是为了让选举结果尽可能稳定，不要出现都想当master而选不出来的情况。
 
-什么时候选举成功？
+#### 什么时候选举成功？
 - 假如集群中有3个master-eligible node，分别为Node_A、 Node_B、 Node_C, 选举优先级也分别为Node_A、Node_B、Node_C。三个node都认为当前没有master，于是都各自发起选举，选举结果都为Node_A(因为选举时按照优先级排序，如上文所述)。于是Node_A开始等join(选票)，Node_B、Node_C都向Node_A发送join，当Node_A接收到一次join时，加上它自己的一票，就获得了两票了(超过半数)，于是Node_A成为Master。此时cluster_state(集群状态)中包含两个节点，当Node_A再收到另一个节点的join时，cluster_state包含全部三个节点。
 
-选举怎么保证不脑裂？
+#### 选举怎么保证不脑裂？
 - 与raft算法相比，es无法保证脑裂情况下的多master
 - 那怎么避免脑裂？
   - 一般而言脑裂问题可能有以下几个原因造成
