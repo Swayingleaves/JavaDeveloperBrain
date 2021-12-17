@@ -2,20 +2,41 @@
 * [RocketMQ](#rocketmq)
   * [架构图](#架构图)
   * [组件](#组件)
+    * [NameServer](#nameserver)
+    * [Broker](#broker)
+    * [Producer](#producer)
+    * [Consumer](#consumer)
   * [rocket的事务实现机制](#rocket的事务实现机制)
     * [概览](#概览)
     * [交互流程](#交互流程)
+* [Broker 集群部署架构](#broker-集群部署架构)
+  * [多 Master 模式](#多-master-模式)
+  * [多 Master 多 Salve - 异步复制 模式](#多-master-多-salve---异步复制-模式)
+  * [多 Master 多 Salve - 同步双写 模式](#多-master-多-salve---同步双写-模式)
+  * [Dledger 模式](#dledger-模式)
 * [参考文章](#参考文章)
-
 
 # RocketMQ
 ## 架构图
 ![](../img/消息队列/rocketmq/架构图.png)
 ## 组件
-- `NameServer` 主要用作注册中心，用于管理 Topic 信息和路由信息的管理
-- `Broker` 负责存储、消息 tag 过滤和转发。需将自身信息上报给注册中心 NameServer
-- `Producer` 生产者
-- `Consumer` 消费者
+### NameServer
+NameServer 是一个功能齐全的服务器，主要包括两个功能：
+- Broker 管理，NameServer接受来自 Broker 集群的注册，并提供心跳机制来检查 Broker 是否处于活动状态。
+- 路由管理，每个 NameServer 将保存有关代理集群的完整路由信息和客户端查询的队列信息。
+### Broker
+Broker主要负责消息的存储、投递和查询以及服务高可用保证，为了实现这些功能，Broker包含了以下几个重要子模块
+- Remoting Module远程模块，代理的入口，处理来自客户端的请求。
+- Client Manager，管理客户端（Producer/Consumer），维护Consumer的topic订阅。
+- Store Service存储服务，提供简单的 API 来存储或查询物理磁盘中的消息。
+- HA Service，提供主代理和从代理之间的数据同步功能。
+- Index Service索引服务，通过指定的key为消息建立索引，并提供快速的消息查询。
+
+![](../img/消息队列/rocketmq/broker.png)
+### Producer
+生产者 消息发布的角色，支持分布式集群方式部署。Producer通过MQ的负载均衡模块选择相应的Broker集群队列进行消息投递，投递的过程支持快速失败并且低延迟
+### Consumer
+消费者 消息消费的角色，支持分布式集群方式部署。支持以push推，pull拉两种模式对消息进行消费。同时也支持集群方式和广播方式的消费，它提供实时消息订阅机制，可以满足大多数用户的需求。
 ## rocket的事务实现机制
 RocketMQ提供了事务消息的功能，采用2PC(两段式协议)+补偿机制（事务回查）的分布式事务功能，通过消息队列 RocketMQ 版事务消息能达到分布式事务的最终一致。
 
@@ -43,5 +64,76 @@ RocketMQ提供了事务消息的功能，采用2PC(两段式协议)+补偿机制
 - 发送流程：发送half message(半消息)，执行本地事务，发送事务执行结果
 - 定时任务回查流程：MQ定时任务扫描半消息，回查本地事务，发送事务执行结果
 
+# Broker 集群部署架构
+开始部署 RocketMQ 之前，我们也做过一些功课，对现在 RocketMQ 支持的集群方案做了一些整理，目前 RocketMQ 支持的集群部署方案有以下4种：
+
+- 多Master模式：一个集群无Slave，全是Master，例如2个Master或者3个Master
+- 多Master多Slave模式-异步复制：每个Master配置一个Slave，有多对Master-Slave，HA采用异步复制方式，主备有短暂消息延迟（毫秒级）
+- 多Master多Slave模式-同步双写：每个Master配置一个Slave，有多对Master-Slave，HA采用同步双写方式，即只有主备都写成功，才向应用返回成功
+- Dledger部署：每个Master配置二个 Slave 组成 Dledger Group，可以有多个 Dledger Group，由 Dledger 实现 Master 选举
+
+## 多 Master 模式
+一个 RocketMQ 集群中所有的节点都是 Master 节点，每个 Master 节点没有 Slave 节点。
+
+![](../img/消息队列/rocketmq/多master模式.png)
+
+这种模式的优缺点如下：
+
+- 优点：配置简单，单个Master宕机或重启维护对应用无影响，在磁盘配置为RAID10时，即使机器宕机不可恢复情况下，由于RAID10磁盘非常可靠，消息也不会丢（异步刷盘丢失少量消息，同步刷盘一条不丢），性能最高；
+- 缺点：单台机器宕机期间，这台机器上未被消费的消息在机器恢复之前不可订阅，消息实时性会受到影响。
+
+## 多 Master 多 Salve - 异步复制 模式
+每个Master配置一个Slave，有多对Master-Slave，HA采用异步复制方式，主备有短暂消息延迟（毫秒级）
+
+![](../img/消息队列/rocketmq/多master多salve.png)
+
+这种模式的优缺点如下：
+
+- 优点：即使磁盘损坏，消息丢失的非常少，且消息实时性不会受影响，同时Master宕机后，消费者仍然可以从Slave消费，而且此过程对应用透明，不需要人工干预，性能同多Master模式几乎一样；
+- 缺点：Master宕机，磁盘损坏情况下会丢失少量消息。
+
+## 多 Master 多 Salve - 同步双写 模式
+每个Master配置一个Slave，有多对Master-Slave，HA采用同步双写方式，即只有主备都写成功，才向应用返回成功
+
+![](../img/消息队列/rocketmq/多master多salve同步双写.png)
+
+这种模式的优缺点如下：
+
+- 优点：数据与服务都无单点故障，Master宕机情况下，消息无延迟，服务可用性与数据可用性都非常高；
+- 缺点：性能比异步复制模式略低（大约低10%左右），发送单个消息的RT会略高，且目前版本在主节点宕机后，备机不能自动切换为主机。
+
+## Dledger 模式
+RocketMQ 4.5 以前的版本大多都是采用 Master-Slave 架构来部署，能在一定程度上保证数据的不丢失，也能保证一定的可用性。
+
+但是那种方式 的缺陷很明显，最大的问题就是当 Master Broker 挂了之后 ，没办法让 Slave Broker 自动 切换为新的 Master Broker，需要手动更改配置将 Slave Broker 设置为 Master Broker，以及重启机器，这个非常麻烦。
+
+在手式运维的期间，可能会导致系统的不可用。
+
+使用 Dledger 技术要求至少由三个 Broker 组成 ，一个 Master 和两个 Slave，这样三个 Broker 就可以组成一个 Group ，也就是三个 Broker 可以分组来运行。一但 Master 宕机，Dledger 就可以从剩下的两个 Broker 中选举一个 Master 继续对外提供服务。
+
+![](../img/消息队列/rocketmq/dledger.png)
+
+使用 Dledger 方式最终的逻辑部署图如下
+
+![](../img/消息队列/rocketmq/dledger逻辑部署图.png)
+
+**高可用**
+
+三个 NameServer 极端情况下，确保集群的可用性，任何两个 NameServer 挂掉也不会影响信息的整体使用。
+
+在上图中每个 Master Broker 都有两个 Slave Broker，这样可以保证可用性，如在同一个 Dledger Group 中 Master Broker 宕机后，Dledger 会去行投票将剩下的节点晋升为 Master Broker。
+
+**高并发**
+
+假设某个Topic的每秒十万消息的写入， 可以增加 Master Broker 然后十万消息的写入会分别分配到不同的 Master Broker ，如有5台 Master Broker 那每个 Broker 就会承载2万的消息写入。
+
+**可伸缩**
+
+如果消息数量增大，需要存储更多的数量和最高的并发，完全可以增加 Broker ，这样可以线性扩展集群。
+
+**海量消息**
+
+数据都是分布式存储的，每个Topic的数据都会分布在不同的 Broker 中，如果需要存储更多的数据，只需要增加 Master Broker 就可以了。
 # 参考文章
 - https://juejin.cn/post/6844904193526857742
+- https://segmentfault.com/a/1190000038318572
