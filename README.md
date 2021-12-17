@@ -642,6 +642,7 @@
     * [集群](消息队列/RabbitMQ.md#集群)
     * [交换器无法根据自身类型和路由键找到符合条件队列时，会如何处理？](消息队列/RabbitMQ.md#交换器无法根据自身类型和路由键找到符合条件队列时会如何处理)
     * [RabbitMQ 的六种模式](消息队列/RabbitMQ.md#rabbitmq-的六种模式)
+    * [死信队列应用场景](消息队列/RabbitMQ.md#死信队列应用场景)
 - [RocketMQ](消息队列/RocketMQ.md)
     * [架构图](消息队列/RocketMQ.md#架构图)
     * [组件](消息队列/RocketMQ.md#组件)
