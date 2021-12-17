@@ -92,6 +92,220 @@
 ## 死信队列应用场景
 一般用在较为重要的业务队列中，确保未被正确消费的消息不被丢弃，一般发生消费异常可能原因主要有由于消息信息本身存在错误导致处理异常，处理过程中参数校验异常，或者因网络波动导致的查询异常等等，当发生异常时，当然不能每次通过日志来获取原消息，然后让运维帮忙重新投递消息（没错，以前就是这么干的= =）。通过配置死信队列，可以让未正确处理的消息暂存到另一个队列中，待后续排查清楚问题后，编写相应的处理代码来处理死信消息，这样比手工恢复数据要好太多了。
 
+## 事务机制
 
+RabbitMQ中与事务机制有关的方法有三个：txSelect(), txCommit()以及txRollback()
+- txSelect用于将当前channel设置成transaction模式
+- txCommit用于提交事务
+- txRollback用于回滚事务
+
+在通过txSelect开启事务之后，我们便可以发布消息给broker代理服务器了，如果txCommit提交成功了，则消息一定到达了broker了，如果在txCommit执行之前broker异常崩溃或者由于其他原因抛出异常，这个时候我们便可以捕获异常通过txRollback回滚事务了。
+
+### 步骤
+1. client发送Tx.Select
+2. broker发送Tx.Select-Ok(之后publish)
+3. client发送Tx.Commit
+4. broker发送Tx.Commit-Ok
+### 事务回滚
+```java
+try {
+    channel.txSelect();
+    channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+    int result = 1 / 0;
+    channel.txCommit();
+} catch (Exception e) {
+    e.printStackTrace();
+    channel.txRollback();
+}
+```
+## Confirm模式
+上面我们介绍了RabbitMQ可能会遇到的一个问题，即生成者不知道消息是否真正到达broker，随后通过AMQP协议层面为我们提供了事务机制解决了这个问题，但是采用事务机制实现会降低RabbitMQ的消息吞吐量，那么有没有更加高效的解决方式呢？答案是采用Confirm模式。
+
+### producer端confirm模式的实现原理
+
+生产者将信道设置成confirm模式，一旦信道进入confirm模式，所有在该信道上面发布的消息都会被指派一个唯一的ID(从1开始)，一旦消息被投递到所有匹配的队列之后，broker就会发送一个确认给生产者（包含消息的唯一ID）,这就使得生产者知道消息已经正确到达目的队列了，如果消息和队列是可持久化的，那么确认消息会将消息写入磁盘之后发出，broker回传给生产者的确认消息中deliver-tag域包含了确认消息的序列号，此外broker也可以设置basic.ack的multiple域，表示到这个序列号之前的所有消息都已经得到了处理。
+
+confirm模式最大的好处在于他是异步的，一旦发布一条消息，生产者应用程序就可以在等信道返回确认的同时继续发送下一条消息，当消息最终得到确认之后，生产者应用便可以通过回调方法来处理该确认消息，如果RabbitMQ因为自身内部错误导致消息丢失，就会发送一条nack消息，生产者应用程序同样可以在回调方法中处理该nack消息。
+
+在channel 被设置成 confirm 模式之后，所有被 publish 的后续消息都将被 confirm（即 ack） 或者被nack一次。但是没有对消息被 confirm 的快慢做任何保证，并且同一条消息不会既被 confirm又被nack 。
+
+###  开启confirm模式的方法
+已经在transaction事务模式的channel是不能再设置成confirm模式的，即这两种模式是不能共存的。
+
+生产者通过调用channel的confirmSelect方法将channel设置为confirm模式
+
+核心代码:
+```java
+//生产者通过调用channel的confirmSelect方法将channel设置为confirm模式  
+channel.confirmSelect(); 
+```
+### 编程模式
+
+对于固定消息体大小和线程数，如果消息持久化，生产者confirm(或者采用事务机制)，消费者ack那么对性能有很大的影响.
+
+消息持久化的优化没有太好方法，用更好的物理存储（SAS, SSD, RAID卡）总会带来改善。生产者confirm这一环节的优化则主要在于客户端程序的优化之上。归纳起来，客户端实现生产者confirm有三种编程方式：
+
+- 普通confirm模式：每发送一条消息后，调用waitForConfirms()方法，等待服务器端confirm。实际上是一种串行confirm了。
+- 批量confirm模式：每发送一批消息后，调用waitForConfirms()方法，等待服务器端confirm。
+- 异步confirm模式：提供一个回调方法，服务端confirm了一条或者多条消息后Client端会回调这个方法。
+
+事务模式性能是最差的，普通confirm模式性能比事务模式稍微好点，但是和批量confirm模式还有异步confirm模式相比，还是小巫见大巫。批量confirm模式的问题在于confirm之后返回false之后进行重发这样会使性能降低，异步confirm模式(async)编程模型较为复杂，至于采用哪种方式，那是仁者见仁智者见智了
+
+#### 普通confirm模式
+```java
+package com.hrabbit.rabbitmq.confirm;
+
+import com.hrabbit.rabbitmq.utils.ConnectionUtils;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+/**
+ * @Auther: hrabbit
+ * @Date: 2018-07-02 下午3:20
+ * @Description:
+ */
+public class SendConfirm {
+    private static final String QUEUE_NAME = "QUEUE_simple_confirm";
+
+    @Test
+    public void sendMsg() throws IOException, TimeoutException, InterruptedException {
+        /* 获取一个连接 */
+        Connection connection = ConnectionUtils.getConnection();
+        /* 从连接中创建通道 */
+        Channel channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        //生产者通过调用channel的confirmSelect方法将channel设置为confirm模式
+        channel.confirmSelect();
+        String msg = "Hello   QUEUE !";
+        channel.basicPublish("", QUEUE_NAME, null, msg.getBytes());
+        if (!channel.waitForConfirms()) {
+            System.out.println("send message 失败");
+        } else {
+            System.out.println(" send messgae ok ...");
+        }
+        channel.close();
+        connection.close();
+    }
+}
+```
+#### 批量confirm模式
+批量confirm模式稍微复杂一点，客户端程序需要定期（每隔多少秒）或者定量（达到多少条）或者两则结合起来publish消息，然后等待服务器端confirm, 相比普通confirm模式，批量极大提升confirm效率，但是问题在于一旦出现confirm返回false或者超时的情况时，客户端需要将这一批次的消息全部重发，这会带来明显的重复消息数量，并且，当消息经常丢失时，批量confirm性能应该是不升反降的。
+```java
+package com.hrabbit.rabbitmq.confirm;
+
+import com.hrabbit.rabbitmq.utils.ConnectionUtils;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+/**
+ * @Auther: hrabbit
+ * @Date: 2018-07-02 下午3:25
+ * @Description:
+ */
+public class SendbatchConfirm {
+
+    private static final String QUEUE_NAME = "QUEUE_simple_confirm";
+
+    @Test
+    public void sendMsg() throws IOException, TimeoutException, InterruptedException {
+        /* 获取一个连接 */
+        Connection connection = ConnectionUtils.getConnection();
+        /* 从连接中创建通道 */
+        Channel channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        //生产者通过调用channel的confirmSelect方法将channel设置为confirm模式
+        channel.confirmSelect();
+
+        //生产者通过调用channel的confirmSelect方法将channel设置为confirm模式
+        channel.confirmSelect();
+        String msg = "Hello   QUEUE !";
+        for (int i = 0; i < 10; i++) {
+            channel.basicPublish("", QUEUE_NAME, null,msg.getBytes());
+        }
+
+        if (!channel.waitForConfirms()) {
+            System.out.println("send message error");
+        } else {
+            System.out.println(" send messgae ok ...");
+        }
+        channel.close();
+        connection.close();
+    }
+}
+
+```
+#### 异步confirm模式
+Channel对象提供的ConfirmListener()回调方法只包含deliveryTag（当前Chanel发出的消息序号），我们需要自己为每一个Channel维护一个unconfirm的消息序号集合，每publish一条数据，集合中元素加1，每回调一次handleAck方法，unconfirm集合删掉相应的一条（multiple=false）或多条（multiple=true）记录。从程序运行效率上看，这个unconfirm集合最好采用有序集合SortedSet存储结构。实际上，SDK中的waitForConfirms()方法也是通过SortedSet维护消息序号的。
+```java
+package com.hrabbit.rabbitmq.confirm;
+
+import com.hrabbit.rabbitmq.utils.ConnectionUtils;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConfirmListener;
+import com.rabbitmq.client.Connection;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.TimeoutException;
+
+/**
+ * @Auther: hrabbit
+ * @Date: 2018-07-02 下午3:28
+ * @Description:
+ */
+public class SendAync {
+
+    private static final String QUEUE_NAME = "QUEUE_simple_confirm_aync";
+    public static void main(String[] args) throws IOException, TimeoutException {
+        /* 获取一个连接 */
+        Connection connection = ConnectionUtils.getConnection();
+        /* 从连接中创建通道 */
+        Channel channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        //生产者通过调用channel的confirmSelect方法将channel设置为confirm模式
+        channel.confirmSelect();
+        final SortedSet<Long> confirmSet = Collections.synchronizedSortedSet(new TreeSet<Long>());
+        channel.addConfirmListener(new ConfirmListener() {
+            //每回调一次handleAck方法，unconfirm集合删掉相应的一条（multiple=false）或多条（multiple=true）记录。
+            public void handleAck(long deliveryTag, boolean multiple) throws IOException {
+                if (multiple) {
+                    System.out.println("--multiple--");
+                    confirmSet.headSet(deliveryTag + 1).clear();
+                    //用一个SortedSet, 返回此有序集合中小于end的所有元素。
+                    } else {
+                    System.out.println("--multiple false--");
+                    confirmSet.remove(deliveryTag);
+                }
+            }
+            public void handleNack(long deliveryTag, boolean multiple) throws IOException {
+                System.out.println("Nack, SeqNo: " + deliveryTag + ", multiple: " + multiple);
+                if (multiple) {
+                    confirmSet.headSet(deliveryTag + 1).clear();
+                } else {
+                    confirmSet.remove(deliveryTag);
+                }
+            }
+        });
+        String msg = "Hello   QUEUE !";
+        while (true) {
+            long nextSeqNo = channel.getNextPublishSeqNo();
+            channel.basicPublish("", QUEUE_NAME, null, msg.getBytes());
+            confirmSet.add(nextSeqNo);
+        }
+    }
+}
+```
 # 参考文章
 - https://mfrank2016.github.io/breeze-blog/2020/05/04/rabbitmq/rabbitmq-how-to-use-dead-letter-queue/
+- https://blog.csdn.net/u013256816/article/details/55515234
+- https://www.jianshu.com/p/801456df3930
