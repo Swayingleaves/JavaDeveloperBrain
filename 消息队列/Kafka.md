@@ -65,8 +65,8 @@ segment file组成：由2大部分组成，分别为index file和data file，此
 
 .log文件
 - 由很多的message组成
-  ![](../img/消息队列/kafka/message物理结构.png)
-  ![](../img/消息队列/kafka/message物理结构2.png)
+![](../img/消息队列/kafka/message物理结构.png)
+![](../img/消息队列/kafka/message物理结构2.png)
 
 - 如果才能判断读取的这条消息读完了
 - 由上图message的物理结构定义，大致为message的size，定义了消息的长度
