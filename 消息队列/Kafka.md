@@ -68,9 +68,9 @@ segment file组成：由2大部分组成，分别为index file和data file，此
 ![](../img/消息队列/kafka/message物理结构.png)
 ![](../img/消息队列/kafka/message物理结构2.png)
 
-- 如果才能判断读取的这条消息读完了
-- 由上图message的物理结构定义，大致为message的size，定义了消息的长度
-- segment文件命名规则：partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充。
+如何才能判断读取的这条消息读完了
+  - 由上图message的物理结构定义，大致为message的size，定义了消息的长度
+  - segment文件命名规则：partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充。
 
 在partition中如何通过offset查找message
 - 例如读取offset=368776的message
