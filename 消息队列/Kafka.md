@@ -50,29 +50,33 @@ partition 译为分区，topic 中的消息被分割为一个或多个的 partit
 Segment 被译为段，将 Partition 进一步细分为若干个 segment，每个 segment 文件的大小相等。
 
 segment file组成：由2大部分组成，分别为index file和data file，此2个文件一一对应，成对出现，后缀”.index”和“.log”分别表示为segment索引文件、数据文件.
-- 图2
-  ![](../img/消息队列/kafka/segmentfile组成.png)
-  - 索引文件存储大量元数据
-    - 数据文件存储大量消息
-    - 索引文件中元数据指向对应数据文件中message的物理偏移地址
-#### index对应log关系
-  - 图
-  ![](../img/消息队列/kafka/index对应log关系.png)
-  - 其中以索引文件中元数据3,497为例，依次在数据文件中表示第3个message(在全局partiton表示第368772个message)、以及该消息的物理偏移地址为497。
-  - 稀疏索引 segment index file采取稀疏索引存储方式，它减少索引文件大小，通过mmap可以直接内存操作，稀疏索引为数据文件的每个对应message设置一个元数据指针,它比稠密索引节省了更多的存储空间，但查找起来需要消耗更多的时间
-  - .log文件
-    - 由很多的message组成
-      ![](../img/消息队列/kafka/message物理结构.png)
-      ![](../img/消息队列/kafka/message物理结构2.png)
 
-    - 如果才能判断读取的这条消息读完了
-    - 由上图message的物理结构定义，大致为message的size，定义了消息的长度
-    - segment文件命名规则：partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充。
-    - 在partition中如何通过offset查找message
-        - 例如读取offset=368776的message
-        - 第一步查找segment file 上述图2为例，其中00000000000000000000.index表示最开始的文件，起始偏移量(offset)为0.第二个文件00000000000000368769.index的消息量起始偏移量为368770 = 368769 + 1.同样，第三个文件00000000000000737337.index的起始偏移量为737338=737337 + 1，其他后续文件依次类推，以起始偏移量命名并排序这些文件，只要根据offset **二分查找**文件列表，就可以快速定位到具体文件。 当offset=368776时定位到00000000000000368769.index|log
-        - 第二步通过segment file查找message 通过第一步定位到segment file，当offset=368776时，依次定位到00000000000000368769.index的元数据物理位置和00000000000000368769.log的物理偏移地址，然后再通过00000000000000368769.log顺序查找直到offset=368776为止。
-        - 分段索引、稀疏存储
+图2
+
+![](../img/消息队列/kafka/segmentfile组成.png)
+ 
+- 索引文件存储大量元数据
+- 数据文件存储大量消息
+- 索引文件中元数据指向对应数据文件中message的物理偏移地址
+#### index对应log关系
+![](../img/消息队列/kafka/index对应log关系.png)
+- 其中以索引文件中元数据3,497为例，依次在数据文件中表示第3个message(在全局partiton表示第368772个message)、以及该消息的物理偏移地址为497。
+- 稀疏索引 segment index file采取稀疏索引存储方式，它减少索引文件大小，通过mmap可以直接内存操作，稀疏索引为数据文件的每个对应message设置一个元数据指针,它比稠密索引节省了更多的存储空间，但查找起来需要消耗更多的时间
+
+.log文件
+- 由很多的message组成
+  ![](../img/消息队列/kafka/message物理结构.png)
+  ![](../img/消息队列/kafka/message物理结构2.png)
+
+- 如果才能判断读取的这条消息读完了
+- 由上图message的物理结构定义，大致为message的size，定义了消息的长度
+- segment文件命名规则：partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充。
+
+在partition中如何通过offset查找message
+- 例如读取offset=368776的message
+- 第一步查找segment file 上述图2为例，其中00000000000000000000.index表示最开始的文件，起始偏移量(offset)为0.第二个文件00000000000000368769.index的消息量起始偏移量为368770 = 368769 + 1.同样，第三个文件00000000000000737337.index的起始偏移量为737338=737337 + 1，其他后续文件依次类推，以起始偏移量命名并排序这些文件，只要根据offset **二分查找**文件列表，就可以快速定位到具体文件。 当offset=368776时定位到00000000000000368769.index|log
+- 第二步通过segment file查找message 通过第一步定位到segment file，当offset=368776时，依次定位到00000000000000368769.index的元数据物理位置和00000000000000368769.log的物理偏移地址，然后再通过00000000000000368769.log顺序查找直到offset=368776为止。
+- 分段索引、稀疏存储
 ### offset
 每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续的序列号叫做offset,用于partition唯一标识一条消息.
 ### broker
