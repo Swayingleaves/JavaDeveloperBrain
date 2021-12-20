@@ -236,25 +236,49 @@ public void queryMysqlData(Connection conn) throws SQLException {
 ## Observer
 - 角色与 Follower 类似，但是无投票权。Zookeeper 需保证高可用和强一致性，为了支持更多的客 户端，需要增加更多 Server；Server 增多，投票阶段延迟增大，影响性能；引入 Observer，
 - Observer 不参与投票； Observers 接受客户端的连接，并将写请求转发给 leader 节点； 加入更多 Observer 节点，提高伸缩性，同时不影响吞吐率。
-# zab协议
-## Zxid
 
-Zxid 是一个 64 位的数字其中低 32 位是一个简单的单调递增的计数器，针对客户端每 一个事务请求，计数器加 1；而高 32 位则代表 Leader 周期 epoch 的编号，每个当选产生一个新 的 Leader 服务器，就会从这个 Leader 服务器上取出其本地日志中最大事务的 ZXID，并从中读取epoch 值，然后加 1，以此作为新的 epoch，并将低 32 位从 0 开始计数
-- epoch 可以理解为当前集群所处的年代或者周期，每个 leader 就像皇帝，都有自己的年号，所以每次改朝换代，leader 变更之后，都会在前一个年代的基础上加 1。这样就算旧的 leader 崩溃恢复之后，也没有人听他的了，因为 follower 只听从当前年代的 leader 的命令。
+# Zookeeper Leader 选举原理
 
-## 模式
-- 恢复模式(选主) 当服务启动或者在领导者崩溃后，Zab 就进入了恢复模式，当领导者被选举出来，且大多数 Server 完成了和 leader 的状态同步以后，恢复模式就结束了
-- 广播模式(同步)
+zookeeper 的 leader 选举存在两个阶段，一个是服务器启动时 leader 选举，另一个是运行过程中 leader 服务器宕机。在分析选举原理前，先介绍几个重要的参数。
 
-## 4阶段
-### 选举阶段 
-节点在一开始都处于选举阶段，只要有一个节点得到超半数 节点的票数，它就可以当选准 leader。只有到达 广播阶段（broadcast） 准 leader 才会成 为真正的 leader。这一阶段的目的是就是为了选出一个准 leader，然后进入下一个阶段
-### 发现阶段
-在这个阶段，followers 跟准 leader 进行通信，同步 followers 最近接收的事务提议。这个一阶段的主要目的是发现当前大多数节点接收的最新提议，并且 准 leader 生成新的 epoch，让 followers 接受，更新它们的 accepted Epoch 一个 follower 只会连接一个 leader，如果有一个节点 f 认为另一个 follower p 是 leader，f 在尝试连接 p 时会被拒绝，f 被拒绝之后，就会进入重新选举阶段。
-### 同步阶段
-同步阶段主要是利用 leader 前一阶段获得的最新提议历史，同步集群中所有的副本。只有当 大多数节点都同步完成，准 leader 才会成为真正的 leader。follower 只会接收 zxid 比自己的 lastZxid 大的提议。
-### 广播阶段
-到了这个阶段，Zookeeper 集群才能正式对外提供事务服务，并且 leader 可以进行消息广播。同时如果有新的节点加入，还需要对新节点进行同步
+- 服务器 ID(myid)：编号越大在选举算法中权重越大
+- 事务 ID(zxid)：值越大说明数据越新，权重越大
+- 逻辑时钟(epoch-logicalclock)：同一轮投票过程中的逻辑时钟值是相同的，每投完一次值会增加
+
+选举状态：
+
+- LOOKING: 竞选状态
+- FOLLOWING: 随从状态，同步 leader 状态，参与投票
+- OBSERVING: 观察状态，同步 leader 状态，不参与投票
+- LEADING: 领导者状态
+## 1、服务器启动时的 leader 选举
+每个节点启动的时候都 LOOKING 观望状态，接下来就开始进行选举主流程。这里选取三台机器组成的集群为例。第一台服务器 server1启动时，无法进行 leader 选举，当第二台服务器 server2 启动时，两台机器可以相互通信，进入 leader 选举过程。
+
+（1）每台 server 发出一个投票，由于是初始情况，server1 和 server2 都将自己作为 leader 服务器进行投票，每次投票包含所推举的服务器myid、zxid、epoch，使用（myid，zxid）表示，此时 server1 投票为（1,0），server2 投票为（2,0），然后将各自投票发送给集群中其他机器。
+
+（2）接收来自各个服务器的投票。集群中的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票（epoch）、是否来自 LOOKING 状态的服务器。
+
+（3）分别处理投票。针对每一次投票，服务器都需要将其他服务器的投票和自己的投票进行对比，对比规则如下：
+
+a. 优先比较 epoch
+b. 检查 zxid，zxid 比较大的服务器优先作为 leader
+c. 如果 zxid 相同，那么就比较 myid，myid 较大的服务器作为 leader 服务器
+
+（4）统计投票。每次投票后，服务器统计投票信息，判断是都有过半机器接收到相同的投票信息。server1、server2 都统计出集群中有两台机器接受了（2,0）的投票信息，此时已经选出了 server2 为 leader 节点。
+
+（5）改变服务器状态。一旦确定了 leader，每个服务器响应更新自己的状态，如果是 follower，那么就变更为 FOLLOWING，如果是 Leader，变更为 LEADING。此时 server3继续启动，直接加入变更自己为 FOLLOWING。
+
+![](../img/消息队列/zookeeper/选取流程.png)
+## 2、运行过程中的 leader 选举
+当集群中 leader 服务器出现宕机或者不可用情况时，整个集群无法对外提供服务，进入新一轮的 leader 选举。
+
+（1）变更状态。leader 挂后，其他非 Oberver服务器将自身服务器状态变更为 LOOKING。
+（2）每个 server 发出一个投票。在运行期间，每个服务器上 zxid 可能不同。
+（3）处理投票。规则同启动过程。
+（4）统计投票。与启动过程相同。
+（5）改变服务器状态。与启动过程相同。
+
 
 # 参考文章
 - https://zhuanlan.zhihu.com/p/363323489
+- https://www.runoob.com/w3cnote/zookeeper-leader.html
