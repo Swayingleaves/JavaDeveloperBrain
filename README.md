@@ -703,7 +703,7 @@
   * [Zookeeper Leader 选举原理](消息队列/Zookeeper.md#zookeeper-leader-选举原理)
     * [1、服务器启动时的 leader 选举](消息队列/Zookeeper.md#1服务器启动时的-leader-选举)
     * [2、运行过程中的 leader 选举](消息队列/Zookeeper.md#2运行过程中的-leader-选举)
-- [pulsar](消息队列/Pulsar.md)
+- [Pulsar](消息队列/Pulsar.md)
     * [broker](消息队列/Pulsar.md#broker)
     * [Apache BookKeeper](消息队列/Pulsar.md#apache-bookkeeper)
         * [组成](消息队列/Pulsar.md#组成)

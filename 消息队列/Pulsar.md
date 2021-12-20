@@ -1,5 +1,5 @@
 
-* [pulsar](#pulsar)
+* [Pulsar](#pulsar)
     * [broker](#broker)
     * [Apache BookKeeper](#apache-bookkeeper)
         * [组成](#组成)
@@ -11,7 +11,7 @@
         * [多租户](#多租户)
         * [计算-储存分离](#计算-储存分离)
 
-# pulsar
+# Pulsar
 ## broker
 ![](../img/消息队列/pulsar/broker.png)
 broker是一个无状态组件
