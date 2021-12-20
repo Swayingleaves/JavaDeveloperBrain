@@ -1,5 +1,7 @@
+
 * [Zookeeper](#zookeeper)
 * [概念](#概念)
+* [用zookeeper可以干嘛](#用zookeeper可以干嘛)
 * [数据结构](#数据结构)
     * [ZNode](#znode)
         * [ZNode的类型](#znode的类型)
@@ -10,15 +12,11 @@
     * [leader](#leader)
     * [follower](#follower)
     * [Observer](#observer)
-* [zab协议](#zab协议)
-    * [Zxid](#zxid)
-    * [模式](#模式)
-    * [4阶段](#4阶段)
-        * [选举阶段](#选举阶段)
-        * [发现阶段](#发现阶段)
-        * [同步阶段](#同步阶段)
-        * [广播阶段](#广播阶段)
+* [Zookeeper Leader 选举原理](#zookeeper-leader-选举原理)
+    * [1、服务器启动时的 leader 选举](#1服务器启动时的-leader-选举)
+    * [2、运行过程中的 leader 选举](#2运行过程中的-leader-选举)
 * [参考文章](#参考文章)
+
 
 # Zookeeper
 # 概念
