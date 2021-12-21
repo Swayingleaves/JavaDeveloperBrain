@@ -1,4 +1,5 @@
 
+
 * [Pulsar](#pulsar)
     * [pulsar的优势](#pulsar的优势)
 * [Apache Pulsar 架构](#apache-pulsar-架构)
@@ -23,6 +24,20 @@
     * [灾备模式（Failover）](#灾备模式failover)
     * [共享模式（Shared）](#共享模式shared)
 * [定时和延时消息](#定时和延时消息)
+    * [相关概念](#相关概念)
+    * [适用场景](#适用场景)
+    * [使用方式](#使用方式)
+    * [定时消息](#定时消息)
+    * [延时消息](#延时消息)
+    * [使用说明和限制](#使用说明和限制)
+* [消息重试与死信机制](#消息重试与死信机制)
+    * [自动重试](#自动重试)
+    * [自定义参数设置](#自定义参数设置)
+    * [重试规则](#重试规则)
+    * [重试消息的消息属性](#重试消息的消息属性)
+    * [重试消息的消息 ID 流转](#重试消息的消息-id-流转)
+        * [完整代码示例](#完整代码示例)
+    * [主动重试](#主动重试)
 * [参考文档](#参考文档)
 
 # Pulsar
@@ -268,7 +283,218 @@ Consumer<byte[]> consumer = client.newConsumer()
 ```
 
 # 定时和延时消息
+## 相关概念
+**定时消息**：消息在发送至服务端后，实际业务并不希望消费端马上收到这条消息，而是推迟到某个时间点被消费，这类消息统称为定时消息。
 
+**延时消息**：消息在发送至服务端后，实际业务并不希望消费端马上收到这条消息，而是推迟一段时间后再被消费，这类消息统称为延时消息。
+
+实际上，定时消息可以看成是延时消息的一种特殊用法，其实现的最终效果和延时消息是一致的。
+
+## 适用场景
+如果系统是一个单体架构，则通过业务代码自己实现延时或利用第三方组件实现基本没有差别；一旦架构复杂起来，形成了一个大型分布式系统，有几十上百个微服务，这时通过应用自己实现定时逻辑会带来各种问题。一旦运行着延时程序的某个节点出现问题，整个延时的逻辑都会受到影响。
+
+针对以上问题，利用延时消息的特性投递到消息队列里，便是一个较好的解决方案，能统一计算延时时间，同时重试和死信机制确保消息不丢失。
+
+具体场景的示例如下：
+
+- 微信红包发出后，生产端发送一条延时24小时的消息，到了24小时消费端程序收到消息，进行用户是否已经领走红包的判断，如果没有则退还到原账户。
+- 小程序下单某商品后，后台存放一条延时30分钟的消息，到时间之后消费端收到消息触发对支付结果的判断，如果没有支付就取消订单，这样就实现了超过30分钟未完成支付就取消订单的逻辑。
+- 微信上用户将某条信息设置待办后，也可以通过发送一条定时消息，服务端到点收到这条定时消息，对用户进行待办项提醒。
+
+## 使用方式
+在 TDMQ Pulsar 版的 SDK 中提供了专门的 API 来实现定时消息和延时消息。
+
+- 对于定时消息，您需要提供一个消息发送的时刻。
+- 对于延时消息，您需要提供一个时间长度作为延时的时长。
+
+## 定时消息
+定时消息通过生产者producer的 deliverAt() 方法实现，代码示例如下：
+```java
+String value = "message content";
+try {
+        //需要先将显式的时间转换为 Timestamp
+      long timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2020-11-11 00:00:00").getTime();
+      //通过调用 producer 的 deliverAt 方法来实现定时消息
+        MessageId msgId = producer.newMessage()
+                .value(value.getBytes())
+                .deliverAt(timeStamp)
+                .send();
+} catch (ParseException e) {
+        //TODO 添加对 Timestamp 解析失败的处理方法
+        e.printStackTrace();
+}
+```
+> 定时消息的时间范围为当前时间开始计算，864000秒（10天）以内的任意时刻。如10月1日12:00开始，最长可以设置到10月11日12:00。
+>
+> 定时消息不可以使用 batch 模式发送，请在创建 producer 的时候把 enableBatch 参数设为 false。
+>  
+> 定时消息的消费模式仅支持使用 Shared 模式进行消费，否则会失去定时效果（Key-shared 也不支持）。
+## 延时消息
+延时消息通过生产者produce的 deliverAfter() 方法实现，代码示例如下：
+```java
+String value = "message content";
+
+//需要指定延时的时长
+long delayTime = 10L;
+//通过调用 producer 的 deliverAfter 方法来实现定时消息
+MessageId msgId = producer.newMessage()
+    .value(value.getBytes())
+    .deliverAfter(delayTime, TimeUnit.SECONDS) //单位可以自由选择
+    .send();
+```
+> 延时消息的时长取值范围为0 - 864000秒（0秒 - 10天）。如10月1日12:00开始，最长可以设置864000秒。如果设置的时间超过这个时间，则直接按864000秒计算，到时会直接投递。
+>
+> 延时消息不可以使用 batch 模式发送，请在创建 producer 的时候把 enableBatch 参数设为 false。
+> 
+> 延时消息的消费模式仅支持使用 Shared 模式进行消费，否则会失去延时效果（Key-shared 也不支持）。
+## 使用说明和限制
+使用定时和延时两种类型的消息时，请确保客户端的机器时钟和服务端的机器时钟（所有地域均为UTC+8 北京时间）保持一致，否则会有时差。
+
+定时和延时消息在精度上会有1秒左右的偏差。
+
+定时和延时消息不支持 batch 模式（批量发送），batch 模式会引起消息堆积，保险起见，请在创建 producer 的时候把 enableBatch 参数设为 false。
+
+定时和延时消息的消费模式仅支持使用 Shared 模式进行消费，否则会失去定时或延时效果（Key-shared 也不支持）。
+
+关于定时和延时消息的时间范围，最大均为10天。
+
+使用定时消息时，设置的时刻在当前时刻以后才会有定时效果，否则消息将被立即发送给消费者。
+
+设定定时时间后，从定时的时间点开始计算消息最长保留时间，例如定时到3天后发送，消息最长保留7天，则到了第10天仍未被消费时，消息会被删除。延时消息同理。
+
+普通类型 Topic 支持收发定时/延时消息，调用 使用方式 中的 API 即可发送定时/延时消息。
+
+# 消息重试与死信机制
+重试 Topic 是一种为了确保消息被正常消费而设计的 Topic 。当某些消息第一次被消费者消费后，没有得到正常的回应，则会进入重试 Topic 中，当重试达到一定次数后，停止重试，投递到死信 Topic 中。
+
+当消息进入到死信队列中，表示 TDMQ Pulsar 版已经无法自动处理这批消息，一般这时就需要人为介入来处理这批消息。您可以通过编写专门的客户端来订阅死信 Topic，处理这批之前处理失败的消息。
+
+## 自动重试
+**相关概念**
+
+重试 Topic：一个重试 Topic 对应一个订阅名（一个订阅者组的唯一标识），以 Topic 形式存在于 TDMQ Pulsar 版中。当您新建了一个订阅后，会自动创建一个重试 Topic，该 Topic 会自主实现消息重试的机制。
+
+该 Topic 命名为：
+
+- 2.7.1及以上版本集群：`[订阅名]-RETRY`
+- 2.6.1版本集群：`[订阅名]-retry`
+
+**实现原理**
+
+您创建的消费者使用某个订阅名以共享模式订阅了一个 Topic 后，如果开启了 enableRetry 属性，就会自动订阅这个订阅名对应的重试队列。
+
+> 仅共享模式支持自动化重试和死信机制，独占和灾备模式不支持。
+
+这里以 Java 语言客户端为例，在 topic1 创建了一个 sub1 的订阅，客户端使用 sub1 订阅名订阅了 topic1 并开启了 enableRetry，如下所示：
+```java
+Consumer consumer = client.newConsumer()
+    .topic("persistent://1******30/my-ns/topic1")
+    .subscriptionType(SubscriptionType.Shared)//仅共享消费模式支持重试和死信
+    .enableRetry(true)
+    .subscriptionName("sub1")
+    .subscribe();
+```
+此时，topic1 对 sub1 的订阅就形成了带有重试机制的投递模式，sub1 会自动订阅之前在新建订阅时自动创建的重试 Topic 中（可以在控制台 Topic 列表中找到）。当 topic1 中的消息投递第一次未收到消费端 ACK 时，这条消息就会被自动投递到重试 Topic ，并且由于 consumer 自动订阅了这个主题，后续这条消息会在一定的 重试规则下重新被消费。当达到最大重试次数后仍失败，消息会被投递到对应的死信队列，等待人工处理。
+
+## 自定义参数设置
+如果希望自定义配置这些参数，可以使用 deadLetterPolicy API 进行配置，代码如下：
+```java
+Consumer<byte[]> consumer = pulsarClient.newConsumer()
+    .topic("persistent://pulsar-****")
+    .subscriptionName("sub1")
+    .subscriptionType(SubscriptionType.Shared)
+    .enableRetry(true)//开启重试消费
+    .deadLetterPolicy(DeadLetterPolicy.builder()
+          .maxRedeliverCount(maxRedeliveryCount)//可以指定最大重试次数
+          .retryLetterTopic("persistent://my-property/my-ns/sub1-retry")//可以指定重试队列
+          .deadLetterTopic("persistent://my-property/my-ns/sub1-dlq")//可以指定死信队列
+          .build())
+    .subscribe();
+```
+
+## 重试规则
+指定任意延迟时间。第二个参数填写延迟时间，第三个参数指定时间单位。延迟时间和延时消息的取值范围一致，范围在1 - 864000（单位：秒）。
+
+## 重试消息的消息属性
+一条重试消息会给消息带上如下 property。
+```java
+{
+  REAL_TOPIC="persistent://my-property/my-ns/test, 
+  ORIGIN_MESSAGE_ID=314:28:-1, 
+  RETRY_TOPIC="persistent://my-property/my-ns/my-subscription-retry, 
+  RECONSUMETIMES=16
+}
+```
+- REAL_TOPIC：原 Topic
+- ORIGIN_MESSAGE_ID：最初生产的消息 ID
+- RETRY_TOPIC：重试 Topic
+- RECONSUMETIMES：代表该消息重试的次数
+
+## 重试消息的消息 ID 流转
+消息 ID 流转过程如下所示，您可以借助此规则对相关日志进行分析。
+```text
+原始消费： msgid=1:1:0:1
+第一次重试： msgid=2:1:-1
+第二次重试： msgid=2:2:-1
+第三次重试： msgid=2:3:-1
+.......
+第16次重试： msgid=2:16:0:1
+第17次写入死信队列： msgid=3:1:-1
+```
+### 完整代码示例
+以下为借助 TDMQ Pulsar 版实现完整消息重试机制的代码示例，供开发者参考。
+
+订阅主题
+```java
+Consumer<byte[]> consumer1 = client.newConsumer()
+        .topic("persistent://pulsar-****")
+        .subscriptionName("my-subscription")
+        .subscriptionType(SubscriptionType.Shared)
+        .enableRetry(true)//开启重试消费
+        //.deadLetterPolicy(DeadLetterPolicy.builder()
+        //         .maxRedeliverCount(maxRedeliveryCount)
+        //         .retryLetterTopic("persistent://my-property/my-ns/my-subscription-retry")//可以指定重试队列
+        //         .deadLetterTopic("persistent://my-property/my-ns/my-subscription-dlq")//可以指定死信队列
+        //         .build())
+        .subscribe();
+```
+执行消费
+```java
+while (true) {
+      Message msg = consumer.receive();
+      try {
+            // Do something with the message
+            System.out.printf("Message received: %s", new String(msg.getData()));
+            // Acknowledge the message so that it can be deleted by the message broker
+            consumer.acknowledge(msg);
+      } catch (Exception e) {
+            // select reconsume policy
+            consumer.reconsumeLater(msg, 1000L, TimeUnit.MILLISECONDS);
+            //consumer.reconsumeLater(msg, 1);
+            //consumer.reconsumeLater(msg);
+      }
+}
+```
+
+## 主动重试
+当消费者在某个时间没有成功消费某条消息，如果想重新消费到这条消息时，消费者可以发送一条取消确认消息到 TDMQ Pulsar 版服务端，TDMQ Pulsar 版会将这条消息重新发给消费者。 这种方式重试时不会产生新的消息，所以也不能自定义重试间隔。
+
+以下为主动重试的 Java 代码示例：
+
+```java
+while (true) {
+    Message msg = consumer.receive();
+    try {
+        // Do something with the message
+        System.out.printf("Message received: %s", new String(msg.getData()));
+        // Acknowledge the message so that it can be deleted by the message broker
+        consumer.acknowledge(msg);
+    } catch (Exception e) {
+        // Message failed to process, redeliver later
+        consumer.negativeAcknowledge(msg);
+    }
+}
+```
 # 参考文档
 - https://cloud.tencent.com/document/product/1179/44779
 - https://cloud.tencent.com/document/product/1179/58089
