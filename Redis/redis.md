@@ -217,12 +217,6 @@ lindex list-key 1
 ```shell
 lpop list-key
 > "item"
-```              
-- lrange
-```shell
-lrange list-key 0 -1
-> "item2"
-> "item"
 ```
 
 #### 应用场景
