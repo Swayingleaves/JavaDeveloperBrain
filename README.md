@@ -57,7 +57,7 @@
 # 内容详情
 [comment]: <> (<details><summary></summary>)
 [comment]: <> (</details>)
-## <a>Java-基础部分</a>
+## <a>Java-基础部分</a> [↑↑](#内容概览)
  - [基本类型](Java-基础/Java类型.md)
  - [包装类型](Java-基础/Java类型.md)
  - [关键字](Java-基础/Java关键字.md)
@@ -92,7 +92,7 @@
    - [NIO](Java-基础/JavaIO.md#nio)
  - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
 
-## <a>Java-JVM</a>
+## <a>Java-JVM</a> [↑↑](#内容概览)
 
 - [内存结构](Java-JVM/内存结构.md)
   - [程序计数器](Java-JVM/内存结构.md#程序计数器)
@@ -183,7 +183,7 @@
       - [2、循环分离](Java-JVM/Java即时编译.md#2循环分离)
     - [5. 窥孔优化与寄存器分配](Java-JVM/Java即时编译.md#5-窥孔优化与寄存器分配)
  
-## <a>Java-多线程</a>
+## <a>Java-多线程</a>[↑↑](#内容概览)
 
 - [线程](Java-多线程/线程.md)
   - [线程的生命状态](Java-多线程/线程.md#线程的生命状态)
@@ -333,7 +333,7 @@
   * [threadlocal如果不remove，出问题了怎么补救？](Java-多线程/ThreadLocal.md#threadlocal如果不remove出问题了怎么补救)
   * [FastThreadLocal](Java-多线程/ThreadLocal.md#fastthreadlocal)
 
-## <a>计算机网络</a>
+## <a>计算机网络</a>[↑↑](#内容概览)
 
 - [网络协议分层](计算机网络/网络协议分层.md)
   * [OSI 7层](计算机网络/网络协议分层.md#osi-7层)
@@ -499,7 +499,7 @@
   * [有哪些编码格式(GBK,UTF-8,ISO-)有没有想过为什么会有这么多的编码格式](计算机网络/HTTP面试题.md#有哪些编码格式gbkutf-8iso-有没有想过为什么会有这么多的编码格式)
   * [实现一个长URL转短URL](计算机网络/HTTP面试题.md#实现一个长url转短url)
 
-## <a>数据库</a>
+## <a>数据库</a>[↑↑](#内容概览)
 
 ### MySQL
 - [MySQL](数据库/MySQL.md)
@@ -655,8 +655,8 @@
   * [禁止直接分页](数据库/Elasticsearch.md#禁止直接分页)
 * [es的分词器有哪些](数据库/Elasticsearch.md#es的分词器有哪些)
 * [es为什么这么快](数据库/Elasticsearch.md#es为什么这么快)
-## <a>消息队列</a>
 
+## <a>消息队列</a>[↑↑](#内容概览)
 ### redis
 - [Redis](消息队列/Redis.md)
     * [Redis实现mq主要是依赖数据结构list](消息队列/Redis.md#redis实现mq主要是依赖数据结构list)
@@ -792,7 +792,7 @@
         * [方法2](消息队列/mq常见面试题.md#方法2)
     * [mq 中的消息过期失效了](消息队列/mq常见面试题.md#mq-中的消息过期失效了)
 
-## <a>Redis</a>
+## <a>Redis</a>[↑↑](#内容概览)
 
 * [特点](Redis/redis.md#特点)
 * [Redis为什么这么快](Redis/redis.md#redis为什么这么快)
@@ -881,7 +881,7 @@
 * [redis的hash槽为什么是16384(2^14)个卡槽，而不是65536(2^16)个？](Redis/redis.md#redis的hash槽为什么是16384214个卡槽而不是65536216个)
 * [redis索引](Redis/redis.md#redis索引)
 
-## <a>Spring</a>
+## <a>Spring</a>[↑↑](#内容概览)
 
 - [Spring](Spring/Spring.md)
   * [架构图](Spring/Spring.md#架构图)
@@ -943,7 +943,7 @@
     * [怎么让Spring把Body变成一个对象](Spring/Springboot.md#怎么让spring把body变成一个对象)
     * [SpringBoot的starter实现原理是什么？](Spring/Springboot.md#springboot的starter实现原理是什么)
 
-## <a>Springcloud</a>
+## <a>Springcloud</a>[↑↑](#内容概览)
 * [服务注册与发现](SpringCloud/springcloud.md#服务注册与发现)
     * [eureka](SpringCloud/springcloud.md#eureka)
     * [consul](SpringCloud/springcloud.md#consul)
@@ -964,7 +964,7 @@
     * [springcloud config](SpringCloud/springcloud.md#springcloud-config)
     * [Nacos](SpringCloud/springcloud.md#nacos)
 
-## <a>SpringcloudAlibaba</a>
+## <a>SpringcloudAlibaba</a>[↑↑](#内容概览)
 * [SpringcloudAlibaba](SpringCloud/springcloud.md#springcloudalibaba)
     * [Nacos](SpringCloud/springcloud.md#nacos-1)
         * [服务注册中心](SpringCloud/springcloud.md#服务注册中心)
@@ -972,7 +972,7 @@
         * [服务总线](SpringCloud/springcloud.md#服务总线)
     * [sentienl](SpringCloud/springcloud.md#sentienl)
 
-## <a>Linux</a>
+## <a>Linux</a>[↑↑](#内容概览)
 
 - [文件和目录的操作](Linux/linux.md#文件和目录的操作)
 - [查看文件](Linux/linux.md#查看文件)
@@ -992,7 +992,7 @@
 - [IO模型](Linux/linux.md#io模型)
 - [select、poll、epoll](Linux/linux.md#selectpollepoll)
 
-## <a>Mybatis</a>
+## <a>Mybatis</a>[↑↑](#内容概览)
 
 - [什么是mybatis](Mybatis/mybatis.md)
 - [JDBC执行六步骤](Mybatis/mybatis.md)
@@ -1000,7 +1000,7 @@
 - [MyBatis整体架构](Mybatis/mybatis.md)
 - [mybatis缓存](Mybatis/mybatis.md)
 
-## <a>Netty</a>
+## <a>Netty</a>[↑↑](#内容概览)
 * [重要的组件](Netty/netty.md#重要的组件)
     * [Channel](Netty/netty.md#channel)
     * [ChannelFuture](Netty/netty.md#channelfuture)
@@ -1033,7 +1033,7 @@
     * [高性能的序列化框架](Netty/netty.md#高性能的序列化框架)
     * [灵活的TCP 参数配置能力](Netty/netty.md#灵活的tcp-参数配置能力)
 
-## <a>分布式相关</a>
+## <a>分布式相关</a>[↑↑](#内容概览)
 - [分布式锁](分布式相关/分布式锁.md)
     * [基于数据库](分布式相关/分布式锁.md#基于数据库)
         * [怎么实现](分布式相关/分布式锁.md#怎么实现)
@@ -1096,7 +1096,7 @@
     * [Paxos](分布式相关/一致性算法.md#paxos)
     * [Raft](分布式相关/一致性算法.md#raft)
 
-## <a>容器技术</a>
+## <a>容器技术</a>[↑↑](#内容概览)
 
 - [docker](容器技术/docker.md)
     * [Docker简介](容器技术/docker.md#docker简介)
@@ -1108,7 +1108,7 @@
         * [容器命令](容器技术/docker.md#容器命令)
 - k8s
 
-## <a>数据结构和算法</a>
+## <a>数据结构和算法</a>[↑↑](#内容概览)
 
 - [排序算法](数据结构和算法/排序算法.md)
 - 树相关
@@ -1123,7 +1123,7 @@
 - [LFU](数据结构和算法/LRU.md)
 - [加减乘除](数据结构和算法/加减乘除.md)
 
-## <a>设计模式</a>
+## <a>设计模式</a>[↑↑](#内容概览)
 
 - [工厂模式](设计模式/工厂模式.md)
 - [单例模式](设计模式/单例模式.md)
@@ -1147,13 +1147,13 @@
 - 中介者模式
 - 解释器模式
 
-## <a>职业规划和学习习惯</a>
+## <a>职业规划和学习习惯</a>[↑↑](#内容概览)
 
 - [项目中遇到的问题](职业规划和学习习惯/职业规划和学习习惯.md#项目中遇到的问题)
 - [职业规划](职业规划和学习习惯/职业规划和学习习惯.md#职业规划)
 - [平时规则](职业规划和学习习惯/职业规划和学习习惯.md#平时规则)
 
-## <a>场景设计</a>
+## <a>场景设计</a>[↑↑](#内容概览)
 
 - [有A、B两个大文件，每个文件几十G,而内存只有4G,其中A文件存放学号+姓名，而B文件存放学号+分数，要求生成文件C，存放姓名和分数。怎么实现?](场景设计/场景设计.md)
 - [秒杀系统怎么设计](场景设计/场景设计.md#秒杀系统怎么设计)
@@ -1174,7 +1174,7 @@
 - [解决哈希冲突的方法](场景设计/场景设计.md#解决哈希冲突的方法)
 - [排行榜设计](场景设计/场景设计.md#排行榜设计)
 
-## <a>智力题</a>
+## <a>智力题</a>[↑↑](#内容概览)
 
 - [100只试管里有-只是有毒的，现在有10个小白鼠，如何最快速地判断出那只试管有毒](智力题/智力题.md)
 - [共1000瓶药水，其中I瓶有毒药。已知小白鼠喝毒药一天内死若想在一天内找到毒药，最少需要几只小白鼠?](智力题/智力题.md)
@@ -1187,42 +1187,42 @@
 - [抢30是双人游戏，游戏规则是:第一个人喊"1"或"2"，第二个人要接着往下喊一个或两个数，然后再轮到第一个人。 两人轮流进行下去。最后喊30的人获胜。问喊数字的最佳策略。](智力题/智力题.md)
 - [某人进行10次打靶，每次打靶可能的得分为0到10分，10次打靶共得90分的可能性有多少种](智力题/智力题.md)
 
-## <a>项目架构</a>
+## <a>项目架构</a>[↑↑](#内容概览)
 - TODO
-## <a>面试解答</a>
+## <a>面试解答</a>[↑↑](#内容概览)
 
 - [面试解答6月牛客](面试解答/面试解答2021-06.md)
 - [面试解答7月牛客](面试解答/面试解答2021-07.md)
 - [面试解答9月牛客](面试解答/面试解答2021-09.md)
 - [面试解答10月牛客](面试解答/面试解答2021-10.md)
 
-## <a>商城类问题</a>
+## <a>商城类问题</a>[↑↑](#内容概览)
 
 - [秒杀](商城类问题/商城类问题.md#秒杀)
 - [超卖](商城类问题/商城类问题.md#如何解决超卖问题)
 - [订单延迟](商城类问题/商城类问题.md#订单延时取消怎么做)
 
-## <a>python</a>
+## <a>python</a>[↑↑](#内容概览)
 
 - [如何离线移植依赖包](Python/Python.md)
 
-# 知识点梳理
+# 知识点梳理[↑↑](#内容概览)
 
 ![](img/Java-总览.png)
 
 点击查看详细大图：[知识点大图](img/Java.png)
 
-# 免责声明
+# 免责声明[↑↑](#内容概览)
 > **:bangbang:某些知识点、观点、图片是从各种优秀博主、作者、大佬们的文章里或文献里提取的，我只是搬运工，如果觉得有侵犯到您的权益，请联系我，我将根据您的要求修改（添加您的出处链接、删除、修改....），谢谢大佬！**
 
 
-# 彩蛋
+# 彩蛋[↑↑](#内容概览)
 
 [md code]
 
 [comment]: <> (如果你发现了这行字：快转行吧！！！Java不仅卷，学的东西真的T多了，呜呜呜呜~~~~)
 
-# 最后
+# 最后[↑↑](#内容概览)
 
 `remind` 不积跬步无以至千里
 
