@@ -40,7 +40,7 @@
   * [SpringMVC](#springmvc)
   * [SpringBoot](#springboot)
 * [Springcloud](#springcloud)
-* [springcloudAlibaba](#springcloudalibaba)
+* [SpringcloudAlibaba](#springcloudalibaba)
 * [Linux](#linux)
 * [Mybatis](#mybatis)
 * [Netty](#netty)
@@ -965,8 +965,8 @@
     * [springcloud config](SpringCloud/springcloud.md#springcloud-config)
     * [Nacos](SpringCloud/springcloud.md#nacos)
 
-## <a>springcloudAlibaba</a>
-* [springcloudAlibaba](SpringCloud/springcloud.md#springcloudalibaba)
+## <a>SpringcloudAlibaba</a>
+* [SpringcloudAlibaba](SpringCloud/springcloud.md#springcloudalibaba)
     * [Nacos](SpringCloud/springcloud.md#nacos-1)
         * [服务注册中心](SpringCloud/springcloud.md#服务注册中心)
         * [服务配置](SpringCloud/springcloud.md#服务配置)
