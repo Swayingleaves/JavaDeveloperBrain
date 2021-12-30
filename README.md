@@ -14,16 +14,6 @@
 ---
 <h3 align="center">不白嫖，来个star:star2::star2::star2:</h3>
 
-# Features
-
-- [x] 将目录里的xMind文件转为md文件 
-- [ ] 将一些难以文字描述的东东画图
-- [ ] 添加新知识点 :man_technologist:
-- [ ] 添加新模块:收集面试题和解答他们:man_technologist:
-- [ ] 优化知识点描述，现在有些知识点真的只是记下来了，但是没有整理导致别人看起来很乱不知所云 :man_technologist:
-
-
-
 # 内容概览
 
 ![](img/Java-总览.png)
