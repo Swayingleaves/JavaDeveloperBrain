@@ -57,7 +57,7 @@
 # 内容详情
 [comment]: <> (<details><summary></summary>)
 [comment]: <> (</details>)
-## <a>Java-基础部分</a> [↑↑](#内容概览)
+## <a>Java-基础部分</a>[↑↑](#内容概览)
  - [基本类型](Java-基础/Java类型.md)
  - [包装类型](Java-基础/Java类型.md)
  - [关键字](Java-基础/Java关键字.md)
@@ -92,7 +92,7 @@
    - [NIO](Java-基础/JavaIO.md#nio)
  - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
 
-## <a>Java-JVM</a> [↑↑](#内容概览)
+## <a>Java-JVM</a>[↑↑](#内容概览)
 
 - [内存结构](Java-JVM/内存结构.md)
   - [程序计数器](Java-JVM/内存结构.md#程序计数器)
