@@ -68,7 +68,7 @@
  - [反射](Java-基础/反射.md)
  - [异常](Java-基础/异常.md)
  - [泛型](Java-基础/泛型.md)
- - [容器](#)
+ - 容器
    - [List](Java-基础/容器-collection.md#list)
      - [Vector](Java-基础/容器-collection.md#vector)
      - [LinkedList](Java-基础/容器-collection.md#linkedlist)
