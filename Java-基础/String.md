@@ -63,3 +63,27 @@ String s6 = "bbb"; System.out.println(s5 == s6); // true
   - 操作少量的数据: 适用 String
   - 单线程操作字符串缓冲区下操作大量数据: 适用 StringBuilder
   - 多线程操作字符串缓冲区下操作大量数据: 适用 StringBuffer
+
+# String 的hashcode()方法
+String也是遵守equals的标准的，也就是 s.equals(s1)为true，则s.hashCode()==s1.hashCode()也为true。此处并不关注eqauls方法，而是讲解 hashCode()方法，String.hashCode()有点意思，而且在面试中也可能被问到。先来看一下代码：
+```java
+public int hashCode() {
+        int h = hash;
+        if (h == 0 && value.length > 0) {
+            char val[] = value;
+            for (int i = 0; i < value.length; i++) {
+                h = 31 * h + val[i];
+            }
+            hash = h;
+        }
+        return h;
+    }
+```
+## 为什么要选31作为乘数呢？
+从网上的资料来看，一般有如下两个原因：
+
+- 31是一个不大不小的质数，是作为 hashCode 乘子的优选质数之一。另外一些相近的质数，比如37、41、43等等，也都是不错的选择。那么为啥偏偏选中了31呢？请看第二个原因。
+- 31可以被 JVM 优化，31 * i = (i << 5) - i。
+
+# 参考文章
+- https://mp.weixin.qq.com/s?__biz=MzI2OTQ4OTQ1NQ==&mid=2247483956&idx=1&sn=1c19164967621fa5449a7830d006c8f9&scene=19#wechat_redirect
