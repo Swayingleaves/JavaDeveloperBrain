@@ -460,7 +460,7 @@ JDK1.7 中，ConcurrentHashMap 的整体结构可以描述为下图的样子：
 }
 ```
 
-在 put 方法中，首先是通过二次哈希减小哈希冲突的可能行，根据 hash 值以 Unsafe 调用方式，直接获取相应的 Segment，最终将数据添加到容器中是由 segment对象的 put 方法来完成。Segment对象的 put 方法源代码如下：
+在 put 方法中，首先是通过二次哈希减小哈希冲突的可能性，根据 hash 值以 Unsafe 调用方式，直接获取相应的 Segment，最终将数据添加到容器中是由 segment对象的 put 方法来完成。Segment对象的 put 方法源代码如下：
 
 ```java
 final V put(K key, int hash, V value, boolean onlyIfAbsent) {
