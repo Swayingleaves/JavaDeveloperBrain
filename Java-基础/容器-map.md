@@ -70,12 +70,14 @@ static class Node<K,V> implements Map.Entry<K,V> {
     }
 ```
 ### hash冲突使用链地址法
+- 链接地址法的思路是将哈希值相同的元素构成一个同义词的单链表
 - `int threshold; `            // 扩容阈值
   - `threshold`就是在此Load factor和length(数组长度)对应下允许的最大元素数目，超过这个数目就重新resize(扩容)，扩容后的HashMap容量是之前容量的两倍
 - `final float loadFactor;`    // 负载因子
   - 0.75
 - `transient int modCount;`  // 出现线程问题时，负责及时抛异常
 - `transient int size;`     // HashMap中实际存在的Node数量
+- 解决hash冲突的几种方法 https://cloud.tencent.com/developer/article/1672781
 ### HashMap的容量为什么要初始化为2的n次幂
 ```java
 static final int tableSizeFor(int cap) {
