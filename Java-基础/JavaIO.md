@@ -277,7 +277,7 @@ public static void fastCopy(String src, String dist) throws IOException {
 - NIO 实现了 IO 多路复用中的 Reactor 模型，一个线程 Thread 使用一个选择器 Selector 通过轮询的方式去监听多个通道 Channel 上的事件，从而让一个线程就可以处理多个事件。
 - 通过配置监听的通道 Channel 为非阻塞，那么当 Channel 上的 IO 事件还未到达时，就不会进入阻塞状态一直等待，而是继续轮询其它 Channel，找到 IO 事件已经到达的 Channel 执行。
 - 因为创建和切换线程的开销很大，因此使用一个线程来处理多个事件而不是一个线程处理一个事件，对于 IO 密集型的应用具有很好地性能。
-- 应该注意的是，只有套接字 Channel 才能配置为非阻塞，而 FileChannel 不能，为 FileChannel 配置非阻塞也没有意义。
+- 应该注意的是，只有套接字 Channel 才能配置为非阻塞，而 FileChannel 不能，因为 FileChannel 配置非阻塞也没有意义。
 ### 流程
 - 创建选择器
 `Selector selector = Selector.open();`
@@ -296,10 +296,38 @@ public static void fastCopy(String src, String dist) throws IOException {
   `int num = selector.select();`
   - 它会一直阻塞直到有至少一个事件到达。
 - 获取到达的事件
-  ![](../img/io/selector获取到达的事件.png)           
+```java
+Set<SelectionKey> keys = selector.selectedKets();
+Iterator<SelectionKey> keyIterator = keys.iterator();
+while(keyIterator.hasNext()){
+    SelectionKey key = keyIterator.next();
+    if(key.isAcceptable()){
+        //....
+    } else if (key.isReadable()){
+        //....    
+    }
+    keyIterator.remove();
+}
+``` 
 - 事件循环
   因为一次 select() 调用不能处理完所有的事件，并且服务器端有可能需要一直监听事件，因此服务器端处理事件的代码一般会放在一个死循环内。
   ![](../img/io/selector事件循环.png)
+```java
+while(true){
+    int num = selector.select();
+    Set<SelectionKey> keys = selector.selectedKets();
+    Iterator<SelectionKey> keyIterator = keys.iterator();
+    while(keyIterator.hasNext()){
+        SelectionKey key = keyIterator.next();
+        if(key.isAcceptable()){
+            //....
+        } else if (key.isReadable()){
+            //....    
+        }
+        keyIterator.remove();
+    }    
+}
+```
 - nio示例
   ![](../img/io/nio示例.png)
   ![](../img/io/nio示例2.png)
