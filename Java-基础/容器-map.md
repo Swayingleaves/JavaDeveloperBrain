@@ -510,7 +510,7 @@ final V put(K key, int hash, V value, boolean onlyIfAbsent) {
     return oldValue;
 }
 ```
-由于 Segment 对象本身就是一把锁，所以在新增数据的时候，相应的 Segment对象块是被锁住的，其他线程并不能操作这个 Segment 对象，这样就保证了数据的安全性，在扩容时也是这样的，在 JDK1.7 中的 ConcurrentHashMap扩容只是针对 Segment 对象中的 HashEntry 数组进行扩容，还是因为 Segment 对象是一把锁，所以在 rehash 的过程中，其他线程无法对 segment 的 hash 表做操作，这就解决了 HashMap 中 put 数据引起的闭环问题
+由于 Segment 对象本身就是一把锁，所以在新增数据的时候，相应的 Segment对象块是被锁住的，其他线程并不能操作这个 Segment 对象，这样就保证了数据的安全性，在扩容时也是这样的，在 JDK1.7 中的 ConcurrentHashMap扩容只是针对 Segment 对象中的 HashEntry 数组进行扩容，还因为 Segment 对象是一把锁，所以在 rehash 的过程中，其他线程无法对 segment 的 hash 表做操作，这就解决了 HashMap 中 put 数据引起的闭环问题
 #### 2、ConcurrentHashMap 在 JDK 1.8 中的实现
 先从容器安全说起，在容器安全上，1.8 中的 ConcurrentHashMap 放弃了 JDK1.7 中的分段技术，而是采用了 CAS 机制 + synchronized 来保证并发安全性，但是在 ConcurrentHashMap 实现里保留了 Segment 定义，这仅仅是为了保证序列化时的兼容性而已，并没有任何结构上的用处
 

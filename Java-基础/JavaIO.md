@@ -24,18 +24,60 @@
   * [NIO的bug](#nio的bug)
 # 文件io
 ## 磁盘操作
-file
-![](../img/io/file.png)
+```java
+public static void listAllFiles(File dir){
+    if(dir == null || !dir.exists()){
+        return;
+    }
+    if (dir.isFile()){
+        System.out.println(dir.getName());
+        return;
+    }
+    for (File file : dir.listFiles()) {
+        listAllFiles(file);
+    }
+}
+```
 ## 字节流
-- 可以处理任意类型的数据
-  ![](../img/io/字节流.png)
+可以处理任意类型的数据
+```java
+public static void copyFile(String src, String dist) throws IOException {
+    FileInputStream in = new FileInputStream(src);
+    FileOutputStream out = new FileOutputStream(dist);
+
+    byte[] buffer = new byte[20 * 1024];
+    int cnt;
+    //read()最多读取buffer.length个字节
+    //返回的是实际读取的个数
+    //返回-1的时候表示读到eof，即文件尾
+    while ((cnt = in.read(buffer, 0, buffer.length)) != -1) {
+        out.write(buffer, 0, cnt);
+    }
+    in.close();
+    out.close();
+}
+```
 - inputStream
   - FileInputStream
 - outputStream
   - FileOutputStream
 ## 字符流
 - 只能处理字符类型的数据
-  ![](../img/io/字符流.png)
+```java
+public static void readFileContent(String filePath) throws IOException {
+    FileReader fileReader = new FileReader(filePath);
+    BufferedReader bufferedReader = new BufferedReader(fileReader);
+    String line;
+    while ((line = bufferedReader.readLine()) != null) {
+        System.out.println(line);
+    }
+    //装饰者模式使得BufferedReader 组合了一个Reader对象
+    //在调用BufferedReader的close()方法时会去调用Reader的close()方法
+    //因此只要一个close()即可
+    bufferedReader.close();
+}
+```
+
 - 编码与解码
   - 编码就是把字符转换为字节，而解码是把字节重新组合成字符。
 - Reader
