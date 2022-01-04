@@ -241,7 +241,34 @@ I/O 与 NIO 最重要的区别是数据打包和传输的方式，I/O 以流的�
   5. 最后需要调用 clear() 方法来清空缓冲区，此时 position 和 limit 都被设置为最初位置。
      ![](../img/io/nio状态变量改变过程5.png)
 - 文件 NIO 实例
-![](../img/io/文件NIO.png)
+```java
+public static void fastCopy(String src, String dist) throws IOException {
+    //获取源文件的输入字节流
+    FileInputStream fin = new FileInputStream(src);
+    //获取输入字节流的文件通道
+    FileChannel fcin = fin.getChannel();
+    //获取目标文件的输出字节流
+    FileOutputStream fout = new FileOutputStream(dist);
+    //获取输出字节流的文件通道
+    FileChannel fcout = fout.getChannel();
+    //为缓冲区分配1024字节
+    ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
+    while (true) {
+        //从输入通道中读取数据到缓冲区
+        int r = fcin.read(buffer);
+        //read()返回 -1 表示EOF
+        if (r == -1) {
+            break;
+        }
+        //切换读写
+        buffer.flip();
+        //把缓冲区的内容写入输出文件中
+        fcout.write(buffer);
+        //清空缓冲区
+        buffer.clear();
+    }
+}
+```
 ## 选择器 Selector
 ### 选择器
 #### 什么是选择器
