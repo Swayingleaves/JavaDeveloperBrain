@@ -96,7 +96,43 @@ public static void readFileContent(String filePath) throws IOException {
 ## 序列化的实现
 将需要被序列化的类实现Serialize接口
 ## 案例
-![](../img/io/序列化.png)
+```java
+private static class A implements Serializable{
+    private int x;
+    private String y;
+
+    public A(int x, String y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "A{" +
+                "x=" + x +
+                ", y='" + y + '\'' +
+                '}';
+    }
+}
+
+public static void main(String[] args) throws IOException, ClassNotFoundException {
+    A a1= new A(123,"abc");
+    String objectFile = "a1";
+
+    ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile));
+    objectOutputStream.writeObject(a1);
+    objectOutputStream.close();
+
+    ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(objectFile));
+    A a2 = (A) objectInputStream.readObject();
+    objectInputStream.close();
+    System.out.println(a2);
+}
+```
+```text
+输出:
+A{x=123, y='abc'}
+```
 ## transient
 - transient 关键字可以使一些属性不会被序列化
 - ArrayList 中存储数据的数组 elementData 是用 transient 修饰的，因为这个数组是动态扩展的，并不是所有的空间都被使用，因此就不需要所有的内容都被序列化。通过重写序列化和反序列化方法，使得可以只序列化数组中有内容的那部分数据。
