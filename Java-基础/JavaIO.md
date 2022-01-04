@@ -401,3 +401,13 @@ public static class NIOClient{
 }
 ```
 ## NIO的bug
+JDK NIO的BUG，例如臭名昭著的epoll bug，它会导致Selector空轮询，最终导致CPU 100%。官方声称在JDK1.6版本的update18修复了该问题，但是直到JDK1.7版本该问题仍旧存在，只不过该BUG发生概率降低了一些而已，它并没有被根本解决
+
+**Selector BUG出现的原因**
+
+因为poll和epoll对于突然中断的连接socket会对返回的eventSet事件集合置为EPOLLHUP或者EPOLLERR，eventSet事件集合发生了变化，这就导致Selector会被唤醒，唤醒后遍历，若Selector的轮询结果为空，也没有wakeup或新消息处理，则发生空轮询，CPU使用率100%，
+
+**Netty的解决办法**
+- 对Selector的select操作周期进行统计，每完成一次空的select操作进行一次计数，
+- 若在某个周期内连续发生N次空轮询，则触发了epoll死循环bug。
+- 重建Selector，判断是否是其他线程发起的重建请求，若不是则将原SocketChannel从旧的Selector上去除注册，重新注册到新的Selector上，并将原来的Selector关闭。
