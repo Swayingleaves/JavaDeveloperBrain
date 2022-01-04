@@ -18,18 +18,50 @@
   * [ZGC](#zgc)
 # Java8
 ## Lambda表达式
-![](../img/Java长期支持版本/lambda语法格式.png)  
+```java
+语法格式:
+(parameters) -> expression 或 (parameters) -> { statements;}
+代码示例：
+Arrays.asList("jay","Eason",""SHE).foreach((s) -> System.out.print(s));
+```
 允许把函数作为一个方法的参数（函数作为参数传递到方法中）
 ## 函数式接口
 - @FunctionalInterface
-  ![](../img/Java长期支持版本/functionInterface.png)
+```java
+@FunctionalInterface
+public interface Runnable{
+    public abstract void run();
+}
+```
 - 只有一个函数
 ## 默认方法
 默认方法就是一个在接口里面有了一个实现的方法。它允许将新方法添加到接口，但不强制实现了该接口的类必须实现新的方法。
-![](../img/Java长期支持版本/接口默认方法.png)
+```java
+public interface ISingerService{
+    //默认方法
+  default void sing(){
+     System.out.printLn("唱歌");
+  }
+  void writeSong();
+}
+
+public class JaySingerServiceImpl implements ISingerService{
+    @Override
+    public void writeSong(){
+      System.out.printLn("写了一首七里香");
+    }
+}
+```
 ## 方法引用 
 可以直接引用已有Java类或对象（实例）的方法或构造器。
-![](../img/Java长期支持版本/方法引用.png)
+```java
+//利用函数式接口Consumer的accept方法实现打印,Lambda表达式如下
+Consumer<String> consumer = x -> System.out.printLn(x);
+consumer.accept("jay");
+//引用PrintStream类（也就是System.out的类型）的printLn方法，这就是方法引用
+consumer = System.out::println;
+consumer.accept("sss");
+```
 ## Stream API 
 ### Collections
 - filter 筛选
@@ -46,7 +78,26 @@
 LocalDate /LocalDateTime
 ## 重复注解
 重复注解，即一个注解可以在一个类、属性或者方法上同时使用多次；用@Repeatable定义重复注解
-![](../img/Java长期支持版本/重复注解.png)
+
+```java
+import java.lang.annotation.Repeatable;
+
+@Repeatable(ScheduleTimes.class)
+public @interface ScheduleTime{
+    String value();
+}
+
+public @interface ScheduleTimes{
+  ScheduleTimes[] value();
+}
+
+public class ScheduleTimeTask{
+    
+    @ScheduleTime("10")
+    @ScheduleTime("12")
+    public void doSomething(){};
+}
+```
 ## Base64
 Java 8把Base64编码的支持加入到官方库中~
 - `String encoded = Base64.getEncoder().encodeToString(str.getBytes( StandardCharsets.UTF_8));`
@@ -62,7 +113,13 @@ Java 8把Base64编码的支持加入到官方库中~
 - lines() 分割获取字符串流。
 - repeat() 复制字符串
 ## 用于 Lambda 参数的局部变量语法
-![](../img/Java长期支持版本/用于lambda参数的局部语法.png)
+```java
+var map = new HashMap<String,Object>();
+map.put("aaa","aaa");
+map.forEach((k,v)->{
+    System.out.println(k+":"+v);    
+})
+```
 ## 标准化HTTP Client
 Java 9 引入Http Client API,Java 10对它更新，Java 11 对它进行标准化。这几个版本后，Http Client几乎被完全重写，支持HTTP/1.1和HTTP/2 ，也支持 websockets。
 ## 单个命令编译运行源代码
