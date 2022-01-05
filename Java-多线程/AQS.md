@@ -179,9 +179,10 @@ abstract static class Sync extends AbstractQueuedSynchronizer {
   //省略其他代码
 }
 ```
-从代码执行流程可以看出，这里做了两件事，
-- 一是尝试再次获取同步状态，如果获取成功则将当前线程设置为OwnerThread，否则失败，
-- 二是判断当前线程current是否为OwnerThread，如果是则属于重入锁，state自增1，并获取锁成功，返回true，反之失败，返回false，也就是tryAcquire(arg)执行失败，返回false。
+从代码执行流程可以看出，这里做了两件事
+
+1. 一是尝试再次获取同步状态，如果获取成功则将当前线程设置为OwnerThread，否则失败，
+2. 二是判断当前线程current是否为OwnerThread，如果是则属于重入锁，state自增1，并获取锁成功，返回true，反之失败，返回false，也就是tryAcquire(arg)执行失败，返回false。
 
 需要注意的是nonfairTryAcquire(int acquires)内部使用的是CAS原子性操作设置state值，可以保证state的更改是线程安全的，因此只要任意一个线程调用nonfairTryAcquire(int acquires)方法并设置成功即可获取锁，不管该线程是新到来的还是已在同步队列的线程，毕竟这是非公平锁，并不保证同步队列中的线程一定比新到来线程请求(可能是head结点刚释放同步状态然后新到来的线程恰好获取到同步状态)先获取到锁，这点跟后面还会讲到的公平锁不同。ok~，接着看之前的方法acquire(int arg)
 
