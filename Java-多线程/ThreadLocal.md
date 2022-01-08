@@ -137,42 +137,43 @@ void createMap(Thread t, T firstValue) {
 5. Spring MVC 的 RequestContextHolder 的实现使用了 ThreadLocal
 
 举例：
-- 每个线程维护了一个“序列号”
-  ```java
-  public class SerialNum {
-    // The next serial number to be assigned
-    private static int nextSerialNum = 0;
-  
-    private static ThreadLocal serialNum = new ThreadLocal() {
-      protected synchronized Object initialValue() {
-        return new Integer(nextSerialNum++);
-      }
-    };
-  
-    public static int get() {
-      return ((Integer) (serialNum.get())).intValue();
+
+每个线程维护了一个“序列号”
+```java
+public class SerialNum {
+  // The next serial number to be assigned
+  private static int nextSerialNum = 0;
+
+  private static ThreadLocal serialNum = new ThreadLocal() {
+    protected synchronized Object initialValue() {
+      return new Integer(nextSerialNum++);
     }
+  };
+
+  public static int get() {
+    return ((Integer) (serialNum.get())).intValue();
   }
-  ```
-- Session的管理
-  ```java
-  private static final ThreadLocal threadSession = new ThreadLocal();  
-    
-  public static Session getSession() throws InfrastructureException {  
-      Session s = (Session) threadSession.get();  
-      try {  
-          if (s == null) {  
-              s = getSessionFactory().openSession();  
-              threadSession.set(s);  
-          }  
-      } catch (HibernateException ex) {  
-          throw new InfrastructureException(ex);  
-      }  
-      return s;  
-  }  
+}
+```
+Session的管理
+```java
+private static final ThreadLocal threadSession = new ThreadLocal();  
   
-  ```
-- SimpleDateFormat
+public static Session getSession() throws InfrastructureException {  
+    Session s = (Session) threadSession.get();  
+    try {  
+        if (s == null) {  
+            s = getSessionFactory().openSession();  
+            threadSession.set(s);  
+        }  
+    } catch (HibernateException ex) {  
+        throw new InfrastructureException(ex);  
+    }  
+    return s;  
+}  
+
+```
+SimpleDateFormat
 ```java
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
