@@ -191,7 +191,7 @@ HTTP1.0最早在网页中使用是在1996年，那个时候只是使用一些较
     - 不用响应后再能发起请求
 - header压缩
   - 如上文中所言，对前面提到过HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小
-- [服务端推送
+- 服务端推送
   - HTTP2.0也具有server push功能
 
 # http的request和response格式
