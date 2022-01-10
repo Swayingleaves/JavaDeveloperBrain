@@ -129,6 +129,11 @@ void createMap(Thread t, T firstValue) {
 }
 ```
 
+所以通过分析可以大致知道以下几个问题
+1. ThreadLocalMap是存放在Thread下面的，ThreadLocal作为key，所以多个线程操作同一个ThreadLocal其实就是在每个线程的ThreadLocalMap中插入的一条记录，不存在任何冲突问题；
+2. ThreadLocalMap在解决冲突时，通过遍历的方式，非常影响性能；
+
+
 ## 使用场景
 1. 线程间数据隔离，各线程的 ThreadLocal 互不影响
 2. 方便同一个线程使用某一对象，避免不必要的参数传递
