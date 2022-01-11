@@ -562,6 +562,7 @@
     * [Shard](数据库/MongoDB.md#shard)
   * [Shard Keys 分片键](数据库/MongoDB.md#shard-keys-分片键)
     * [关于collection（类似mysql中的table）分片](数据库/MongoDB.md#关于collection类似mysql中的table分片)
+    * [关于collection的切分规则](数据库/MongoDB.md#关于collection的切分规则)
       * [按范围（range） 切分chunk](数据库/MongoDB.md#按范围range-切分chunk)
       * [按hash 切分chunk](数据库/MongoDB.md#按hash-切分chunk)
   * [Chunks 块](数据库/MongoDB.md#chunks-块)

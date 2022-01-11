@@ -22,6 +22,7 @@
         * [Shard](#shard)
     * [Shard Keys 分片键](#shard-keys-分片键)
         * [关于collection（类似mysql中的table）分片](#关于collection类似mysql中的table分片)
+        * [关于collection的切分规则](#关于collection的切分规则)
             * [按范围（range） 切分chunk](#按范围range-切分chunk)
             * [按hash 切分chunk](#按hash-切分chunk)
     * [Chunks 块](#chunks-块)
@@ -114,7 +115,7 @@ collection会自动分层多个chunk，如下图collection1的白色的框框，
 
 ![](../img/数据库/MongoDB/collection分片.png)
 
-###关于collection的切分规则
+### 关于collection的切分规则
 #### 按范围（range） 切分chunk
 类比mysql的按照id分，比如前1w个id放入a1,2w内的放在a2..
 
