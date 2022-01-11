@@ -39,7 +39,7 @@
 - consumer：消息消费者，就是接受消息的程序。
 - channel：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务。
 - connection
-  (../img/消息队列/rabbitmq-connection.png)
+- ![](../img/消息队列/rabbitmq/rabbitmq-connection.png)
     - 什么是
         - connection 是 生产者或消费者与 RabbitMQ Broker 建立的连接，是一个TCP连接
         - 一旦 TCP 连接建立起来，客户端紧接着可以创建一个 AMQP 信道（Channel），每个信道都会被指派一个唯一的 ID
