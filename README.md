@@ -5,7 +5,7 @@
 [comment]: <> ([![GitHub issues]&#40;https://img.shields.io/github/issues/Swayingleaves/JavaDeveloperBrain?style=for-the-badge&#41;]&#40;https://github.com/Swayingleaves/JavaDeveloperBrain/issues&#41;)
 [![GitHub forks](https://img.shields.io/github/forks/Swayingleaves/JavaDeveloperBrain?style=for-the-badge)](https://github.com/Swayingleaves/JavaDeveloperBrain/network)
 [![GitHub stars](https://img.shields.io/github/stars/Swayingleaves/JavaDeveloperBrain?style=for-the-badge)](https://github.com/Swayingleaves/JavaDeveloperBrain/stargazers)
-![Java基础进阶](https://img.shields.io/badge/Java-%E8%BF%9B%E9%98%B6-brightgreen?style=for-the-badge)
+![Java进阶](https://img.shields.io/badge/Java-%E8%BF%9B%E9%98%B6-brightgreen?style=for-the-badge)
 
 </div>
 
