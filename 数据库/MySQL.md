@@ -5,14 +5,6 @@
     * [server层](#server层)
     * [储存引擎](#储存引擎)
     * [物理文件层](#物理文件层)
-  * [SQL优化](#sql优化)
-    * [explain](#explain)
-    * [属性](#属性)
-    * [如何做慢查询排查的](#如何做慢查询排查的)
-      * [什么是慢查询日志](#什么是慢查询日志)
-      * [使用工具分析](#使用工具分析)
-    * [select * select col 主要区别](#select--select-col-主要区别)
-    * [select count(*)  count(1)  count(col) 主要区别](#select-count--count1--countcol-主要区别)
   * [储存引擎](#储存引擎-1)
     * [InnoDB](#innodb)
       * [架构图](#架构图)
@@ -102,6 +94,14 @@
     * [第一范式](#第一范式)
     * [第二范式](#第二范式)
     * [第三范式](#第三范式)
+  * [SQL优化](#sql优化)
+    * [explain](#explain)
+    * [属性](#属性)
+    * [如何做慢查询排查的](#如何做慢查询排查的)
+      * [什么是慢查询日志](#什么是慢查询日志)
+      * [使用工具分析](#使用工具分析)
+    * [select * select col 主要区别](#select--select-col-主要区别)
+    * [select count(*)  count(1)  count(col) 主要区别](#select-count--count1--countcol-主要区别)  
 * [参考文章](#参考文章)
 
 # MySQL
@@ -130,105 +130,7 @@
 - io密集型
 ### 物理文件层
 存储数据库真正的表数据、日志等。物理文件包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等
-## SQL优化
-### explain
-Explain 可以用来分析select、update、delete、insert等语句，开发人员可以通过分析 Explain 结果来优化查询语句
-### 属性
-![](../img/数据库/MySQL/explain.png)
-![](../img/数据库/MySQL/explain2.png)
-- `id`: SELECT 查询的标识符. 每个 SELECT 都会自动分配一个唯一的标识符.
-  - SQL执行的顺序的标识,SQL从大到小的执行
-    1. id相同时，执行顺序由上至下
-    2. 如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
-    3. id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行
-- `select_type`: SELECT 查询的类型.
-  - `SIMPLE`, 表示此查询不包含 UNION 查询或子查询
-  - `PRIMARY`, 表示此查询是最外层的查询
-  - `UNION`, 表示此查询是 UNION 的第二或随后的查询
-  - `DEPENDENT UNION`, UNION 中的第二个或后面的查询语句, 取决于外面的查询
-  - `UNION RESULT`, UNION 的结果
-  - `SUBQUERY`, 子查询中的第一个 SELECT
-  - `DEPENDENT SUBQUERY`: 子查询中的第一个 SELECT, 取决于外面的查询. 即子查询依赖于外层查询的结果.
-- `table`: 查询的是哪个表
-- `partitions`: 匹配的分区
-- `type`: 表示MySQL在表中找到所需行的方式，又称“访问类型” ，效率：`NULL > system > const > eq_ref > ref > range ~ index_merge > index > ALL`
-  - `NULL`: MySQL在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成
-  - `system`: 表中只有一条数据. 这个类型是特殊的 const 类型.
-  - `const`: 针对主键或唯一索引的等值查询扫描, 最多只返回一行数据. const 查询速度非常快, 因为它仅仅读取一次即可.
-  - `eq_ref`: 此类型通常出现在多表的 join 查询, 表示对于前表的每一个结果, 都只能匹配到后表的一行结果. 并且查询的比较操作通常是 =, 查询效率较高
-  - `ref`: 此类型通常出现在多表的 join 查询, 针对于非唯一或非主键索引, 或者是使用了 最左前缀 规则索引的查询
-  - `range`: 表示使用索引范围查询, 通过索引字段范围获取表中部分数据记录. 这个类型通常出现在 =, <>, >, >=, <, <=, IS NULL, <=>, BETWEEN, IN() 操作中.
-    - 当 type 是 range 时, 那么 EXPLAIN 输出的 ref 字段为 NULL, 并且 key_len 字段是此次查询中使用到的索引的最长的那个
-  - `index`: 表示全索引扫描(full index scan), 和 ALL 类型类似, 只不过 ALL 类型是全表扫描, 而 index 类型则仅仅扫描所有的索引, 而不扫描数据.
-    - index 类型通常出现在: 所要查询的数据直接在索引树中就可以获取到, 而不需要扫描数据. 当是这种情况时, Extra 字段 会显示 Using index
-  - `ALL`: 表示全表扫描, 这个类型的查询是性能最差的查询之一. 通常来说, 我们的查询不应该出现 ALL 类型的查询, 因为这样的查询在数据量大的情况下, 对数据库的性能是巨大的灾难. 如一个查询是 ALL 类型查询, 那么一般来说可以对相应的字段添加索引来避免
-  
-- `possible_keys`: 此次查询中可能选用的索引
-- `key`: 此次查询中确切使用到的索引.
-- `key_len`: 表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度（key_len显示的值为索引字段的最大可能长度，并非实际使用长度，即key_len是根据表定义计算而得，不是通过表内检索出的）
-- `ref`: 哪个字段或常数与 key 一起被使用
-- `rows`: 显示此查询一共扫描了多少行. 这个是一个估计值.
-- `filtered`: 这个字段表示存储引擎返回的数据在server层过滤后，剩下多少满足查询的记录数量的比例，注意是百分比，不是具体记录数。这个字段不重要
-- `extra`: 额外的信息
-  - `Using where`:列数据是从仅仅使用了索引中的信息而没有读取实际的行动的表返回的，这发生在对表的全部的请求列都是同一个索引的部分的时候，表示mysql服务器将在存储引擎检索行后再进行过滤
-  - `Using temporary`：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询
-  - `Using filesort`：MySQL中无法利用索引完成的排序操作称为“文件排序”
-    - 在使用order by关键字的时候，如果待排序的内容不能由所使用的索引直接完成排序的话，MySQL有可能就要进行文件排序
-    - filesort是通过相应的排序算法将取得的数据在内存中进行排序，所使用的内存区域也就是通过sort_buffer_size 系统变量所设置的排序区。这个排序区是每个Thread 独享的，可能同一时刻在MySQL 中存在多个 sort buffer 内存区域
-    - 比如 SELECT id FROM testing WHERE room_number=1000 ORDER BY id ;只有ID索引，explain可能出现using where;using filesort就是无法直接使用索引完成排序，如果加上room_number索引，则结果只有using where
-  - `Using join buffer`：改值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进能。
-  - `Impossible where`：这个值强调了where语句会导致没有符合条件的行。
-  - `Select tables optimized away`：这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行
-### 如何做慢查询排查的
-#### 什么是慢查询日志
-具体指运行时间超过long_query_time值的SQL，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是运行10秒以上的语句。
-- 如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。慢查询日志支持将日志记录写入文件
-- 默认关闭：`SHOW VARIABLES LIKE '%slow_query_log%';`
-   ![](../img/数据库/MySQL/慢查询配置.png)
-  - 临时生效：`set global slow_query_log=1;`
-  - 永久生效，修改配置文件my.cnf（其它系统变量也是如此）
-- 查询当前系统中有多少条慢查询记录
-  - `show global status like '%Slow_queries%';`
-#### 使用工具分析
-- mysql自带的 mysqldumpslow,
-  - `mysqldumpslow  /var/lib/mysql/mysql-slow.log`
-    - 得到的信息
-      - 主要功能是, 统计不同慢sql的
-      - 出现次数(Count),
-      - 执行最长时间(Time),
-      - 累计总耗费时间(Time),
-      - 等待锁的时间(Lock),
-      - 发送给客户端的行总数(Rows),
-      - 扫描的行总数(Rows),
-      - 用户以及sql语句本身(抽象了一下格式, 比如 limit 1, 20 用 limit N,N 表示).
-  - 一般一台服务器有很多数据库，这样根本看不出来啊
-- mysqlsla 
-  - 需要单独安装
-  - 使用举例
-    - 统计慢查询文件为/data/mysql/127-slow.log的所有select的慢查询sql，并显示执行时间最长的100条sql，并写到sql_select.log中去
-    - `mysqlsla -lt slow  -sf "+select" -top 100  /data/mysql/127-slow.log >/tmp/sql_select.log`
-    ![](../img/数据库/MySQL/mysqlsla.png)					
-  - 返回参数
-    - `Count`, sql的执行次数及占总的slow log数量的百分比.
-    - `Time`, 执行时间, 包括总时间, 平均时间, 最小, 最大时间, 时间占到总慢sql时间的百分比.
-    - `95% of Time`, 去除最快和最慢的sql, 覆盖率占95%的sql的执行时间.
-    - `Lock Time`, 等待锁的时间.95% of Lock , 95%的慢sql等待锁时间.Rows sent, 结果行统计数量, 包括平均, 最小, 最大数量.
-    - `Rows examined`, 扫描的行数量.
-    - `Database`, 属于哪个[数据库]
-    - `Users`, 哪个用户,IP, 占到所有用户执行的sql百分比
-    - `Query abstract`, 抽象后的sql语句
-    - `Query sample`, sql语句
-  - 对于得到这个信息还可以进一步分析，就是登陆到mysql 的客户端，登陆数据库，执行 EXPLAIN查看sql具体的 type 信息。
-### select * select col 主要区别
-- select * 是查询表的所有字段，数据返回量肯定比较大
-- 如果只是查询单独字段，最好写单独字段不要查询全部字段
-- 如果查询单独字段比如select abc，而写了select * 如果abc有索引，则会读完索引的数据再去读其他data造成性能问题
-### select count(*)  count(1)  count(col) 主要区别
-count(1) 和count(*) 没有什么很大区别
 
-count(1) 和 count(col) 
-- 主要区别是 count(1)会统计值为null的数据,count(*)也不会忽略
-- 而count(col)会忽略
 
 ## 储存引擎
 ### InnoDB
@@ -915,6 +817,105 @@ _表: 学号, 姓名, 年龄, 学院名称, 学院电话_
 
 因为存在依赖传递: (学号) → (学生)→(所在学院) → (学院电话) 。
 
+## SQL优化
+### explain
+Explain 可以用来分析select、update、delete、insert等语句，开发人员可以通过分析 Explain 结果来优化查询语句
+### 属性
+![](../img/数据库/MySQL/explain.png)
+![](../img/数据库/MySQL/explain2.png)
+- `id`: SELECT 查询的标识符. 每个 SELECT 都会自动分配一个唯一的标识符.
+  - SQL执行的顺序的标识,SQL从大到小的执行
+    1. id相同时，执行顺序由上至下
+    2. 如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
+    3. id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行
+- `select_type`: SELECT 查询的类型.
+  - `SIMPLE`, 表示此查询不包含 UNION 查询或子查询
+  - `PRIMARY`, 表示此查询是最外层的查询
+  - `UNION`, 表示此查询是 UNION 的第二或随后的查询
+  - `DEPENDENT UNION`, UNION 中的第二个或后面的查询语句, 取决于外面的查询
+  - `UNION RESULT`, UNION 的结果
+  - `SUBQUERY`, 子查询中的第一个 SELECT
+  - `DEPENDENT SUBQUERY`: 子查询中的第一个 SELECT, 取决于外面的查询. 即子查询依赖于外层查询的结果.
+- `table`: 查询的是哪个表
+- `partitions`: 匹配的分区
+- `type`: 表示MySQL在表中找到所需行的方式，又称“访问类型” ，效率：`NULL > system > const > eq_ref > ref > range ~ index_merge > index > ALL`
+  - `NULL`: MySQL在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成
+  - `system`: 表中只有一条数据. 这个类型是特殊的 const 类型.
+  - `const`: 针对主键或唯一索引的等值查询扫描, 最多只返回一行数据. const 查询速度非常快, 因为它仅仅读取一次即可.
+  - `eq_ref`: 此类型通常出现在多表的 join 查询, 表示对于前表的每一个结果, 都只能匹配到后表的一行结果. 并且查询的比较操作通常是 =, 查询效率较高
+  - `ref`: 此类型通常出现在多表的 join 查询, 针对于非唯一或非主键索引, 或者是使用了 最左前缀 规则索引的查询
+  - `range`: 表示使用索引范围查询, 通过索引字段范围获取表中部分数据记录. 这个类型通常出现在 =, <>, >, >=, <, <=, IS NULL, <=>, BETWEEN, IN() 操作中.
+    - 当 type 是 range 时, 那么 EXPLAIN 输出的 ref 字段为 NULL, 并且 key_len 字段是此次查询中使用到的索引的最长的那个
+  - `index`: 表示全索引扫描(full index scan), 和 ALL 类型类似, 只不过 ALL 类型是全表扫描, 而 index 类型则仅仅扫描所有的索引, 而不扫描数据.
+    - index 类型通常出现在: 所要查询的数据直接在索引树中就可以获取到, 而不需要扫描数据. 当是这种情况时, Extra 字段 会显示 Using index
+  - `ALL`: 表示全表扫描, 这个类型的查询是性能最差的查询之一. 通常来说, 我们的查询不应该出现 ALL 类型的查询, 因为这样的查询在数据量大的情况下, 对数据库的性能是巨大的灾难. 如一个查询是 ALL 类型查询, 那么一般来说可以对相应的字段添加索引来避免
+
+- `possible_keys`: 此次查询中可能选用的索引
+- `key`: 此次查询中确切使用到的索引.
+- `key_len`: 表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度（key_len显示的值为索引字段的最大可能长度，并非实际使用长度，即key_len是根据表定义计算而得，不是通过表内检索出的）
+- `ref`: 哪个字段或常数与 key 一起被使用
+- `rows`: 显示此查询一共扫描了多少行. 这个是一个估计值.
+- `filtered`: 这个字段表示存储引擎返回的数据在server层过滤后，剩下多少满足查询的记录数量的比例，注意是百分比，不是具体记录数。这个字段不重要
+- `extra`: 额外的信息
+  - `Using where`:列数据是从仅仅使用了索引中的信息而没有读取实际的行动的表返回的，这发生在对表的全部的请求列都是同一个索引的部分的时候，表示mysql服务器将在存储引擎检索行后再进行过滤
+  - `Using temporary`：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询
+  - `Using filesort`：MySQL中无法利用索引完成的排序操作称为“文件排序”
+    - 在使用order by关键字的时候，如果待排序的内容不能由所使用的索引直接完成排序的话，MySQL有可能就要进行文件排序
+    - filesort是通过相应的排序算法将取得的数据在内存中进行排序，所使用的内存区域也就是通过sort_buffer_size 系统变量所设置的排序区。这个排序区是每个Thread 独享的，可能同一时刻在MySQL 中存在多个 sort buffer 内存区域
+    - 比如 SELECT id FROM testing WHERE room_number=1000 ORDER BY id ;只有ID索引，explain可能出现using where;using filesort就是无法直接使用索引完成排序，如果加上room_number索引，则结果只有using where
+  - `Using join buffer`：改值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进能。
+  - `Impossible where`：这个值强调了where语句会导致没有符合条件的行。
+  - `Select tables optimized away`：这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行
+### 如何做慢查询排查的
+#### 什么是慢查询日志
+具体指运行时间超过long_query_time值的SQL，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是运行10秒以上的语句。
+- 如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。慢查询日志支持将日志记录写入文件
+- 默认关闭：`SHOW VARIABLES LIKE '%slow_query_log%';`
+  ![](../img/数据库/MySQL/慢查询配置.png)
+  - 临时生效：`set global slow_query_log=1;`
+  - 永久生效，修改配置文件my.cnf（其它系统变量也是如此）
+- 查询当前系统中有多少条慢查询记录
+  - `show global status like '%Slow_queries%';`
+#### 使用工具分析
+- mysql自带的 mysqldumpslow,
+  - `mysqldumpslow  /var/lib/mysql/mysql-slow.log`
+    - 得到的信息
+      - 主要功能是, 统计不同慢sql的
+      - 出现次数(Count),
+      - 执行最长时间(Time),
+      - 累计总耗费时间(Time),
+      - 等待锁的时间(Lock),
+      - 发送给客户端的行总数(Rows),
+      - 扫描的行总数(Rows),
+      - 用户以及sql语句本身(抽象了一下格式, 比如 limit 1, 20 用 limit N,N 表示).
+  - 一般一台服务器有很多数据库，这样根本看不出来啊
+- mysqlsla
+  - 需要单独安装
+  - 使用举例
+    - 统计慢查询文件为/data/mysql/127-slow.log的所有select的慢查询sql，并显示执行时间最长的100条sql，并写到sql_select.log中去
+    - `mysqlsla -lt slow  -sf "+select" -top 100  /data/mysql/127-slow.log >/tmp/sql_select.log`
+      ![](../img/数据库/MySQL/mysqlsla.png)
+  - 返回参数
+    - `Count`, sql的执行次数及占总的slow log数量的百分比.
+    - `Time`, 执行时间, 包括总时间, 平均时间, 最小, 最大时间, 时间占到总慢sql时间的百分比.
+    - `95% of Time`, 去除最快和最慢的sql, 覆盖率占95%的sql的执行时间.
+    - `Lock Time`, 等待锁的时间.95% of Lock , 95%的慢sql等待锁时间.Rows sent, 结果行统计数量, 包括平均, 最小, 最大数量.
+    - `Rows examined`, 扫描的行数量.
+    - `Database`, 属于哪个[数据库]
+    - `Users`, 哪个用户,IP, 占到所有用户执行的sql百分比
+    - `Query abstract`, 抽象后的sql语句
+    - `Query sample`, sql语句
+  - 对于得到这个信息还可以进一步分析，就是登陆到mysql 的客户端，登陆数据库，执行 EXPLAIN查看sql具体的 type 信息。
+### select * select col 主要区别
+- select * 是查询表的所有字段，数据返回量肯定比较大
+- 如果只是查询单独字段，最好写单独字段不要查询全部字段
+- 如果查询单独字段比如select abc，而写了select * 如果abc有索引，则会读完索引的数据再去读其他data造成性能问题
+### select count(*)  count(1)  count(col) 主要区别
+count(1) 和count(*) 没有什么很大区别
+
+count(1) 和 count(col)
+- 主要区别是 count(1)会统计值为null的数据,count(*)也不会忽略
+- 而count(col)会忽略
 # 参考文章
 - https://www.zhihu.com/question/20596402/answer/529312016
 - https://segmentfault.com/a/1190000013695030
