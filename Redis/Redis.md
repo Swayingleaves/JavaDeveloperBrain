@@ -202,32 +202,36 @@ ptr 是一个指针，指向实际保存值的数据结构，这个数据结构�
 ```cpp
 /* 因为生的跟别人不一样（内部结构不一样），老五（sdshdr5）从来不被使用 */
   struct __attribute__ ((__packed__)) sdshdr5 {
-  unsigned char flags; /* 低三位表示类型, 高五位表示字符串长度 */
-  char buf[];
+      unsigned char flags; /* 低三位表示类型, 高五位表示字符串长度 */
+      char buf[];
   };
+  
   struct __attribute__ ((__packed__)) sdshdr8 {
-  uint8_t len; /* 字符串长度*/
-  uint8_t alloc; /* 分配长度 */
-  unsigned char flags; /* 低三位表示类型，高五位未使用 */
-  char buf[];
+      uint8_t len; /* 字符串长度*/
+      uint8_t alloc; /* 分配长度 */
+      unsigned char flags; /* 低三位表示类型，高五位未使用 */
+      char buf[];
   };
+  
   struct __attribute__ ((__packed__)) sdshdr16 {
-  uint16_t len; /* 字符串长度*/
-  uint16_t alloc; /* 分配长度 */
-  unsigned char flags; /* 低三位表示类型，高五位未使用 */
-  char buf[];
+      uint16_t len; /* 字符串长度*/
+      uint16_t alloc; /* 分配长度 */
+      unsigned char flags; /* 低三位表示类型，高五位未使用 */
+      char buf[];
   };
+  
   struct __attribute__ ((__packed__)) sdshdr32 {
-  uint32_t len; /* 字符串长度*/
-  uint32_t alloc; /* 分配长度 */
-  unsigned char flags; /* 低三位表示类型，高五位未使用 */
-  char buf[];
+      uint32_t len; /* 字符串长度*/
+      uint32_t alloc; /* 分配长度 */
+      unsigned char flags; /* 低三位表示类型，高五位未使用 */
+      char buf[];
   };
+  
   struct __attribute__ ((__packed__)) sdshdr64 {
-  uint64_t len; /* 字符串长度*/
-  uint64_t alloc; /* 分配长度 */
-  unsigned char flags; /* 低三位表示类型，高五位未使用 */
-  char buf[];
+      uint64_t len; /* 字符串长度*/
+      uint64_t alloc; /* 分配长度 */
+      unsigned char flags; /* 低三位表示类型，高五位未使用 */
+      char buf[];
   };
 ```
 - 为何要定义不同的结构体
