@@ -637,21 +637,21 @@ setbit 、getbit 、bitcount、bitop
     ```
     ```shell
     # 初始化数据: 
-    127.0.0.1 :6379> setbit 20210308 1 1
+    127.0.0.1:6379> setbit 20210308 1 1
     (integer) 0
-    127.0.0.1 :6379> setbit 20210308 2 1
+    127.0.0.1:6379> setbit 20210308 2 1
     (integer) 0
-    127.0.0.1 :6379> setbit 20210309 1 1
+    127.0.0.1:6379> setbit 20210309 1 1
     (integer) 0
     # 统计20210308~20210309总活跃用户数: 1
-    127.0.0.1 :6379> bitop and desk1 20210308 20210309
+    127.0.0.1:6379> bitop and desk1 20210308 20210309
     (integer) 1
-    127.0.0.1 :6379> bitcount desk1
+    127.0.0.1:6379> bitcount desk1
     (integer) 1
     # 统计20210308~20210309在线活跃用户数: 2
-    127.0.0.1 :6379> bitop or desk2 20210308 20210309
+    127.0.0.1:6379> bitop or desk2 20210308 20210309
     (integer) 1
-    127.0.0.1 :6379> bitcount desk2
+    127.0.0.1:6379> bitcount desk2
     (integer) 2
     ```
   - 使用场景三：用户在线状态
