@@ -26,7 +26,7 @@
   * [HBASE](#hbase)
   * [Elasticsearch](#elasticsearch)
 * [消息队列](#消息队列)
-  * [redis](#redis)
+  * [Redis](#redis)
   * [RocketMQ](#rocketmq)
   * [Kafka](#kafka)
   * [Zookeeper](#zookeeper)
