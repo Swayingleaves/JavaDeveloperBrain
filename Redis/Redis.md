@@ -347,8 +347,10 @@ dict的rehash
   - Rehash不是一步完成的，而是在操作过程中渐进式的。字典维持一个索引计数器rehashidx用来记录当前正在操作的索引，从ht[0]的0号索引上开始，一个项一个项的迁移到ht[1]，直到完成所有迁移，rehashidx变成-1。
   - 在rehash期间，所有新增字段添加在ht[1]中，而删除，更新操作会在两个表上同时进行。查找时先找ht[0]，再找ht[1]。
 #### hash的操作
-- hset hash-key sub-key1 value1 添加
+
 ```shell
+# 添加
+hset hash-key sub-key1 value1
 hset hash-key sub-key2 value2
 ```
 - hgetall hash-key 获取全部
