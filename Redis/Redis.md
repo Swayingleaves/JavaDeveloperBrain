@@ -512,7 +512,27 @@ zskiplist 表示跳跃表结构
 - Redis的实现与一般维持平衡跳跃表的实现大同小异，Redis中跳跃表的层数也是在插入的时候确定，按照分数找好位置后，Redis会生成一个1-32的数作为层数。
 - Redis的level+1的概率是1/4,所以Redis的跳跃表是一个四叉树
   
-  ![](../img/redis/平衡跳跃表的实现.png)
+  ```cpp
+  /* Returns a random level for the new skiplist node we are going to create.
+  * The return value of this function is between 1 and ZSKIPLIST_MAXLEVEL
+  * (both inclusive), with a powerlaw-alike distribution where higher
+  * levels are less likely to be returned.
+  * 
+  * 返回一个介于 1 和 ZSKIPLIST_MAXLEVEL 之间的随机值，作为节点的层数。
+  * 
+  * 根据幂次定律(power law)，数值越大，函数生成它的几率就越小
+  * 
+  * T = O(N)
+  */
+  #define ZSKIPLIST_MAXLEVEL 32 /* Should be enough for 2^32 elements */
+  #define ZSKIPLIST_P 0.25      /* Skiplist P = 1/4 */
+  int zslRandomLevel(void) {
+      int level = 1;
+      while ((random()&0xFFFF) < (ZSKIPLIST_P * 0xFFFF))
+          level += 1;
+      return (level<ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
+  }
+  ```
   - 指定节点最大层数 MaxLevel，指定概率 p， 默认层数 lvl 为1
   - 生成一个0~1的随机数r，若r<p，且lvl<MaxLevel ，则lvl ++
   - 重复第 2 步，直至生成的r >p 为止，此时的 lvl 就是要插入的层数。
