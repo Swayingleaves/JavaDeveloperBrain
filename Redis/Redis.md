@@ -352,11 +352,16 @@ dict的rehash
 # 添加
 hset hash-key sub-key1 value1
 hset hash-key sub-key2 value2
-```
-- hgetall hash-key 获取全部
-- hdel hash-key sub-key2 删除
-- hget hash-key sub-key1 获取
 
+# 获取全部
+hgetall hash-key 
+
+# 删除
+hdel hash-key sub-key2 
+
+# 获取
+hget hash-key sub-key1 
+```
 #### 应用场景
 特别适合存储对象
 
