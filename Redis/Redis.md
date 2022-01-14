@@ -274,8 +274,17 @@ list压缩列表
 			
 linkedlist双端列表
 - 结构
+```cpp
+typedef struct listNode {
+    // 前置节点
+    struct listNode *prev;
+    // 后置节点
+    struct listNode *next;
+    // 节点的值
+    void *value;
+} listNode;
 
-  ![](../img/redis/list结构.png)
+```
 - 列表的节点（注意不是列表的定义）定义如上，除了双向链表必须的前后指针外，为了实现通用性，支持不同类型数据的存储，Redis将节点类型的数据域定义为void *类型，从而模拟了“泛型”
 
 #### list的操作
@@ -354,8 +363,13 @@ hset hash-key sub-key2 value2
 ### set
 #### intset整数集合
 - 结构
-
-  ![](../img/redis/intset结构.png)
+  ```cpp
+  typedef struct intset {
+    uint32_t encoding;
+    uint32_t length;
+    int8_t contents[];
+  } intset;
+  ```
   - Encoding 存储编码方式
   - Length inset的长度，即元素数量
   - Content Int数组，用来保存元素，各个项在数组中按数值从小到大排序，不包含重复项
@@ -441,7 +455,31 @@ SUNION key1 [key2]
 
 #### Redis中的跳跃表的实现
 结构
-![](../img/redis/跳表的结构.png)						
+```cpp
+#define ZSKIPLIST_MAXLEVEL 32
+#define ZSKIPLIST_P 0.25
+
+typedef struct zskiplistNode {
+    robj *obj;
+    double score;
+    struct zskiplistNode *backward;
+    struct zskiplistLevel {
+        struct zskiplistNode *forward;
+        unsigned int span;
+    } level[];
+} zskiplistNode;
+
+typedef struct zskiplist {
+    struct zskiplistNode *header, *tail;
+    unsigned long length;
+    int level;
+} zskiplist;
+
+typedef struct zset {
+    dict *dict;
+    zskiplist *zsl;
+} zset;
+```
 
 zskiplistNode 表示跳跃表节点结构
 - ele是个SDS，是有序集合的值element。
@@ -577,7 +615,25 @@ setbit 、getbit 、bitcount、bitop
     ```shell
     BITOP operation destkey key [key ...]
     ```
-    ![](../img/redis/bit操作.png)
+    ```shell
+    # 初始化数据: 
+    127.0.0.1 :6379> setbit 20210308 1 1
+    (integer) 0
+    127.0.0.1 :6379> setbit 20210308 2 1
+    (integer) 0
+    127.0.0.1 :6379> setbit 20210309 1 1
+    (integer) 0
+    # 统计20210308~20210309总活跃用户数: 1
+    127.0.0.1 :6379> bitop and desk1 20210308 20210309
+    (integer) 1
+    127.0.0.1 :6379> bitcount desk1
+    (integer) 1
+    # 统计20210308~20210309在线活跃用户数: 2
+    127.0.0.1 :6379> bitop or desk2 20210308 20210309
+    (integer) 1
+    127.0.0.1 :6379> bitcount desk2
+    (integer) 2
+    ```
   - 使用场景三：用户在线状态
     - 取或者统计用户在线状态，使用 bitmap 是一个节约空间效率又高的一种方法。
     - 一个 key，然后用户 ID 为 offset，如果在线就设置为 1，不在线就设置为 0。
