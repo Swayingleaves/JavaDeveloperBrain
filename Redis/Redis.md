@@ -129,10 +129,53 @@ Redis列表结构，LPUSH可以在列表头部插入一个内容ID作为关键�
 消息队列是大型网站必用中间件，如ActiveMQ、RabbitMQ、Kafka等流行的消息队列中间件，主要用于业务解耦、流量削峰及异步处理实时性低的业务。Redis提供了发布/订阅及阻塞队列功能，能实现一个简单的消息队列系统。另外，这个不能和专业的消息中间件相比
 ## 数据类型
 ### redisObject
-Redis的每种数据类型都是套用该对象
-![](../img/redis/redisObject.png)	
+redisObject 的定义位于 redis.h ,Redis的每种数据类型都是套用该对象
+```javascript
+typedef struct redisObject {
+    // 类型
+    unsigned type:4;
+    // 对齐位
+    unsigned notused:2;
+    // 编码方式
+    unsigned encoding:4;
+    // LRU 时间（相对于 server.lruclock）
+    unsigned lru:22;
+    // 引用计数
+    int refcount;
+    // 指向对象的值
+    void *ptr;
+} robj;
+```
+type 、 encoding 和 ptr 是最重要的三个属性。
 
-redisObject使用type字段记录自身属于哪种类型。而每种对象类型至少使用了两种底层数据结构来实现，redisObject使用编码字段（encoding字段）记录了自己使用的是哪种底层数据结构实现。而*ptr指针则会直接指向这个对应的底层数据结构
+type 记录了对象所保存的值的类型，它的值可能是以下常量的其中一个（定义位于 redis.h）：
+```javascript
+/*
+ * 对象类型
+ */
+#define REDIS_STRING 0  // 字符串
+#define REDIS_LIST 1    // 列表
+#define REDIS_SET 2     // 集合
+#define REDIS_ZSET 3    // 有序集
+#define REDIS_HASH 4    // 哈希表
+```
+encoding 记录了对象所保存的值的编码，它的值可能是以下常量的其中一个（定义位于 redis.h）：
+```javascript
+/*
+ * 对象编码
+ */
+#define REDIS_ENCODING_RAW 0            // 编码为字符串
+#define REDIS_ENCODING_INT 1            // 编码为整数
+#define REDIS_ENCODING_HT 2             // 编码为哈希表
+#define REDIS_ENCODING_ZIPMAP 3         // 编码为 zipmap
+#define REDIS_ENCODING_LINKEDLIST 4     // 编码为双端链表
+#define REDIS_ENCODING_ZIPLIST 5        // 编码为压缩列表
+#define REDIS_ENCODING_INTSET 6         // 编码为整数集合
+#define REDIS_ENCODING_SKIPLIST 7       // 编码为跳跃表
+```
+ptr 是一个指针，指向实际保存值的数据结构，这个数据结构由 type 属性和 encoding 属性决定。
+
+举个例子，如果一个 redisObject 的 type 属性为 REDIS_LIST ， encoding 属性为 REDIS_ENCODING_LINKEDLIST ，那么这个对象就是一个 Redis 列表，它的值保存在一个双端链表内，而 ptr 指针就指向这个双端链表；
 
 每个类型都会有两种或以上的实现
 ![](../img/redis/类型底层实现.png)				
@@ -914,3 +957,4 @@ zrangebylex usr.index.type [1: (1;
 
 # 参考文章
 - https://www.jianshu.com/p/53083f5f2ddc
+- https://cloud.tencent.com/developer/article/1608410
