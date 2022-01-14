@@ -390,29 +390,29 @@ hget hash-key sub-key1
 
 - sadd 添加
 ```shell
-sadd set-key item
-> (integer) 1
-sadd set-key item2
-> (integer) 1
-sadd set-key item3
-> (integer) 1
-sadd set-key item
-> (integer) 0
+> sadd set-key item
+(integer) 1
+> sadd set-key item2
+(integer) 1
+> sadd set-key item3
+(integer) 1
+> sadd set-key item
+(integer) 0
 ```
 - smembers 返回集合中的所有成员
 ```shell
- smembers set-key
-> "item" 
-> "item2" 
-> "item3"
+> smembers set-key
+"item" 
+"item2" 
+"item3"
 ```    
 - sismember set-key item4 判断 member 元素是否是集合 key 的成员
 
 ```shell
-sismember set-key item4
-> (integer) 0
-sismember set-key item
-> (integer) 1
+> sismember set-key item4
+(integer) 0
+> sismember set-key item
+(integer) 1
 ```
 - SREM 移除集合中一个或多个成员
 ```shell
