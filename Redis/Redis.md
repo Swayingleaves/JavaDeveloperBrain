@@ -385,7 +385,7 @@ hget hash-key sub-key1
 - 整数集合只支持升级操作，不支持降级操作
 
 #### hashtable字典
-              
+同上
 #### set的操作
 
 - sadd 添加
@@ -467,18 +467,26 @@ SUNION key1 [key2]
 #define ZSKIPLIST_P 0.25
 
 typedef struct zskiplistNode {
+    //成员对象
     robj *obj;
+    //分值
     double score;
+    //后向指针
     struct zskiplistNode *backward;
     struct zskiplistLevel {
+        //前向指针
         struct zskiplistNode *forward;
+        //跨度
         unsigned int span;
     } level[];
 } zskiplistNode;
 
 typedef struct zskiplist {
+    //跳跃表的表头节点和表尾节点
     struct zskiplistNode *header, *tail;
+    // 表中节点的数量
     unsigned long length;
+    // 表中层数最大的节点层数
     int level;
 } zskiplist;
 
@@ -489,14 +497,16 @@ typedef struct zset {
 ```
 
 zskiplistNode 表示跳跃表节点结构
-- ele是个SDS，是有序集合的值element。
+- obj 存放着该节点对于的成员对象，一般指向一个sds结构
 - score是double结构，存储分数值。
 - backward，后退指针，指向列表前一个node
 - level [ ]数组，表示一个节点可以有多个层
   - 数组里面的项是zskiplistLevel结构，可以看到，每一层都有一个跳跃指针forward
   - 跨度span，顾名思义，就是用来记录跨度的，相邻的节点跨度为1。
   - 注意：跨度的用处是用来计算某个节点在跳跃表中的排位的，zset的排序按score从小到大排序。比如我查找到node7，通过将沿途的所有跨度累加，我们可以得到其排在列表中的序列
-  
+
+![](../img/redis/redis-skiplist.png)
+
 zskiplist 表示跳跃表结构
 - zskiplist中有指向整个跳跃表两端的head指针和tail指针
 - 记录跳跃表长度的leng字段。
