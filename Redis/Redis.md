@@ -130,7 +130,7 @@ Redis列表结构，LPUSH可以在列表头部插入一个内容ID作为关键�
 ## 数据类型
 ### redisObject
 redisObject 的定义位于 redis.h ,Redis的每种数据类型都是套用该对象
-```javascript
+```cpp
 typedef struct redisObject {
     // 类型
     unsigned type:4;
@@ -149,7 +149,7 @@ typedef struct redisObject {
 type 、 encoding 和 ptr 是最重要的三个属性。
 
 type 记录了对象所保存的值的类型，它的值可能是以下常量的其中一个（定义位于 redis.h）：
-```javascript
+```cpp
 /*
  * 对象类型
  */
@@ -160,7 +160,7 @@ type 记录了对象所保存的值的类型，它的值可能是以下常量的
 #define REDIS_HASH 4    // 哈希表
 ```
 encoding 记录了对象所保存的值的编码，它的值可能是以下常量的其中一个（定义位于 redis.h）：
-```javascript
+```cpp
 /*
  * 对象编码
  */
