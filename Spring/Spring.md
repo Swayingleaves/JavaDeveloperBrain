@@ -435,13 +435,42 @@ public class AccountController {
 
 ## 事务
 ### Spring 支持两种方式的事务管理
-- 编程式事务管理
-  - TransactionTemplate
-    ![](../img/spring/SpringTransactionTemplate.png)				
-  - TransactionManager
-    ![](../img/spring/SpringTransactionManager.png)				
-- 注解
-  - @Transactional
+编程式事务管理
+- TransactionTemplate
+```java
+  @Autowired
+  private TransactionTemplate transactionTemplate;
+
+  public void testTransaction(){
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    //...业务代码
+                }catch (Exception e){
+                    status.setRollbackOnly();
+                }
+            }
+        });
+  }
+```
+- TransactionManager
+```java
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    public void testTransaction2(){
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            //...业务代码
+            transactionManager.commit(status);
+        }catch (Exception e){
+            transactionManager.rollback(status);
+        }
+    }
+```
+注解
+- @Transactional
 ### 事务的传播性 Propagation
 - `REQUIRED` 这是默认的传播属性，如果外部调用方有事务，将会加入到事务，没有的话新建一个。
 - `PROPAGATION_SUPPORTS` 如果当前存在事务，则加入到该事务；如果当前没有事务，则以非事务的方式继续运行。
