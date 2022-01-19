@@ -29,13 +29,75 @@ MyBatis 是一款旨在帮助开发人员屏蔽底层重复性原生 JDBC 代码
 - 执行SQL
 - 封装结果集
 - 释放资源
-  ![](../img/mybatis/jdbc执行6步走.png)
+```java
+public void findStudent() {
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
 
+    try {
+        //注册MySQL驱动
+        Class.forName("com.mysql.jdbc.Driver");
+        //连接数据库的基本信息
+        String url = "jdbc:mysql://localhost:3306/db";
+        String username = "root";
+        String password = "password";
+        //创建连接对象
+        conn = DriverManager.getConnection(url, username, password);
+        //保存查询结果
+        List<Student> stuList = new ArrayList<>();
+        //创建statement，执行SQL
+        stmt = conn.createStatement();
+        //执行查询
+        rs = stmt.executeQuery("select * from student");
+        while (rs.next()) {
+            //取出结果封装为对象
+            Student student = new Student();
+            student.setAge(rs.getInt("age"));
+            student.setName(rs.getString("name"));
+            stuList.add(student);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        //关闭资源
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 ## mybatis执行8步骤
 
 ![](../img/mybatis/mybatis执行8步走.png)
-![](../img/mybatis/mybatis执行8步走2.png)
-
+```java
+public void testStart() throws IOException {
+    //1.mybatis 主配置文件
+    String config = "mybatis-config.xml";
+    //2.读取配置文件
+    InputStream in = Resources.getResourceAsStream(config);
+    //3.创建SqlSessionFactory对象，目的是为了获取SqlSession
+    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(in);
+    //4.获取SqlSession，SqlSession能执行sql
+    SqlSession sqlSession = factory.openSession();
+    //5.执行session的select
+    List<Student> students = sqlSession.selectList("com.dao.UserDao.selectAll");
+    //6.循环输出查询结果
+    students.forEach(System.out::println);
+    //7.关闭资源
+    sqlSession.close();
+}
+```
 ### 步骤
 1. 读取MyBatis的核心配置文件。mybatis-config.xml为MyBatis的全局配置文件，用于配置数据库连接、属性、类型别名、类型处理器、插件、环境配置、映射器（mapper.xml）等信息，这个过程中有一个比较重要的部分就是映射文件其实是配在这里的；这个核心配置文件最终会被封装成一个Configuration对象
 2. 加载映射文件。映射文件即SQL映射文件，该文件中配置了操作数据库的SQL语句，映射文件是在mybatis-config.xml中加载；可以加载多个映射文件。常见的配置的方式有两种，一种是package扫描包，一种是mapper找到配置文件的位置。
