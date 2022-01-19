@@ -97,11 +97,11 @@ public void connect(String host, int port) throws Exception {
         b.group(worker)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new SimpleClientHandler());
-            }
-        });
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new SimpleClientHandler());
+                    }
+                });
         ChannelFuture f = b.connect(host, port).sync();
         f.channel().closeFuture().sync();
     } finally {
