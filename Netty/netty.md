@@ -58,9 +58,57 @@ ChannelPipeline 为 ChannelHandler 链提供了一个容器并定义了用于沿
 当一个数据流进入 ChannlePipeline 时，它会从 ChannelPipeline 头部开始传给第一个 ChannelInboundHandler ，当第一个处理完后再传给下一个，一直传递到管道的尾部。与之相对应的是，当数据被写出时，它会从管道的尾部开始，先经过管道尾部的 “最后” 一个ChannelOutboundHandler，当它处理完成后会传递给前一个 ChannelOutboundHandler 。
 ## netty的使用示例
 ### 服务端
-![](../img/netty/服务端.png)			
+```java
+public void startNetty() {
+    EventLoopGroup acceptor = new NioEventLoopGroup();
+    EventLoopGroup worker = new NioEventLoopGroup();
+    try {
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap.group(acceptor, worker)
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel e) throws Exception {
+                        e.pipeline().addLast("http-codec",new HttpServerCodec());
+                        e.pipeline().addLast("aggregator",new HttpObjectAggregator(65536));
+                        e.pipeline().addLast("http-chunked",new ChunkedWriteHandler());
+                        e.pipeline().addLast("handler",new WsHandler());
+                    }
+                });
+        int port = 8888;
+        ChannelFuture f = bootstrap.bind(port).sync();
+        f.channel().closeFuture().sync();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } finally {
+        acceptor.shutdownGracefully();
+        worker.shutdownGracefully();
+    }
+
+}
+```
 ### 客户端
-![](../img/netty/客户端.png)
+```java
+public void connect(String host, int port) throws Exception {
+    EventLoopGroup worker = new NioEventLoopGroup();
+    try {
+        Bootstrap b = new Bootstrap();
+        b.group(worker)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            public void initChannel(SocketChannel ch) throws Exception {
+                ch.pipeline().addLast(new SimpleClientHandler());
+            }
+        });
+        ChannelFuture f = b.connect(host, port).sync();
+        f.channel().closeFuture().sync();
+    } finally {
+        worker.shutdownGracefully();
+    }
+}
+```
 ## TCP粘包/拆包问题
 ### 什么是粘包拆包
 一个完整的包在发送过程中可能会被拆成多个包进行发送
