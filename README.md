@@ -12,7 +12,7 @@
 <p align="center">[Java工程师必备+学习+知识点+面试]：包含计算机网络知识、JavaSE、JVM、Spring、Springboot、SpringCloud、Mybatis、多线程并发、netty、MySQL、MongoDB、Elasticsearch、Redis、HBASE、RabbitMQ、RocketMQ、Pulsar、Kafka、Zookeeper、Linux、设计模式、智力题、项目架构、分布式相关、算法、面试题</p>
 
 ---
-<h3 align="center">不白嫖，来个star:star2::star2::star2:</h3>
+<h3 align="center">辛苦总结归纳，不白嫖，来个star:star2::star2::star2:</h3>
 
 # 内容概览[↓↓](#最后)
 
