@@ -311,7 +311,6 @@ while(keyIterator.hasNext()){
 ``` 
 - 事件循环
   因为一次 select() 调用不能处理完所有的事件，并且服务器端有可能需要一直监听事件，因此服务器端处理事件的代码一般会放在一个死循环内。
-  ![](../img/io/selector事件循环.png)
 ```java
 while(true){
     int num = selector.select();
