@@ -634,7 +634,7 @@ mvcc 又被称为快照读，间隙锁称为当前读
 ## 事务日志	
 ### redo log（重做日志）
 - 保证事务持久性
-- MySQL每执行一条语句，先将记录写入log buffer ，然后写入OS buffer（cache），系统调用fsync()刷入redo log磁盘
+- MySQL每执行一条语句，先将记录写入redo log buffer ，然后写入OS buffer（cache），系统调用fsync()刷入redo log file磁盘
 - redo log 采用大小固定，循环写入的方式，写到结尾会回到开头写
 - MySQL提供了buffer pool（内存）来提高读取速度，并且对数据的修改也会首先写入bufferpool等待后刷入磁盘，如果在还未刷入磁盘时发生宕机就会发生数据丢失，所以引入redo log（磁盘）对数据的修改也会记录在redo log中，DB宕机后重启，InnoDB会首先去查看数据页中的LSN的数值。这个值代表数据页被刷新回磁盘的LSN的大小。然后再去查看redo log的LSN的大小。如果数据页中的LSN值大说明数据页领先于redo log刷新回磁盘，不需要进行恢复。反之需要从redo log中恢复数据
   - LSN (逻辑序列号)
