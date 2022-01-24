@@ -524,7 +524,7 @@
             - [读未提交：read uncommitted](数据库/MySQL.md#读未提交read-uncommitted)
             - [读已提交：read committed](数据库/MySQL.md#读已提交read-committed)
             - [可重复读：repeatable read](数据库/MySQL.md#可重复读repeatable-read)
-        - [串行化：serializable](数据库/MySQL.md#串行化serializable)
+            - [串行化：serializable](数据库/MySQL.md#串行化serializable)
         - [持久性（Durability）](数据库/MySQL.md#持久性durability)
   - [事务日志](数据库/MySQL.md#事务日志)
     - [redo log（重做日志）](数据库/MySQL.md#redo-log重做日志)

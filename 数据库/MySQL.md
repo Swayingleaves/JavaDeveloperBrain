@@ -63,7 +63,7 @@
           * [读未提交：read uncommitted](#读未提交read-uncommitted)
           * [读已提交：read committed](#读已提交read-committed)
           * [可重复读：repeatable read](#可重复读repeatable-read)
-      * [串行化：serializable](#串行化serializable)
+          * [串行化：serializable](#串行化serializable)
       * [持久性（Durability）](#持久性durability)
   * [事务日志](#事务日志)
     * [redo log（重做日志）](#redo-log重做日志)
@@ -621,11 +621,11 @@ bcd联合索引在B+树上的结构图：
     - 而避免幻读，则需要通过next-key lock。next-key lock是行锁的一种，实现相当于record lock(记录锁) + gap lock(间隙锁)；其特点是不仅会锁住记录本身(record lock的功能)，还会锁定一个范围(gap lock的功能)。因此，加锁读同样可以避免脏读、不可重复读和幻读，保证隔离性
 
 
-#####  MVCC、间隙锁都可以解决幻读，有什么区别？
+#######  MVCC、间隙锁都可以解决幻读，有什么区别？
 mvcc 又被称为快照读，间隙锁称为当前读
 - 快照读的优势是不加锁，并发高，缺点是不是实时数据，是历史数据，严格意义来说不算解决了幻读问题
 - 当前读是实时数据
-##### 串行化：serializable
+###### 串行化：serializable
 事务A和事务B，事务A在操作数据库时，事务B只能排队等待
 - 这种级别可以避免“幻像读”，每一次读取的都是数据库中真实存在数据，事务A与事务B串行，而不并发
 ####  持久性（Durability）
