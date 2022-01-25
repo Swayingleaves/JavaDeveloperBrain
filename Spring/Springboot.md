@@ -67,4 +67,51 @@
 ## SpringBoot的starter实现原理是什么？
 原理就是因为在@EnableAutoConfiguration注解，会自动的扫描jar包下的META-INF/spring.factories文件的配置类，写在这里面的类都是需要被自动加载的
 
+将configuration类中定义的bean加入spring到容器中。就相当于加载之前我们自己配置组件的xml文件。而现在SpringBoot自己定义了一个默认的值，然后直接加载进入了Spring容器。
+
+SpringBoot提供的自动配置依赖模块都以spring-boot-starter-为命名前缀，并且这些依赖都在org.springframework.boot下。 所有的spring-boot-starter都有约定俗成的默认配置，但允许调整这些配置调整默认的行为。
+## spring 和springboot的区别
+Spring Boot基本上是Spring框架的扩展，它消除了设置Spring应用程序所需的XML配置，为更快，更高效的开发生态系统铺平了道路。
+
+Spring Boot中的一些特征：
+
+- 创建独立的Spring应用。
+- 嵌入式Tomcat、Jetty、 Undertow容器（无需部署war文件）。
+- 提供的starters 简化构建配置
+- 尽可能自动配置spring应用。
+- 提供生产指标,例如指标、健壮检查和外部化配置
+- 完全没有代码生成和XML配置要求
+
+Maven依赖
+
+首先，让我们看一下使用Spring创建Web应用程序所需的最小依赖项
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-web</artifactId>
+    <version>5.1.0.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.1.0.RELEASE</version>
+</dependency>
+```
+与Spring不同，Spring Boot只需要一个依赖项来启动和运行Web应用程序：
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <version>2.0.6.RELEASE</version>
+</dependency>
+```
+在进行构建期间，所有其他依赖项将自动添加到项目中。
+
+另一个很好的例子就是测试库。我们通常使用Spring Test，JUnit，Hamcrest和Mockito库。在Spring项目中，我们应该将所有这些库添加为依赖项。但是在Spring Boot中，我们只需要添加spring-boot-starter-test依赖项来自动包含这些库。
+
+spring在运行前需要使用xml文件做很多配置，而springboot帮我们实现了这些配置的自动加载，基于注解和简单的yml配置即可
+
+spring的web程序还是打包为war然后再Tomcat里运行，而springboot内嵌了Tomcat直接打成可运行的jar
+# 参考文章
+- https://www.jianshu.com/p/ffe5ebe17c3a
 

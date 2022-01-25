@@ -41,3 +41,14 @@
 
 ## 判断创建多少个对象
 因为大多包装类型都用cache，在判断时考虑是否超出了cache范围，否则会创建新对象
+
+## new Integer(1) 和 Integer.valueOf(1)的区别是什么
+
+Integer.valueOf(1)如果范围在`[-128,127]`之间是直接使用缓存不会创建对象
+```java
+public static Integer valueOf(int i) {
+    if (i >= IntegerCache.low && i <= IntegerCache.high)
+        return IntegerCache.cache[i + (-IntegerCache.low)];
+    return new Integer(i);
+}
+```

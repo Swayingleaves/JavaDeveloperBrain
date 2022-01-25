@@ -561,6 +561,10 @@ AOP底层，就是动态代理模式的实现。
 **动态代理：**
 
 在内存中构建的，不需要手动编写代理类
+
+## spring中properties和yml的加载顺序
+相同内容properties和yml的加载顺序是properties优先
+
 # 参考文章
 - https://www.jianshu.com/p/5e7c0713731f
 - https://blog.csdn.net/nuomizhende45/article/details/81158383
