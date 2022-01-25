@@ -89,12 +89,9 @@
 - `spring-test` 主要为测试提供支持的，通过 JUnit 和 TestNG 组件支持单元测试和集成测试。它提供了一致性地加载和缓存 Spring 上下文，也提供了用于单独测试代码的模拟对象（mock object）
 ## IOC
 ### IOC是什么？
+控制反转即IoC (Inversion of Control)，它把传统上由程序代码直接操控的对象的调用权交给容器，通过容器来实现对象组件的装配和管理。所谓的“控制反转”概念就是对组件对象控制权的转移，从程序代码本身转移到了外部容器。
 
-IOC（Inverse of Contro）控制反转，有时候也被称为DI（Dependency injection）依赖注入，它是一种降低对象耦合关系的一种设计思想。
-
-2004年，Martin Fowler探讨了一个问题，既然IOC是控制反转，那么到底是哪些方面的控制被反转了呢？，经过详细地分析和论证后，他得出了答案：获得依赖对象的过程被反转了。控制被反转之后，获得依赖对象的过程由自身管理变为了由IOC容器主动注入。于是，他给“控制反转”取了一个更合适的名字叫做“依赖注入（Dependency Injection）”。他的这个答案，实际上给出了实现IOC的方法：注入。所谓依赖注入就是：由IOC容器在运行期间，动态地将某种依赖关系注入到对象之中。
-
-控制反转（IOC）是一种思想，而依赖注入（Dependency Injection）则是实现这种思想的方法。
+Spring IOC 负责创建对象，管理对象（通过依赖注入（DI），装配对象，配置对象，并且管理这些对象的整个生命周期。
 
 ### 使用IOC的好处
 - 不用自己组装，拿来就用。
@@ -102,6 +99,37 @@ IOC（Inverse of Contro）控制反转，有时候也被称为DI（Dependency in
 - 便于单元测试，方便切换mock组件
 - 便于进行AOP操作，对于使用者是透明的
 - 统一配置，便于修改
+
+## BeanFactory 和 ApplicationContext有什么区别
+BeanFactory和ApplicationContext是Spring的两大核心接口，都可以当做Spring的容器。其中ApplicationContext是BeanFactory的子接口。
+
+### 依赖关系
+
+BeanFactory：是Spring里面最底层的接口，包含了各种Bean的定义，读取bean配置文档，管理bean的加载、实例化，控制bean的生命周期，维护bean之间的依赖关系。
+
+ApplicationContext接口作为BeanFactory的派生，除了提供BeanFactory所具有的功能外，还提供了更完整的框架功能：
+
+- 继承MessageSource，因此支持国际化。
+- 统一的资源文件访问方式。
+- 提供在监听器中注册bean的事件。
+- 同时加载多个配置文件。
+- 载入多个（有继承关系）上下文 ，使得每一个上下文都专注于一个特定的层次，比如应用的web层。
+### 加载方式
+
+BeanFactroy采用的是延迟加载形式来注入Bean的，即只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能发现一些存在的Spring的配置问题。如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常。
+
+ApplicationContext，它是在容器启动时，一次性创建了所有的Bean。这样，在容器启动时，我们就可以发现Spring中存在的配置错误，这样有利于检查所依赖属性是否注入。 ApplicationContext启动后预载入所有的单实例Bean，通过预载入单实例bean ,确保当你需要的时候，你就不用等待，因为它们已经创建好了。
+
+相对于基本的BeanFactory，ApplicationContext 唯一的不足是占用内存空间。当应用程序配置Bean较多时，程序启动较慢。
+
+### 创建方式
+
+BeanFactory通常以编程的方式被创建，ApplicationContext还能以声明的方式创建，如使用ContextLoader。
+
+### 注册方式
+
+BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProcessor的使用，但两者之间的区别是：BeanFactory需要手动注册，而ApplicationContext则是自动注册。
+
 ### Spring IoC的初始化过程
 #### IOC粗略总结
 1. 首先入口是xml或者注解或者其他形式，要实现beanDefinationReader接口，然后 读取的时候，会将他们解析为bean的定义信息；
@@ -313,8 +341,28 @@ Request作用域针对的是每次的Http请求，Spring容器会根据相关的
 
 ### 循环依赖问题
 ![](../img/spring/循环依赖.png)
+
+## Spring框架中的单例bean是线程安全的吗？它是如何处理线程并发问题的?
+不是，Spring框架中的单例bean不是线程安全的。
+
+spring 中的 bean 默认是单例模式，spring 框架并没有对单例 bean 进行多线程的封装处理。实际上大部分 spring bean 是无状态的（比如 dao 类），在某种程度上来说 bean 也是安全的，但如果 bean 有状态的话（比如 view model ）就要开发者自己去保证线程安全了，最简单的就是改变 bean 的作用域，把“singleton”变更为“prototype”，这样请求 bean 相当于 new Bean()了， 保证线程安全了。
+
+- 有状态就是有数据存储功能。
+- 无状态就是不会保存数据。
+
+Spring如何处理线程并发问题?
+
+一般只有无状态的Bean才可以在多线程下共享，大部分是无状态的Bean。当存有状态的Bean的时候，spring一般是使用ThreadLocal进行处理，解决线程安全问题。
+
+ThreadLocal和线程同步机制都是为了解决多线程中相同变量的访问冲突问题。
+同步机制采用了“时间换空间”的方式，仅提供一份变量，不同的线程获取锁，没获得锁的线程则需要排队。而ThreadLocal采用了“空间换时间”的方式。
+ThreadLocal会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，所以没有相同变量的访问冲突问题。所以在编写多线程代码时，可以把不安全的变量封装进ThreadLocal。
+
 				
 ## AOP
+OOP(Object-Oriented Programming)面向对象编程，允许开发者定义纵向的关系，但并适用于定义横向的关系，导致了大量代码的重复，而不利于各个模块的重用。
+
+AOP(Aspect-Oriented Programming)，一般称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的公共行为和逻辑，抽取并封装为一个可重用的模块，这个模块被命名为“切面”（Aspect），减少系统中的重复代码，降低了模块间的耦合度，同时提高了系统的可维护性。可用于权限认证、日志、事务处理等。
 ### AOP原理
 原理是在IOC过程中，创建bean实例时，最后都会对bean进行处理来实现增强，对于AOP来说就是创建代理类
 - 底层是动态代理技术
@@ -522,10 +570,19 @@ public class AccountController {
 注解
 - @Transactional
 ### 事务的传播性 Propagation
-- `REQUIRED` 这是默认的传播属性，如果外部调用方有事务，将会加入到事务，没有的话新建一个。
-- `PROPAGATION_SUPPORTS` 如果当前存在事务，则加入到该事务；如果当前没有事务，则以非事务的方式继续运行。
-- `PROPAGATION_NOT_SUPPORTED` 以非事务方式运行，如果当前存在事务，则把当前事务挂起。
-- `PROPAGATION_NEVER` 以非事务方式运行，如果当前存在事务，则抛出异常。
+① PROPAGATION_REQUIRED：如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置。
+
+② PROPAGATION_SUPPORTS：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就以非事务执行。
+
+③ PROPAGATION_MANDATORY：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就抛出异常。
+
+④ PROPAGATION_REQUIRES_NEW：创建新事务，无论当前存不存在事务，都创建新事务。
+
+⑤ PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+
+⑥ PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。
+
+⑦ PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按REQUIRED属性执行。
 
 ## spring使用的设计模式
 
@@ -608,6 +665,23 @@ AOP底层，就是动态代理模式的实现。
 ## spring中properties和yml的加载顺序
 相同内容properties和yml的加载顺序是properties优先
 
+## 使用@Autowired注解自动装配的过程是怎样的？
+使用@Autowired注解来自动装配指定的bean。在使用@Autowired注解之前需要在Spring配置文件进行配置，<context:annotation-config />。
+
+在启动spring IoC时，容器自动装载了一个AutowiredAnnotationBeanPostProcessor后置处理器，当容器扫描到@Autowied、@Resource或@Inject时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性。在使用@Autowired时，首先在容器中查询对应类型的bean：
+
+- 如果查询结果刚好为一个，就将该bean装配给@Autowired指定的数据；
+- 如果查询的结果不止一个，那么@Autowired会根据名称来查找；
+- 如果上述查找的结果为空，那么会抛出异常。解决方法时，使用required=false。
+
+## @Autowired和@Resource之间的区别
+@Autowired可用于：构造函数、成员变量、Setter方法
+
+@Autowired和@Resource之间的区别
+
+- @Autowired默认是按照类型装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。
+- @Resource默认是按照名称来装配注入的，只有当找不到与名称匹配的bean才会按照类型来装配注入。
+
 # 参考文章
 - https://www.jianshu.com/p/5e7c0713731f
 - https://blog.csdn.net/nuomizhende45/article/details/81158383
@@ -616,3 +690,5 @@ AOP底层，就是动态代理模式的实现。
 - https://blog.csdn.net/icarus_wang/article/details/51586776
 - https://cloud.tencent.com/developer/article/1512235
 - https://zhuanlan.zhihu.com/p/114244039
+- https://blog.csdn.net/qq_41701956/article/details/116354268
+- https://blog.csdn.net/weixin_41980692/article/details/105803311

@@ -15,7 +15,10 @@
     * [Kafka零拷贝](#kafka零拷贝)
     * [常见问题](#常见问题)
     * [kafka中zookeeper的作用](#kafka中zookeeper的作用)
-
+    * [kafka的consumer是拉模式还是推模式](#kafka的consumer是拉模式还是推模式)
+    * [kafka生产者丢消息情况](#kafka生产者丢消息情况)
+    * [kafka消费者者丢消息情况](#kafka消费者者丢消息情况)
+* [参考文章](#参考文章)
 
 # Kafka
 ## 架构图
@@ -116,3 +119,28 @@ Kafka使用的zero-copy的应用程序要求内核直接将数据从磁盘文件
 - producer 和 consumer 负载均衡
 - 维护 partition 与 consumer 的关系
 - 记录消息消费的进度以及 consumer 注册
+
+## kafka的consumer是拉模式还是推模式
+producer将消息推送到broker，consumer从broker拉取消息。
+
+push模式的缺点：
+
+由broker决定消息推送的速率，对于不同消费速率的consumer就不太好处理了。消息系统都致力于让consumer以最大的速率最快速的消费消息，但不幸的是，push模式下，当broker推送的速率远大于consumer消费的速率时，consumer恐怕就要崩溃了
+
+pull模式的缺点：
+
+- broker需要在数据为空时阻塞
+- broker需要储存数据
+## kafka生产者丢消息情况
+当producer向leader发送数据时，可以通过request.required.acks参数来设置数据可靠性的级别：
+
+- acks=0： 表示producer不需要等待任何broker确认收到消息的回复，就可以继续发送下一条消息。性能最高，但是最容易丢消息。大数据统计报表场景，对性能要求很高，对数据丢失不敏感的情况可以用这种。
+- acks=1： 至少要等待leader已经成功将数据写入本地log，但是不需要等待所有follower是否成功写入。就可以继续发送下一条消息。这种情况下，如果follower没有成功备份数据，而此时leader又挂掉，则消息会丢失。
+- acks=-1或all： 这意味着leader需要等待所有备份(min.insync.replicas配置的备份个数)都成功写入日志，这种策略会保证只要有一个备份存活就不会丢失数据。这是最强的数据保证。一般除非是金融级别，或跟钱打交道的场景才会使用这种配置。当然了如果min.insync.replicas配置的是1则也可能丢消息，跟acks=1情况类似。
+
+## kafka消费者者丢消息情况
+如果消费这边配置的是自动提交，万一消费到数据还没处理完，就自动提交offset了，但是此时你consumer直接宕机了，未处理完的数据丢失了，下次也消费不到了。
+
+# 参考文章
+- https://blog.51cto.com/u_15239532/2858247
+- https://www.daimajiaoliu.com/series/kafka/479991a51900405
