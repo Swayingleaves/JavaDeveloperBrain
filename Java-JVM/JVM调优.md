@@ -51,6 +51,7 @@
 - -XX:+DisableExplicitGC：禁止运行期显式地调用System.gc()来触发fulll GC。
 - -XX:ConcGCThreads=4：CMS垃圾回收器并行线程线，推荐值为CPU核心数。
 - -XX:ParallelGCThreads=8：新生代并行收集器的线程数。
+- -XX:+HeapDumpOnOutOfMemoryError 当首次遭遇内存溢出时Dump出此时的堆内 ，再使用jhat分析
 - 内存优化示例
   - java heap：参数-Xms和-Xmx，建议扩大至3-4倍FullGC后的老年代空间占用。
   - 永久代：-XX:PermSize和-XX:MaxPermSize，建议扩大至1.2-1.5倍FullGc后的永久带空间占用。

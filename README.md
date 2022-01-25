@@ -160,6 +160,7 @@
     - [5. 初始化](Java-JVM/类加载机制.md#5-初始化)
   - [双亲委派模型](Java-JVM/类加载机制.md#双亲委派模型)
     - [怎么打破双亲委派模型？](Java-JVM/类加载机制.md#怎么打破双亲委派模型)
+    - [Tomcat是如何隔离Web应用的？](Java-JVM/类加载机制.md#tomcat是如何隔离web应用的)
 - [JVM调优](Java-JVM/JVM调优.md)
   - [原则](Java-JVM/JVM调优.md#原则)
   - [jvm调优](Java-JVM/JVM调优.md#jvm调优)
