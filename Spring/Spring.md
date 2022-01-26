@@ -682,6 +682,21 @@ AOP底层，就是动态代理模式的实现。
 - @Autowired默认是按照类型装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。
 - @Resource默认是按照名称来装配注入的，只有当找不到与名称匹配的bean才会按照类型来装配注入。
 
+## Spring中BeanFactory与FactoryBean的区别
+### BeanFactory
+BeanFactory是一个接口，它是Spring中工厂的顶层规范，是SpringIoc容器的核心接口，它定义了getBean()、containsBean()等管理Bean的通用方法。Spring的容器都是它的具体实现如：
+- DefaultListableBeanFactory
+- XmlBeanFactory
+- ApplicationContext
+
+这些实现类又从不同的维度分别有不同的扩展。
+### FactoryBean
+首先它是一个Bean，但又不仅仅是一个Bean。它是一个能生产或修饰对象生成的工厂Bean，类似于设计模式中的工厂模式和装饰器模式。它能在需要的时候生产一个对象，且不仅仅限于它自身，它能返回任何Bean的实例。
+
+FactoryBean表现的是一个工厂的职责。   即一个Bean A如果实现了FactoryBean接口，那么A就变成了一个工厂，根据A的名称获取到的实际上是工厂调用getObject()返回的对象，而不是A本身，如果要获取工厂A自身的实例，那么需要在名称前面加上'&'符号。
+
+- getObject('name')返回工厂中的实例
+- getObject('&name')返回工厂本身的实例
 
 # 参考文章
 - https://www.jianshu.com/p/5e7c0713731f
@@ -693,3 +708,4 @@ AOP底层，就是动态代理模式的实现。
 - https://zhuanlan.zhihu.com/p/114244039
 - https://blog.csdn.net/qq_41701956/article/details/116354268
 - https://blog.csdn.net/weixin_41980692/article/details/105803311
+- https://juejin.cn/post/6844903967600836621
