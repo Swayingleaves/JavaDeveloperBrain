@@ -40,3 +40,14 @@ EXPLAIN SELECT * FROM test WHERE col1=1;
 - 使用count(*)或count(1)来统计行数来查询，使用count(列)的时候，需要在查看列中这个是否为null,不会统计此列为null的情况，而且mysql已经对count(*)做了优化
 - 联合索引要注意where条件满足最左匹配
 - 不要使用 where 函数(列名)= ss  这样,会使索引失效
+
+## char和varchar区别
+1、最大长度： char最大长度是255字符，varchar最大长度是65535个字节。
+
+2、定长： char是定长的，不足的部分用隐藏空格填充，varchar是不定长的。
+
+3、空间使用： char会浪费空间，varchar会更加节省空间。
+
+4、查找效率： char查找效率会很高，varchar查找效率会更低。
+
+5、尾部空格： char插入时可省略，vaechar插入时不会省略，查找时省略。
