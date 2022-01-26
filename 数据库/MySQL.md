@@ -7,6 +7,10 @@
     * [物理文件层](#物理文件层)
   * [储存引擎](#储存引擎-1)
     * [InnoDB](#innodb)
+    * [MyISAM](#myisam)
+    * [MEMORY](#memory)
+    * [ARCHIVE](#archive)
+    * [InnoDB](#innodb-1)
       * [架构图](#架构图)
       * [架构划分](#架构划分)
         * [内存结构](#内存结构)
@@ -16,7 +20,7 @@
           * [日志缓冲 (Log Buffer)](#日志缓冲-log-buffer)
         * [磁盘结构](#磁盘结构)
       * [特点总结](#特点总结)
-    * [MyISAM](#myisam)
+    * [MyISAM](#myisam-1)
   * [MyISAM和InnoDB的区别总结](#myisam和innodb的区别总结)
     * [存储结构](#存储结构)
     * [存储空间](#存储空间)
@@ -50,6 +54,7 @@
     * [InnoDB的索引](#innodb的索引)
     * [主键和唯一索引的区别](#主键和唯一索引的区别)
   * [联合索引的底层组织方式](#联合索引的底层组织方式)
+    * [联合索引具体查找步骤](#联合索引具体查找步骤)
   * [锁](#锁)
     * [行级锁](#行级锁)
     * [表级锁](#表级锁)
@@ -101,7 +106,8 @@
       * [什么是慢查询日志](#什么是慢查询日志)
       * [使用工具分析](#使用工具分析)
     * [select * select col 主要区别](#select--select-col-主要区别)
-    * [select count(*)  count(1)  count(col) 主要区别](#select-count--count1--countcol-主要区别)  
+    * [select count(*)  count(1)  count(col) 主要区别](#select-count--count1--countcol-主要区别)
+  * [MySQL与PostGreSQL的区别](#mysql与postgresql的区别)
 * [参考文章](#参考文章)
 
 # MySQL
@@ -133,6 +139,28 @@
 
 
 ## 储存引擎
+MySQL 5.7 支持的存储引擎有 InnoDB、MyISAM、Memory、Merge、Archive、CSV、BLACKHOLE 等。可以使用SHOW ENGINES;语句查看系统所支持的引擎类型
+
+### InnoDB
+特点
+- 灾难恢复性好
+- 支持事务
+- 使用行级锁
+- 支持外键关联
+- 支持热备份
+### MyISAM
+- 不支持事务使用表级锁
+- 并发性差主机宕机后，MyISAM表易损坏
+- 灾难恢复性不佳可以配合锁，实现操作系统下的复制备份、迁移
+- 只缓存索引，数据的缓存是利用操作系统缓冲区来实现的。可能引发过多的系统调用且效率不佳
+- 数据紧凑存储，因此可获得更小的索引和更快的全表扫描性能
+### MEMORY
+- 使用内存
+- 重启后数据会丢失
+
+### ARCHIVE
+该存储引擎非常适合存储大量独立的、作为历史记录的数据。区别于InnoDB和MyISAM这两种引擎，ARCHIVE提供了压缩功能，拥有高效的插入速度，但是这种引擎不支持索引，所以查询性能较差一些
+
 ### InnoDB
 #### 架构图
 ![](../img/数据库/MySQL/innodb架构图.png)				
@@ -916,6 +944,21 @@ count(1) 和count(*) 没有什么很大区别
 count(1) 和 count(col)
 - 主要区别是 count(1)会统计值为null的数据,count(*)也不会忽略
 - 而count(col)会忽略
+
+## MySQL与PostGreSQL的区别
+一.PostgreSQL相对于MySQL的优势
+1、在SQL的标准实现上要比MySQL完善，而且功能实现比较严谨；
+2、存储过程的功能支持要比MySQL好，具备本地缓存执行计划的能力；
+3、对表连接支持较完整，优化器的功能较完整，支持的索引类型很多，复杂查询能力较强；
+4、PG主表采用堆表存放，MySQL采用索引组织表，能够支持比MySQL更大的数据量。
+5、PG的主备复制属于物理复制，相对于MySQL基于binlog的逻辑复制，数据的一致性更加可靠，复制性能更高，对主机性能的影响也更小。
+6、MySQL的存储引擎插件化机制，存在锁机制复杂影响并发的问题，而PG不存在。
+
+二、MySQL相对于PG的优势：
+1、innodb的基于回滚段实现的MVCC机制，相对PG新老数据一起存放的基于XID的MVCC机制，是占优的。因此MySQL的速度是高于PG的；
+2、MySQL采用索引组织表，这种存储方式非常适合基于主键匹配的查询、删改操作，但是对表结构设计存在约束；
+3、MySQL的优化器较简单，系统表、运算符、数据类型的实现都很精简，非常适合简单的查询操作；
+4、MySQL分区表的实现要优于PG的基于继承表的分区实现，主要体现在分区个数达到上千上万后的处理性能差异较大。
 # 参考文章
 - https://www.zhihu.com/question/20596402/answer/529312016
 - https://segmentfault.com/a/1190000013695030
