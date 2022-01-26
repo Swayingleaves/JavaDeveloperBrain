@@ -682,6 +682,7 @@ AOP底层，就是动态代理模式的实现。
 - @Autowired默认是按照类型装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。
 - @Resource默认是按照名称来装配注入的，只有当找不到与名称匹配的bean才会按照类型来装配注入。
 
+
 # 参考文章
 - https://www.jianshu.com/p/5e7c0713731f
 - https://blog.csdn.net/nuomizhende45/article/details/81158383

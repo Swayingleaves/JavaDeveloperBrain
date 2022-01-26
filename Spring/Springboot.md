@@ -8,7 +8,10 @@
     * [启动类中的main方法：org.springframework.boot.SpringApplication#run(java.lang.Class&lt;?&gt;, java.lang.String...)](#启动类中的main方法orgspringframeworkbootspringapplicationrunavalangstring)
   * [怎么让Spring把Body变成一个对象](#怎么让spring把body变成一个对象)
   * [SpringBoot的starter实现原理是什么？](#springboot的starter实现原理是什么)
-
+  * [Spring Boot 可执行 Jar 包运行原理](#spring-boot-可执行-jar-包运行原理)
+    * [打可执行 Jar 包](#打可执行-jar-包)
+    * [可执行 Jar 包内部结构](#可执行-jar-包内部结构)
+    * [JarLauncher](#jarlauncher)
 
 # springboot
 ## springboot启动流程
@@ -112,6 +115,109 @@ Maven依赖
 spring在运行前需要使用xml文件做很多配置，而springboot帮我们实现了这些配置的自动加载，基于注解和简单的yml配置即可
 
 spring的web程序还是打包为war然后再Tomcat里运行，而springboot内嵌了Tomcat直接打成可运行的jar
+
+## Spring Boot 可执行 Jar 包运行原理
+Spring Boot 有一个很方便的功能就是可以将应用打成可执行的 Jar。那么大家有没想过这个 Jar 是怎么运行起来的呢？本篇博客就来介绍下 Spring Boot 可执行 Jar 包的运行原理。
+
+### 打可执行 Jar 包
+将 Spring Boot 应用打成可执行 Ja r包很容易，只需要在 pom 中加上一个 Spring Boot 提供的插件，然后在执行mvn package即可
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+```
+运行完mvn package后，我们会在 target 目录下看到两个 jar 文件。myproject-0.0.1-SNAPSHOT.jar 和 myproject-0.0.1-SNAPSHOT.jar.original。第一个 jar 文件就是我们应用的可执行 jar 包，第二个 Jar 文件是应用原始的 jar 包。
+
+### 可执行 Jar 包内部结构
+```text
+可执行 jar 目录结构
+├─BOOT-INF
+│  ├─classes
+│  └─lib
+├─META-INF
+│  ├─maven
+│  ├─app.properties
+│  ├─MANIFEST.MF      
+└─org
+    └─springframework
+        └─boot
+            └─loader
+                ├─archive
+                ├─data
+                ├─jar
+                └─util
+
+```
+我们先来重点关注两个地方：META-INF 下面的 Jar 包描述文件和 BOOT-INF 这个目录。
+```properties
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: xxxx
+Start-Class: com.xxxx.AppServer
+Spring-Boot-Classes: BOOT-INF/classes/
+Spring-Boot-Lib: BOOT-INF/lib/
+Spring-Boot-Version: 2.1.6.RELEASE
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_73
+Main-Class: org.springframework.boot.loader.JarLauncher
+
+```
+在上面我们看到一个熟悉的配置Main-Class: org.springframework.boot.loader.JarLauncher。我们大概能猜到这个类是整个系统的入口。
+
+再看下 BOOT-INF 这个目录下面，我们会发现里面是我们项目打出来的 class 文件和项目依赖的 Jar 包。看到这里，你可能已经猜到 Spring Boot 是怎么启动项目的了。
+
+### JarLauncher
+```java
+public class JarLauncher extends ExecutableArchiveLauncher {
+
+	static final String BOOT_INF_CLASSES = "BOOT-INF/classes/";
+
+	static final String BOOT_INF_LIB = "BOOT-INF/lib/";
+
+	public JarLauncher() {
+	}
+
+	protected JarLauncher(Archive archive) {
+		super(archive);
+	}
+
+	@Override
+	protected boolean isNestedArchive(Archive.Entry entry) {
+		if (entry.isDirectory()) {
+			return entry.getName().equals(BOOT_INF_CLASSES);
+		}
+		return entry.getName().startsWith(BOOT_INF_LIB);
+	}
+
+	public static void main(String[] args) throws Exception {
+        //项目入口，重点在launch这个方法中
+		new JarLauncher().launch(args);
+	}
+
+}
+
+```
+```java
+//launch方法
+protected void launch(String[] args) throws Exception {
+    JarFile.registerUrlProtocolHandler();
+    //创建LaunchedURLClassLoader。如果根类加载器和扩展类加载器没有加载到某个类的话，就会通过LaunchedURLClassLoader这个加载器来加载类。这个加载器会从Boot-INF下面的class目录和lib目录下加载类。
+    ClassLoader classLoader = createClassLoader(getClassPathArchives());
+    //这个方法会读取jar描述文件中的Start-Class属性，然后通过反射调用到这个类的main方法。
+    launch(args, getMainClass(), classLoader);
+}
+
+```
+简单总结
+- Spring Boot 可执行 Jar 包的入口点是 JarLauncher 的 main 方法；
+- 这个方法的执行逻辑是先创建一个 LaunchedURLClassLoader，这个加载器加载类的逻辑是：先判断根类加载器和扩展类加载器能否加载到某个类，如果都加载不到就从 Boot-INF 下面的 class 和 lib 目录下去加载；
+- 读取Start-Class属性，通过反射机制调用启动类的 main 方法，这样就顺利调用到我们开发的 Spring Boot 主启动类的 main 方法了。
 # 参考文章
 - https://www.jianshu.com/p/ffe5ebe17c3a
+- https://www.cnblogs.com/54chensongxia/p/11419796.html
 
