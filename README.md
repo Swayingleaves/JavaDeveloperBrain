@@ -1111,6 +1111,7 @@
     * [一致性 Consistency](分布式相关/CAP.md#一致性-consistency)
     * [可用性 Availability](分布式相关/CAP.md#可用性-availability)
     * [分区容错性 Partition Tolerance](分布式相关/CAP.md#分区容错性-partition-tolerance)
+    * [常见的注册中心](#常见的注册中心)
 - [BASE](分布式相关/BASE.md)
     * [基本可以  Basically Available](分布式相关/BASE.md#基本可以--basically-available)
     * [软状态  Soft-state](分布式相关/BASE.md#软状态--soft-state)

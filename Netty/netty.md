@@ -161,41 +161,49 @@ public void connect(String host, int port) throws Exception {
 ![](../img/netty/reactor单线程.png)
 
 流程
-- Reactor内部通过 selector 监听连接事件，收到事件后通过dispatch进行分发
-- 如果是连接建立的事件，通过accept接受连接，并创建一个Handler来处理连接后续的各种事件
-- 如果是读写事件，直接调用连接对应的Handler来处理，Handler完成 read => (decode => compute => encode) => send 的全部流程
-- 这个过程中，无论是事件监听、事件分发、还是事件处理，都始终只有 一个线程 执行所有的事情
-                
-缺点
-- 在请求过多时，会无法支撑。因为只有一个线程，无法发挥多核CPU性能。
-- 而且一旦某个Handler发生阻塞，服务端就完全无法处理其他连接事件
+- Reactor 对象通过 Select 监控客户端请求事件，收到事件后通过 Dispatch 进行分发。
+- 如果是建立连接请求事件，则由 Acceptor 通过 Accept 处理连接请求，然后创建一个 Handler 对象处理连接完成后的后续业务处理。
+- 如果不是建立连接事件，则 Reactor 会分发调用连接对应的 Handler 来响应。
+- Handler 会完成 Read→业务处理→Send 的完整业务流程。这个过程中，无论是事件监听、事件分发、还是事件处理，都始终只有 一个线程 执行所有的事情
+
+优点：模型简单，没有多线程、进程通信、竞争的问题，全部都在一个线程中完成。
+
+缺点：性能问题，只有一个线程，无法完全发挥多核 CPU 的性能。Handler 在处理某个连接上的业务时，整个进程无法处理其他连接事件，很容易导致性能瓶颈。
+
+可靠性问题，线程意外跑飞，或者进入死循环，会导致整个系统通信模块不可用，不能接收和处理外部消息，造成节点故障。
+
+使用场景：客户端的数量有限，业务处理非常快速，比如 Redis，业务处理的时间复杂度 O(1)。
 #### Reactor 多线程模型
 ![](../img/netty/reactor多线程.png)					
 流程
-- 这种模型和第一种模型的主要区别是把业务处理从之前的单一线程脱离出来，换成线程池处理。
-- Reactor线程 通过select监听客户请求，如果是连接建立的事件，通过accept接受连接，并创建一个Handler来处理连接后续的读写事件。这里的Handler只负责响应事件、read和write事件，会将具体的业务处理交由Worker线程池处理
-  - 只处理连接事件、读写事件
-- Worker线程池 处理所有业务事件，包括(decode => compute => encode) 过程
-充分利用多核机器的资源，提高性能
+- Reactor 对象通过 Select 监控客户端请求事件，收到事件后通过 Dispatch 进行分发。
+- 如果是建立连接请求事件，则由 Acceptor 通过 Accept 处理连接请求，然后创建一个 Handler 对象处理连接完成后续的各种事件。
+- 如果不是建立连接事件，则 Reactor 会分发调用连接对应的 Handler 来响应。
+- Handler 只负责响应事件，不做具体业务处理，通过 Read 读取数据后，会分发给后面的 Worker 线程池进行业务处理。
+- Worker 线程池会分配独立的线程完成真正的业务处理，如何将响应结果发给 Handler 进行处理。
+- Handler 收到响应结果后通过 Send 将响应结果返回给 Client。
 
-缺点
-- 在极个别特殊场景中，一个Reactor线程负责监听和处理所有的客户端连接可能会存在性能问题。例如并发百万客户端连接(双十一、春运抢票)
+优点：可以充分利用多核 CPU 的处理能力。
+
+缺点：多线程数据共享和访问比较复杂；Reactor 承担所有事件的监听和响应，在单线程中运行，高并发场景下容易成为性能瓶颈。
+
 #### （采用）主从 Reactor 多线程模型
 ![](../img/netty/主从Reactor多线程模型.png)
 
 流程
-- 服务端用于接收客户端连接的不再是1个单独的NIO线程，而是一个独立的NIO线程池
-- 比起第二种模型，它是将Reactor分成两部分
-  - mainReactor负责监听server socket，用来处理网络IO连接建立操作，将建立的socketChannel指定注册给subReactor。
-  - subReactor主要做和建立起来的socket做数据交互和事件业务处理操作。通常，subReactor个数上可与CPU个数等同。
-- 消息处理流程
-  - 从主线程池中随机选择一个Reactor线程作为acceptor线程，用于绑定监听端口，接收客户端连接
-  - acceptor线程接收客户端连接请求之后创建新的SocketChannel，将其注册到主线程池的其它Reactor线程上，由其负责接入认证、IP黑白名单过滤、握手等操作
-  - 步骤2完成之后，业务层的链路正式建立，将SocketChannel从主线程池的Reactor线程的多路复用器上摘除，重新注册到Sub线程池的线程上，并创建一个Handler用于处理各种连接事件
-  - 当有新的事件发生时，SubReactor会调用连接对应的Handler进行响应
-  - Handler通过Read读取数据后，会分发给后面的Worker线程池进行业务处理
-  - Worker线程池会分配独立的线程完成真正的业务处理，如何将响应结果发给Handler进行处理
-  - Handler收到响应结果后通过Send将响应结果返回给Client
+- Reactor 主线程 MainReactor 对象通过 Select 监控建立连接事件，收到事件后通过 Acceptor 接收，处理建立连接事件。
+- Acceptor 处理建立连接事件后，MainReactor 将连接分配 Reactor 子线程给 SubReactor 进行处理。
+- SubReactor 将连接加入连接队列进行监听，并创建一个 Handler 用于处理各种连接事件。
+- 当有新的事件发生时，SubReactor 会调用连接对应的 Handler 进行响应。
+- Handler 通过 Read 读取数据后，会分发给后面的 Worker 线程池进行业务处理。
+- Worker 线程池会分配独立的线程完成真正的业务处理，如何将响应结果发给 Handler 进行处理。
+- Handler 收到响应结果后通过 Send 将响应结果返回给 Client。
+
+优点：父线程与子线程的数据交互简单职责明确，父线程只需要接收新连接，子线程完成后续的业务处理。
+
+父线程与子线程的数据交互简单，Reactor 主线程只需要把新连接传给子线程，子线程无需返回数据。
+
+这种模型在许多项目中广泛使用，包括 Nginx 主从 Reactor 多进程模型，Memcached 主从多线程，Netty 主从多线程模型的支持。
 ### 无锁化串行设计
 消息的处理尽可能在一个线程内完成，期间不进行线程切换，避免了多线程竞争和同步锁的使用
 ### 高性能的序列化框架
@@ -208,3 +216,4 @@ Netty 默认提供了对Google Protobuf 的支持，通过扩展Netty 的编解�
 
 # 参考文章
 - https://blog.csdn.net/chenssy/article/details/78703551
+- https://www.baiyp.ren/Linux%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.html
