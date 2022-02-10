@@ -66,44 +66,68 @@
 - 最终返回容器对象，这里调用方法没有声明对象来接收。
 ```java
 public ConfigurableApplicationContext run(String... args) {
+    //创建计时器
     StopWatch stopWatch = new StopWatch();
+    //开始计时
     stopWatch.start();
-    DefaultBootstrapContext bootstrapContext = createBootstrapContext();
+    //定义上下文对象
     ConfigurableApplicationContext context = null;
+    Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+    //Headless模式设置
     configureHeadlessProperty();
+    //加载SpringApplicationRunListeners监听器
     SpringApplicationRunListeners listeners = getRunListeners(args);
-    listeners.starting(bootstrapContext, this.mainApplicationClass);
+    //发送ApplicationStartingEvent事件
+    listeners.starting();
     try {
+        //封装ApplicationArguments对象
         ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-        ConfigurableEnvironment environment = prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+        //配置环境模块
+        ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+        //根据环境信息配置要忽略的bean信息
         configureIgnoreBeanInfo(environment);
+        //打印Banner标志
         Banner printedBanner = printBanner(environment);
+        //创建ApplicationContext应用上下文
         context = createApplicationContext();
-        context.setApplicationStartup(this.applicationStartup);
-        prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+        //加载SpringBootExceptionReporter
+        exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+                                                         new Class[] { ConfigurableApplicationContext.class }, context);
+        //ApplicationContext基本属性配置
+        prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+        //刷新上下文
         refreshContext(context);
+        //刷新后的操作，由子类去扩展
         afterRefresh(context, applicationArguments);
+        //计时结束
         stopWatch.stop();
+        //打印日志
         if (this.logStartupInfo) {
             new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
         }
+        //发送ApplicationStartedEvent事件，标志spring容器已经刷新，此时所有的bean实例都已经加载完毕
         listeners.started(context);
+        //查找容器中注册有CommandLineRunner或者ApplicationRunner的bean，遍历并执行run方法
         callRunners(context, applicationArguments);
     }
     catch (Throwable ex) {
-        handleRunFailure(context, ex, listeners);
+        //发送ApplicationFailedEvent事件，标志SpringBoot启动失败
+        handleRunFailure(context, ex, exceptionReporters, listeners);
         throw new IllegalStateException(ex);
     }
 
     try {
+        //发送ApplicationReadyEvent事件，标志SpringApplication已经正在运行，即已经成功启动，可以接收服务请求。
         listeners.running(context);
     }
     catch (Throwable ex) {
-        handleRunFailure(context, ex, null);
+        //报告异常，但是不发送任何事件
+        handleRunFailure(context, ex, exceptionReporters, null);
         throw new IllegalStateException(ex);
     }
     return context;
 }
+
 ```
 ## 怎么让Spring把Body变成一个对象
 - @RequestBody注解原理
