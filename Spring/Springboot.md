@@ -65,67 +65,87 @@
 - 报告启动异常，即若启动过程中抛出异常，此时用FailureAnalyzers来报告异常;
 - 最终返回容器对象，这里调用方法没有声明对象来接收。
 ```java
+public static void main(String[] args) throws Exception {
+   SpringApplication.run(new Class<?>[0], args);
+}
+public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
+   // 新建SpringApplication对象，再调用run方法
+   return new SpringApplication(primarySources).run(args);
+}
 public ConfigurableApplicationContext run(String... args) {
-    //创建计时器
-    StopWatch stopWatch = new StopWatch();
-    //开始计时
-    stopWatch.start();
-    //定义上下文对象
-    ConfigurableApplicationContext context = null;
-    Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
-    //Headless模式设置
-    configureHeadlessProperty();
-    //加载SpringApplicationRunListeners监听器
-    SpringApplicationRunListeners listeners = getRunListeners(args);
-    //发送ApplicationStartingEvent事件
-    listeners.starting();
-    try {
-        //封装ApplicationArguments对象
-        ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-        //配置环境模块
-        ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
-        //根据环境信息配置要忽略的bean信息
-        configureIgnoreBeanInfo(environment);
-        //打印Banner标志
-        Banner printedBanner = printBanner(environment);
-        //创建ApplicationContext应用上下文
-        context = createApplicationContext();
-        //加载SpringBootExceptionReporter
-        exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
-                                                         new Class[] { ConfigurableApplicationContext.class }, context);
-        //ApplicationContext基本属性配置
-        prepareContext(context, environment, listeners, applicationArguments, printedBanner);
-        //刷新上下文
-        refreshContext(context);
-        //刷新后的操作，由子类去扩展
-        afterRefresh(context, applicationArguments);
-        //计时结束
-        stopWatch.stop();
-        //打印日志
-        if (this.logStartupInfo) {
-            new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
-        }
-        //发送ApplicationStartedEvent事件，标志spring容器已经刷新，此时所有的bean实例都已经加载完毕
-        listeners.started(context);
-        //查找容器中注册有CommandLineRunner或者ApplicationRunner的bean，遍历并执行run方法
-        callRunners(context, applicationArguments);
-    }
-    catch (Throwable ex) {
-        //发送ApplicationFailedEvent事件，标志SpringBoot启动失败
-        handleRunFailure(context, ex, exceptionReporters, listeners);
-        throw new IllegalStateException(ex);
-    }
+   // stopWatch用于统计run启动过程时长
+   StopWatch stopWatch = new StopWatch();
+   // 开始计时
+   stopWatch.start();
+   // 创建ConfigurableApplicationContext对象
+   ConfigurableApplicationContext context = null;
+   // exceptionReporters集合用来存储SpringApplication启动过程的异常，SpringBootExceptionReporter且通过spring.factories方式来加载
+   Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+   // 配置headless属性
+   configureHeadlessProperty();
+   /**
+    * 从spring.factories配置文件中加载到EventPublishingRunListener对象并赋值给SpringApplicationRunListeners
+    * # Run Listeners
+    * org.springframework.boot.SpringApplicationRunListener=\
+    * org.springframework.boot.context.event.EventPublishingRunListener
+    */
+   SpringApplicationRunListeners listeners = getRunListeners(args);
+   // 启动SpringApplicationRunListeners监听
+   listeners.starting();
+   try {
+      // 创建ApplicationArguments对象，封装了args参数
+      ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+      // 备配置参数有app.properties，外部配置参数比如jvm启动参数等
+      ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+      // 配置spring.beaninfo.ignore属性
+      configureIgnoreBeanInfo(environment);
+      // 打印springboot的bannner
+      Banner printedBanner = printBanner(environment);
+      // 根据不同类型创建不同类型的spring applicationcontext容器
+      context = createApplicationContext();
+      /**
+       * 异常报告
+       * 从spring.factories配置文件中加载exceptionReporters，其中ConfigurableApplicationContext.class作为FailureAnalyzers构造方法的参数
+       * # Error Reporters
+       * org.springframework.boot.SpringBootExceptionReporter=\
+       * org.springframework.boot.diagnostics.FailureAnalyzers
+       */
+      exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+            new Class[] { ConfigurableApplicationContext.class }, context);
+      // 准备容器事项：调用各个ApplicationContextInitializer的initialize方法
+      // 和触发SpringApplicationRunListeners的contextPrepared及contextLoaded方法等
+      prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+      // 刷新容器，这一步至关重要
+      refreshContext(context);
+      // 执行刷新容器后的后置处理逻辑，注意这里为空方法
+      afterRefresh(context, applicationArguments);
+      // 停止stopWatch计时
+      stopWatch.stop();
+      // 打印springboot的启动时常
+      if (this.logStartupInfo) {
+         new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
+      }
+      // 触发SpringApplicationRunListener的started方法，通知spring容器已经启动
+      listeners.started(context);
+      // 调用ApplicationRunner和CommandLineRunner的run方法，实现spring容器启动后需要做的一些东西
+      callRunners(context, applicationArguments);
+   }
+   // 若上面的方法抛出异常，将异常添加到exceptionReporters集合中，并抛出 IllegalStateException 异常。
+   catch (Throwable ex) {
+      handleRunFailure(context, ex, exceptionReporters, listeners);
+      throw new IllegalStateException(ex);
+   }
 
-    try {
-        //发送ApplicationReadyEvent事件，标志SpringApplication已经正在运行，即已经成功启动，可以接收服务请求。
-        listeners.running(context);
-    }
-    catch (Throwable ex) {
-        //报告异常，但是不发送任何事件
-        handleRunFailure(context, ex, exceptionReporters, null);
-        throw new IllegalStateException(ex);
-    }
-    return context;
+   try {
+      // 当容器刷新完毕等，触发SpringApplicationRunListeners数组的running方法
+      listeners.running(context);
+   }
+   catch (Throwable ex) {
+      // 若上面的方法抛出异常，将异常添加到exceptionReporters集合中，并抛出 IllegalStateException 异常。
+      handleRunFailure(context, ex, exceptionReporters, null);
+      throw new IllegalStateException(ex);
+   }
+   return context;
 }
 
 ```
