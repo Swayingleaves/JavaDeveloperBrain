@@ -141,6 +141,8 @@
 ## 储存引擎
 MySQL 5.7 支持的存储引擎有 InnoDB、MyISAM、Memory、Merge、Archive、CSV、BLACKHOLE 等。可以使用SHOW ENGINES;语句查看系统所支持的引擎类型
 
+![](../img/数据库/MySQL/MySQL储存引擎比较.png)
+
 ### InnoDB
 特点
 - 灾难恢复性好
