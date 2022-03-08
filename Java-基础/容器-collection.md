@@ -123,8 +123,10 @@ peek，element区别：
 - element() 抛出异常
 - peek() 特殊值
 
-### 常见的实现Queue<T> queue = new LinkedList<>();
-  
+### 常见的实现
+Queue<T> queue = new LinkedList<>();
+
+BlockingQueue（阻塞队列）详解 https://www.cnblogs.com/aspirant/p/8657801.html
 
 # 参考文章
 - https://segmentfault.com/a/1190000021237438
