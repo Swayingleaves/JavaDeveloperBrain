@@ -76,8 +76,8 @@
 ## 集合对比
 - ArrayList（动态数组结构），查询快（随意访问或顺序访问），增删慢，但在末尾插入删除，速度与LinkedList相差无几，但是是非线程安全的！
 - LinkedList（双向链表结构），查询慢，增删快，也是非线程安全的！
-- Vector（动态数组结构），因为方法加了同步锁，相比 ArrayList 执行都慢，基本不在使用，如果需要在多线程下使用，推荐使用并发容器中的CopyOnWriteArrayList来操作，效率高！
-- Stack（栈结构）继承于Vector，数据是先进后出，基本不在使用，如果要实现栈，推荐使用 Deque 下的 ArrayDeque，效率比 Stack 高！
+- Vector（动态数组结构），因为方法加了同步锁，相比 ArrayList 执行都慢，基本不再使用，如果需要在多线程下使用，推荐使用并发容器中的CopyOnWriteArrayList来操作，效率高！
+- Stack（栈结构）继承于Vector，数据是先进后出，基本不再使用，如果要实现栈，推荐使用 Deque 下的 ArrayDeque，效率比 Stack 高！
 `https://juejin.im/post/6844903728324018189`
 # Set
 - 实现了Collection接口
