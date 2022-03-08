@@ -56,8 +56,8 @@
 - 当然，插入删除也不是效率非常低，在某些场景下，比如尾部插入、删除，因为不需要移动数组元素，所以效率也很高哦！
 - ArrayList 是一个非线程安全的类，在多线程环境下使用迭代器遍历元素时，会报错，抛ConcurrentModificationException异常！
   - 迭代器
-    - 迭代器删除原始
-    - 单线程和多线程的区别
+    - 迭代器删除元素
+    - 单线程和多线程的区别 https://blog.csdn.net/weixin_35681869/article/details/113812708
 - addAll方法
   - 底层使用native arraycopy方法，内存拷贝数组速度会更快
   - 大数据量时推荐使用，小数据量时与for循环对比不明显
@@ -76,8 +76,8 @@
 ## 集合对比
 - ArrayList（动态数组结构），查询快（随意访问或顺序访问），增删慢，但在末尾插入删除，速度与LinkedList相差无几，但是是非线程安全的！
 - LinkedList（双向链表结构），查询慢，增删快，也是非线程安全的！
-- Vector（动态数组结构），因为方法加了同步锁，相比 ArrayList 执行都慢，基本不在使用，如果需要在多线程下使用，推荐使用并发容器中的CopyOnWriteArrayList来操作，效率高！
-- Stack（栈结构）继承于Vector，数据是先进后出，基本不在使用，如果要实现栈，推荐使用 Deque 下的 ArrayDeque，效率比 Stack 高！
+- Vector（动态数组结构），因为方法加了同步锁，相比 ArrayList 执行都慢，基本不再使用，如果需要在多线程下使用，推荐使用并发容器中的CopyOnWriteArrayList来操作，效率高！
+- Stack（栈结构）继承于Vector，数据是先进后出，基本不再使用，如果要实现栈，推荐使用 Deque 下的 ArrayDeque，效率比 Stack 高！
 `https://juejin.im/post/6844903728324018189`
 # Set
 - 实现了Collection接口
@@ -123,8 +123,10 @@ peek，element区别：
 - element() 抛出异常
 - peek() 特殊值
 
-### 常见的实现Queue<T> queue = new LinkedList<>();
-  
+### 常见的实现
+Queue<T> queue = new LinkedList<>();
+
+BlockingQueue（阻塞队列）详解 https://www.cnblogs.com/aspirant/p/8657801.html
 
 # 参考文章
 - https://segmentfault.com/a/1190000021237438
