@@ -56,8 +56,8 @@
 - 当然，插入删除也不是效率非常低，在某些场景下，比如尾部插入、删除，因为不需要移动数组元素，所以效率也很高哦！
 - ArrayList 是一个非线程安全的类，在多线程环境下使用迭代器遍历元素时，会报错，抛ConcurrentModificationException异常！
   - 迭代器
-    - 迭代器删除原始
-    - 单线程和多线程的区别
+    - 迭代器删除元素
+    - 单线程和多线程的区别 https://blog.csdn.net/weixin_35681869/article/details/113812708
 - addAll方法
   - 底层使用native arraycopy方法，内存拷贝数组速度会更快
   - 大数据量时推荐使用，小数据量时与for循环对比不明显
