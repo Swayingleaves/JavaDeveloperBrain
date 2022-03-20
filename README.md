@@ -25,6 +25,7 @@
   * [MongoDB](#mongodb)
   * [HBASE](#hbase)
   * [Elasticsearch](#elasticsearch)
+  * [SQL问题](#sql问题)
 * [消息队列](#消息队列)
   * [Redis](#redis)
   * [RabbitMQ](#rabbitmq)
@@ -546,6 +547,10 @@
     - [ShardingSphere](数据库/MySQL.md#shardingsphere)
   - [SQL优化](数据库/MySQL.md#sql优化)
   - [MySQL与PostGreSQL的区别](数据库/MySQL.md#mysql与postgresql的区别)
+
+### SQL问题
+* [count(*)分页](数据库/count.md)
+
 ### MongoDB[↑↑](#内容概览)
 * [MongoDB](数据库/MongoDB.md#mongodb)
 * [特点](数据库/MongoDB.md#特点)
