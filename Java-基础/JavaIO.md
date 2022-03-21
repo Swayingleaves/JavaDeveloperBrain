@@ -83,7 +83,7 @@ public static void readFileContent(String filePath) throws IOException {
 - Reader
 - InputStreamReader
 实现从字节流解码成字符流
-- Write
+- Writer
 - InputStreamWriter
 实现字符流编码成为字节流
 
