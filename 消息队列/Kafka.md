@@ -141,6 +141,11 @@ pull模式的缺点：
 ## kafka消费者者丢消息情况
 如果消费这边配置的是自动提交，万一消费到数据还没处理完，就自动提交offset了，但是此时你consumer直接宕机了，未处理完的数据丢失了，下次也消费不到了。
 
+# springboot整合kafka
+## pom引入依赖
+```xml
+
+```
 # 参考文章
 - https://blog.51cto.com/u_15239532/2858247
 - https://www.daimajiaoliu.com/series/kafka/479991a51900405
