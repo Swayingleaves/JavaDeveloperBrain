@@ -134,7 +134,7 @@ public void connect(String host, int port) throws Exception {
 ### netty粘包问题解决方案
 - LineBasedFrameDecoder和StringDecoder解码器（按行切换的文本解码器）
   - LineBasedFrameDecoder 依次遍历ByteBuf中的可读字节，判断是否有\n或者\r\n，如果有就以此为结束位置，从可读索引到结束位置区间的字节就组成了一行
-  - StringDecoder 将接受到的对象转换为字符串，然后继续调用后的Handler
+  - StringDecoder 将接收到的对象转换为字符串，然后继续调用后的Handler
   - 添加到ChannelPipeline中
 - DelimiterBasedFrameDecoder以分隔符作为结束标识的解码器
 - FixedLengthFrameDecoder固定长度解码器
