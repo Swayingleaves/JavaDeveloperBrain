@@ -164,7 +164,7 @@ public static void main(String[] args) {
     ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationfile.xml");
 }
 ```
-这里ApplicationContext是一个接口，最要的实现类有：
+这里ApplicationContext是一个接口，主要的实现类有：
 - ClassPathXmlApplicationContext 需要一个 xml 配置文件在系统中的路径
 - FileSystemXmlApplicationContext 需要一个 xml 配置文件在系统中的路径
 - AnnotationConfigApplicationContext 基于注解，大势所趋
@@ -606,7 +606,7 @@ bean容器的启动阶段：
 各种的Aware接口 ，比如 BeanFactoryAware，对于实现了这些Aware接口的bean，在实例化bean时Spring会帮我们注入对应的BeanFactory的实例。
 BeanPostProcessor接口 ，实现了BeanPostProcessor接口的bean，在实例化bean时Spring会帮我们调用接口中的方法。
 InitializingBean接口 ，实现了InitializingBean接口的bean，在实例化bean时Spring会帮我们调用接口中的方法。
-DisposableBean接口 ，实现了BeanPostProcessor接口的bean，在该bean死亡时Spring会帮我们调用接口中的方法。
+DisposableBean接口 ，实现了DisposableBean接口的bean，在该bean死亡时Spring会帮我们调用接口中的方法。
 
 **设计意义：**
 
@@ -672,7 +672,7 @@ AOP底层，就是动态代理模式的实现。
 
 - 如果查询结果刚好为一个，就将该bean装配给@Autowired指定的数据；
 - 如果查询的结果不止一个，那么@Autowired会根据名称来查找；
-- 如果上述查找的结果为空，那么会抛出异常。解决方法时，使用required=false。
+- 如果上述查找的结果为空，那么会抛出异常。解决方法是，使用required=false。
 
 ## @Autowired和@Resource之间的区别
 @Autowired可用于：构造函数、成员变量、Setter方法

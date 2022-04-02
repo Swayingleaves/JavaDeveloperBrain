@@ -26,7 +26,7 @@ Consistency，一致性的意思。
 ### 可用性 Availability
 Availability，可用性的意思。
 
-这个比较好理解，就是说，只要我对服务器，发送请求，服务器必须对我进行相应，保证服务器一直是可用的
+这个比较好理解，就是说，只要我对服务器，发送请求，服务器必须对我进行响应，保证服务器一直是可用的
 ### 分区容错性 Partition Tolerance
 Partition tolerance，分区容错的意思。
 
