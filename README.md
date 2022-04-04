@@ -15,7 +15,7 @@
 <h3 align="center">总结归纳，不白嫖，来个star:star2::star2::star2:</h3>
 
 
-<h3 align="center">:muscle::fist欢迎大家一起来完善仓库内容fist::muscle:</h3>
+<h3 align="center">:muscle::fis:欢迎大家一起来完善仓库内容:fist::muscle:</h3>
 
 
 # 内容概览[↓↓](#最后)
