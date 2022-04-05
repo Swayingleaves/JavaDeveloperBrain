@@ -1064,7 +1064,7 @@
 - [网络管理](Linux/linux.md#网络管理)
 - [cpu100%怎么排查](Linux/linux.md#cpu100怎么排查)
 - [用户空间与内核空间](Linux/linux.md#用户空间与内核空间)
-- [LINUX 的进程、线程、文件描述符是什么](Linux/linux.md##linux-的进程线程文件描述符是什么)
+- [LINUX 的进程、线程、文件描述符是什么](Linux/linux.md#linux-的进程线程文件描述符是什么)
 - [进程切换](Linux/linux.md#进程切换)
 - [进程的阻塞](Linux/linux.md#进程的阻塞)
 - [文件描述符fd](Linux/linux.md#文件描述符fd)
