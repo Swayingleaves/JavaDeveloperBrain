@@ -284,6 +284,10 @@ es 的搜索引擎严重依赖于底层的 filesystem cache ，你如果给 file
 # es为什么这么快
 - 倒排索引
 
+# es 的分页方案
+todo
+# es 的查询
+todo
 
 # 参考文章
 - https://blog.csdn.net/qq_34820803/article/details/104798716
