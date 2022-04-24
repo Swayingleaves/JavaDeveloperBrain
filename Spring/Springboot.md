@@ -205,7 +205,7 @@ spring的web程序还是打包为war然后再Tomcat里运行，而springboot内�
 Spring Boot 有一个很方便的功能就是可以将应用打成可执行的 Jar。那么大家有没想过这个 Jar 是怎么运行起来的呢？本篇博客就来介绍下 Spring Boot 可执行 Jar 包的运行原理。
 
 ### 打可执行 Jar 包
-将 Spring Boot 应用打成可执行 Ja r包很容易，只需要在 pom 中加上一个 Spring Boot 提供的插件，然后在执行mvn package即可
+将 Spring Boot 应用打成可执行 Jar包很容易，只需要在 pom 中加上一个 Spring Boot 提供的插件，然后在执行mvn package即可
 ```xml
 <build>
     <plugins>
