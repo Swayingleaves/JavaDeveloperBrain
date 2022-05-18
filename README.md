@@ -119,6 +119,7 @@
     * [弱引用](Java-JVM/垃圾回收.md#弱引用)
     * [虚引用](Java-JVM/垃圾回收.md#虚引用)
   - [分代收集理论](Java-JVM/垃圾回收.md#分代收集理论)
+  - [Java对象头](Java-JVM/Java对象头.md)
   - [GC定义](Java-JVM/垃圾回收.md#gc定义)
     - [新生代收集（Minor GC/Young GC）](Java-JVM/垃圾回收.md#新生代收集minor-gcyoung-gc)
     - [老年代收集（Major GC/Old GC）](Java-JVM/垃圾回收.md#老年代收集major-gcold-gc)
