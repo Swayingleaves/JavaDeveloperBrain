@@ -17,6 +17,8 @@
 
 <h3 align="center">:muscle:欢迎大家一起来完善仓库内容:muscle:</h3>
 
+<h3 align="center">:wave:缺内容或者需要补内容可以提issues:wave:</h3>
+
 
 # 内容概览[↓↓](#最后)
 
