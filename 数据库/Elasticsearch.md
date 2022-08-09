@@ -94,6 +94,9 @@ E 开头的 term ……………. Zzz 页
 ### FST(finite-state transducer有限状态转换器)
 实际上，Lucene 内部的 Term Index 是用的「变种的」trie前缀树，即 FST 。FST 比 trie树好在哪？trie树只共享了前缀，而 FST 既共享前缀也共享后缀，更加的节省空间。
 
+# 数据如何存储
+
+
 # 集群
 ## 基本概念
 ### 节点(Node)
