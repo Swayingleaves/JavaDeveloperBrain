@@ -12,13 +12,17 @@
 
 # final
 ## 不可变的原因
-- 可以缓存hash值
-  - 因为 String 的 hash 值经常被使用，例如 String 用做 HashMap 的 key。不可变的特性可以使得 hash 值也不可变， 因此只需要进行一次计算
-  - 理解final关键字的作用
-- String Pool 的需要
-  - 如果一个 String 对象已经被创建过了，那么就会从 String Pool 中取得引用。只有 String 是不可变的，才可能使用String Pool。
-- 安全性
-- 线程安全
+在Java中，String类型被设计成final的主要原因是为了保证字符串的不可变性。这意味着一旦一个字符串被创建，它的值就不能再被改变。这种不可变性带来了很多好处，例如：
+
+- 线程安全：由于字符串是不可变的，所以在多线程环境下，不需要担心并发访问的问题。
+
+- 缓存哈希值：由于字符串的哈希值是不可变的，所以可以在哈希表等数据结构中缓存字符串的哈希值，提高性能。
+
+- 安全性：不可变的字符串可以防止在处理字符串时，因为修改字符串而导致的潜在安全问题，例如SQL注入攻击。
+
+- 简化代码：由于字符串是不可变的，所以在编写代码时，不需要担心字符串值被改变的情况，这使得代码更加简单和可读。
+
+此外，String类型作为Java中最常用的类型之一，设计成final还可以提高字符串的性能，因为编译器可以对字符串的操作进行一些优化，例如重复使用相同的字符串对象、避免创建新的字符串对象等。
 # 储存数据
 - Java8内部使用char数组储存数据
   - `private final char value[];`
@@ -37,12 +41,17 @@
 个字符串引用。intern() 首先把 s1 引用的字符串放到 String Pool 中，然后返回这个字符串引用。因此 s3 和 s4 引用
 的是同一个字符串。
 String s1 = new String("aaa"); 
-String s2 = new String("aaa"); System.out.println(s1 == s2); // false 
+String s2 = new String("aaa"); 
+System.out.println(s1 == s2); // false
+ 
 String s3 = s1.intern(); 
-String s4 = s1.intern(); System.out.println(s3 == s4); // true
+String s4 = s1.intern(); 
+System.out.println(s3 == s4); // true
+
 如果是采用 "bbb" 这种字面量的形式创建字符串，会自动地将字符串放入 String Pool 中。
 String s5 = "bbb"; 
-String s6 = "bbb"; System.out.println(s5 == s6); // true
+String s6 = "bbb"; 
+System.out.println(s5 == s6); // true
 ```
 ### str1 + " a nice day"
 - 编译为 new StringBuilder().append(str1).append(" a nice day");
