@@ -288,7 +288,89 @@ es 的搜索引擎严重依赖于底层的 filesystem cache ，你如果给 file
 - 倒排索引
 
 # es 的分页方案
-todo
+## form size
+使用from和size参数进行分页，可以通过指定起始位置和返回的文档数量来获取分页数据。例如，如果要获取第 10-20 条文档，可以设置from为9，size为10，即：
+```sql
+GET /my_index/_search
+{
+    "from": 9,
+    "size": 10,
+    "query": {
+        "match_all": {}
+    }
+}
+
+```
+## 滚动查询
+scroll API 允许在结果集中使用游标来滚动浏览结果，从而进行分页。这个API通常用于处理大型结果集。使用scroll API进行分页，需要在第一次查询中设置scroll参数，该参数指定了结果集的存活时间，然后使用scroll_id来获取下一页结果集。例如，假设要获取第 10-20 条文档，可以使用以下步骤：
+
+第一次查询：
+```sql
+GET /my_index/_search?scroll=1m
+{
+    "size": 10,
+    "query": {
+        "match_all": {}
+    }
+}
+
+```
+在第一次查询中，指定了scroll参数，并设置size为10，表示每次返回10条文档。查询返回的结果中包含了scroll_id。
+
+获取下一页结果集：
+```sql
+GET /_search/scroll
+{
+    "scroll_id": "scroll_id",
+    "scroll": "1m"
+}
+
+```
+## search after
+ES（Elasticsearch）的 Search After 是一种基于游标的分页方式，可以用于获取大量数据时的分页操作。相比于使用 from 和 size 参数的方式，Search After 在处理大数据量时更加高效。
+
+Search After 使用一个类似于游标的方式，在查询后保存上一页的最后一条文档的排序字段值，并在下一页查询时使用该值作为起始点来获取下一页的结果集。以下是 Search After 的使用方法：
+
+首先进行第一次查询，不需要指定 Search After 参数：
+```sql
+GET /my_index/_search
+{
+    "size": 10,
+    "sort": [
+        {"timestamp": "desc"},
+        {"_id": "asc"}
+    ],
+    "query": {
+        "match_all": {}
+    }
+}
+
+```
+在上面的示例中，我们使用 sort 参数按照 timestamp 降序排列，并且使用 _id 升序排列。这是为了保证结果的稳定性，因为在查询过程中可能会有新的文档被添加进来。查询返回的结果中包含了第一页的文档数据和 Search After 参数值。
+
+在获取下一页时，需要将上一页的最后一个文档的排序字段值作为 Search After 参数传入查询中：
+```sql
+GET /my_index/_search
+{
+    "size": 10,
+    "sort": [
+        {"timestamp": "desc"},
+        {"_id": "asc"}
+    ],
+    "search_after": [last_timestamp, last_id],
+    "query": {
+        "match_all": {}
+    }
+}
+
+```
+在上面的示例中，我们将上一页最后一个文档的 timestamp 和 _id 作为 Search After 参数传入查询中，以获取下一页的文档数据。重复执行该步骤，直到获取到指定范围的文档数据。
+
+注意，使用 Search After 时需要注意以下几点：
+
+需要使用唯一的排序字段，以保证分页的正确性。
+在排序字段相同时，需要使用唯一的 _id 排序，以保证分页的正确性。
+在处理大数据量时，需要适当调整分页大小，避免查询效率过低。
 # es 的查询
 todo
 
