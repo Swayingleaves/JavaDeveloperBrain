@@ -678,8 +678,8 @@
   * [禁止直接分页](数据库/Elasticsearch.md#禁止直接分页)
 * [es的分词器有哪些](数据库/Elasticsearch.md#es的分词器有哪些)
 * [es为什么这么快](数据库/Elasticsearch.md#es为什么这么快)
-* [es 的分页方案](数据库/Elasticsearch.md#es 的分页方案)
-* [es 的查询流程](数据库/Elasticsearch.md#es 的查询流程)
+* [es 的分页方案](数据库/Elasticsearch.md#es的分页方案)
+* [es 的查询流程](数据库/Elasticsearch.md#es的查询流程)
 
 ### Nebula Graph[↑↑](#内容概览) 
 * [什么是Nebula Graph](数据库/Nebula.md#什么是nebula-graph)
