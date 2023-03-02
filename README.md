@@ -823,6 +823,13 @@
   * [Zookeeper Leader 选举原理](消息队列/Zookeeper.md#zookeeper-leader-选举原理)
     * [1、服务器启动时的 leader 选举](消息队列/Zookeeper.md#1服务器启动时的-leader-选举)
     * [2、运行过程中的 leader 选举](消息队列/Zookeeper.md#2运行过程中的-leader-选举)
+  * [常见的问题](消息队列/Zookeeper.md#常见的问题)
+    * [什么是Zookeeper？它的作用是什么？](消息队列/Zookeeper.md#什么是zookeeper它的作用是什么)
+    * [Zookeeper是如何实现数据的一致性和可靠性的？](消息队列/Zookeeper.md#zookeeper是如何实现数据的一致性和可靠性的)
+    * [Zookeeper中的watcher是什么？如何使用watcher机制实现分布式锁？](消息队列/Zookeeper.md#zookeeper中的watcher是什么如何使用watcher机制实现分布式锁)
+    * [Zookeeper的性能瓶颈在哪里？如何优化Zookeeper的性能？](消息队列/Zookeeper.md#zookeeper的性能瓶颈在哪里如何优化zookeeper的性能)
+    * [如何在Zookeeper集群中进行数据的备份和恢复？](消息队列/Zookeeper.md#如何在zookeeper集群中进行数据的备份和恢复)
+
 
 ### Pulsar[↑↑](#内容概览)
 - [Pulsar](消息队列/Pulsar.md)
