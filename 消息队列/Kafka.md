@@ -301,6 +301,15 @@ zookeeper.connect=zk1:2181,zk2:2181,zk3:2181 # Zookeeper集群地址
 - 新节点加入后，需要等待一段时间进行重平衡，期间可能会影响到消费者的消费速度。
 - 当节点数量增加时，需要注意调整Kafka的配置，以保证高吞吐量和高可用性。
 
+## Kafka 的分区策略有哪些？
+所谓分区策略就是决定生产者将消息发送到哪个分区的算法。
+
+- RoundRobinPartitioner：轮询分区策略，按照分区编号依次将消息分配到不同的分区。
+- HashedPartitioner：哈希分区策略，将消息的key进行哈希计算，然后将哈希结果对分区数取余，得到消息所在的分区。
+- RangePartitioner：范围分区策略，根据消息key的范围将消息分配到不同的分区。需要在创建主题时指定分区边界。
+- StickyPartitioner：粘性分区策略，将消息发送到同一个分区，直到该分区的消息数量超过阈值，才会将消息发送到下一个分区。这个策略可以用来保证消息的顺序性。
+- CustomPartitioner：自定义分区策略，用户可以根据自己的业务逻辑自定义分区策略。
+
 # 参考文章
 - https://blog.51cto.com/u_15239532/2858247
 - https://www.daimajiaoliu.com/series/kafka/479991a51900405
