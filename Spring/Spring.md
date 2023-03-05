@@ -74,7 +74,7 @@
 
 ## 架构图
 
-![](../img/spring/spring架构图.png)
+<img src="../img/spring/spring架构图.png" width="50%" />
 
 ## 模块
 
@@ -222,7 +222,7 @@ BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProc
 ```java
 public static void main(String[]args){
         ApplicationContext context=new ClassPathXmlApplicationContext("classpath:applicationfile.xml");
-        }
+}
 ```
 
 这里ApplicationContext是一个接口，主要的实现类有：
@@ -274,8 +274,8 @@ public class App {
 ```java
 @Override
 public void refresh()throws BeansException,IllegalStateException{
-// 1. 首先是一个synchronized加锁，当然要加锁，不然你先调一次refresh()然后这次还没处理完又调一次，就会乱套了；
-synchronized (this.startupShutdownMonitor){
+    // 1. 首先是一个synchronized加锁，当然要加锁，不然你先调一次refresh()然后这次还没处理完又调一次，就会乱套了；
+    synchronized (this.startupShutdownMonitor){
         // 2. 这个方法是做准备工作的，记录容器的启动时间、标记“已启动”状态、处理配置文件中的占位符，可以点进去看看，这里就不多说了。
         prepareRefresh();
 
@@ -286,60 +286,55 @@ synchronized (this.startupShutdownMonitor){
         prepareBeanFactory(beanFactory);
 
         try{
-        // 5. 方法是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化，具体的子类可以在这步的时候添加一些特殊的 BeanFactoryPostProcessor 的实现类，来完成一些其他的操作。
-        postProcessBeanFactory(beanFactory);
+            // 5. 方法是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化，具体的子类可以在这步的时候添加一些特殊的 BeanFactoryPostProcessor 的实现类，来完成一些其他的操作。
+            postProcessBeanFactory(beanFactory);
+    
+            // 6. 接下来是这个方法是调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法；
+            invokeBeanFactoryPostProcessors(beanFactory);
+    
+            // 7. 然后这个方法注册 BeanPostProcessor 的实现类，和上面的BeanFactoryPostProcessor 是有区别的，这个方法调用的其实是PostProcessorRegistrationDelegate类的registerBeanPostProcessors方法；
+            // 这个类里面有个内部类BeanPostProcessorChecker，BeanPostProcessorChecker里面有两个方法postProcessBeforeInitialization和postProcessAfterInitialization，这两个方法分别在 Bean 初始化之前和初始化之后得到执行。
+            // 然后回到refresh()方法中继续往下看
+            registerBeanPostProcessors(beanFactory);
+    
+            // 8. 方法是初始化当前 ApplicationContext 的 MessageSource，国际化处理，继续往下
+            initMessageSource();
+    
+            // 9. 方法初始化当前 ApplicationContext 的事件广播器继续往下
+            initApplicationEventMulticaster();
+    
+            // 10. 方法初始化一些特殊的 Bean（在初始化 singleton beans 之前）；继续往下
+            onRefresh();
+    
+            // 11. 方法注册事件监听器，监听器需要实现 ApplicationListener 接口；继续往下
+            registerListeners();
+    
+            // 12. 重点到了 初始化所有的 singleton beans（单例bean），懒加载（non-lazy-init）的除外，这个方法也是等会细说
+            finishBeanFactoryInitialization(beanFactory);
+    
+            // 13. 方法是最后一步，广播事件，ApplicationContext 初始化完成
+            finishRefresh();
+        } catch(BeansException ex){
+            if(logger.isWarnEnabled()){
+                logger.warn("Exception encountered during context initialization - "+"cancelling refresh attempt: "+ex);
+            }
 
-        // 6. 接下来是这个方法是调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法；
-        invokeBeanFactoryPostProcessors(beanFactory);
-
-        // 7. 然后这个方法注册 BeanPostProcessor 的实现类，和上面的BeanFactoryPostProcessor 是有区别的，这个方法调用的其实是PostProcessorRegistrationDelegate类的registerBeanPostProcessors方法；
-        // 这个类里面有个内部类BeanPostProcessorChecker，BeanPostProcessorChecker里面有两个方法postProcessBeforeInitialization和postProcessAfterInitialization，这两个方法分别在 Bean 初始化之前和初始化之后得到执行。
-        // 然后回到refresh()方法中继续往下看
-        registerBeanPostProcessors(beanFactory);
-
-        // 8. 方法是初始化当前 ApplicationContext 的 MessageSource，国际化处理，继续往下
-        initMessageSource();
-
-        // 9. 方法初始化当前 ApplicationContext 的事件广播器继续往下
-        initApplicationEventMulticaster();
-
-        // 10. 方法初始化一些特殊的 Bean（在初始化 singleton beans 之前）；继续往下
-        onRefresh();
-
-        // 11. 方法注册事件监听器，监听器需要实现 ApplicationListener 接口；继续往下
-        registerListeners();
-
-        // 12. 重点到了 初始化所有的 singleton beans（单例bean），懒加载（non-lazy-init）的除外，这个方法也是等会细说
-        finishBeanFactoryInitialization(beanFactory);
-
-        // 13. 方法是最后一步，广播事件，ApplicationContext 初始化完成
-        finishRefresh();
+            // Destroy already created singletons to avoid dangling resources.
+            // 销毁已经初始化的 singleton 的 Beans，以免有些 bean 会一直占用资源
+            destroyBeans();
+    
+            // Reset 'active' flag.
+            cancelRefresh(ex);
+    
+            // Propagate exception to caller.
+            throw ex;
+        } finally{
+            // Reset common introspection caches in Spring's core, since we
+            // might not ever need metadata for singleton beans anymore...
+            resetCommonCaches();
         }
-
-        catch(BeansException ex){
-        if(logger.isWarnEnabled()){
-        logger.warn("Exception encountered during context initialization - "+
-        "cancelling refresh attempt: "+ex);
-        }
-
-        // Destroy already created singletons to avoid dangling resources.
-        // 销毁已经初始化的 singleton 的 Beans，以免有些 bean 会一直占用资源
-        destroyBeans();
-
-        // Reset 'active' flag.
-        cancelRefresh(ex);
-
-        // Propagate exception to caller.
-        throw ex;
-        }
-
-        finally{
-        // Reset common introspection caches in Spring's core, since we
-        // might not ever need metadata for singleton beans anymore...
-        resetCommonCaches();
-        }
-        }
-        }
+    }
+}
 ```
 
 ### Spring bean的生命周期
@@ -707,21 +702,21 @@ public class AccountController {
 - TransactionTemplate
 
 ```java
-  @Autowired
+@Autowired
 private TransactionTemplate transactionTemplate;
 
 public void testTransaction(){
-        transactionTemplate.execute(new TransactionCallbackWithoutResult(){
-@Override
-protected void doInTransactionWithoutResult(TransactionStatus status){
-        try{
-        //...业务代码
-        }catch(Exception e){
-        status.setRollbackOnly();
+    transactionTemplate.execute(new TransactionCallbackWithoutResult(){
+        @Override
+        protected void doInTransactionWithoutResult(TransactionStatus status){
+                try{
+                    //...业务代码
+                }catch(Exception e){
+                    status.setRollbackOnly();
+                }
         }
-        }
-        });
-        }
+    });
+}
 ```
 
 - TransactionManager
@@ -733,12 +728,12 @@ private PlatformTransactionManager transactionManager;
 public void testTransaction2(){
         TransactionStatus status=transactionManager.getTransaction(new DefaultTransactionDefinition());
         try{
-        //...业务代码
-        transactionManager.commit(status);
+            //...业务代码
+            transactionManager.commit(status);
         }catch(Exception e){
-        transactionManager.rollback(status);
+            transactionManager.rollback(status);
         }
-        }
+}
 ```
 
 注解
