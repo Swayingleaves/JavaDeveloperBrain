@@ -22,7 +22,9 @@
 
 # 内容概览[↓↓](#最后)
 
-<img src="img/Java-总览.png" width="50%" />
+<div align=center>
+  <img src="img/Java-总览.png" align="center" width="50%" />
+</div>
 
 * [Java-基础部分](#java-基础部分)
 * [Java-JVM](#java-jvm)
