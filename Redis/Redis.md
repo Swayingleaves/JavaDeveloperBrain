@@ -863,58 +863,19 @@ Redis 提供了复制（replication）功能，可以实现当一台数据库中
 哨兵模式是一种特殊的模式，首先 Redis 提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是哨兵通过发送命令，等待Redis服务器响应，从而监控运行的多个 Redis 实例
 
 #### 原理图
-![](../img/redis/哨兵模式.png)
+<img src="../img/redis/哨兵模式.png" width="70%" />
 
 #### 哨兵模式的作用
 - 通过发送命令，让 Redis 服务器返回监控其运行状态，包括主服务器和从服务器；
 - 当哨兵监测到 master 宕机，会自动将 slave 切换成 master ，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它们切换主机；
 
 #### 多哨兵模式
+<img src="../img/redis/多哨兵模式.png" width="70%" />
 
-![](../img/redis/多哨兵模式.png)				
 一个哨兵进程对Redis服务器进行监控，也可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式
 
 #### 故障切换的过程
 - 假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行 failover 过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为主观下线。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行 failover 操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机，这个过程称为客观下线。这样对于客户端而言，一切都是透明的。
-
-#### 哨兵的选举算法
-
-Raft算法
-
-Raft是一个用户管理日志一致性的协议，它将分布式一致性问题分解为多个子问题：Leader选举、日志复制、安全性、日志压缩等。Raft将系统中的角色分为领导者（Leader）、跟从者（Follower）和候选者（Candidate）
-- Leader（领导者-日志管理） 负责日志的同步管理，处理来自客户端的请求，与 Follower 保持这 heartBeat 的联系；
-- Follower（追随者-日志同步） 刚启动时所有节点为Follower状态，响应Leader的日志同步请求，响应Candidate的请求， 把请求到 Follower 的事务转发给 Leader；
-- Candidate（候选者-负责选票） 负责选举投票，Raft 刚启动时由一个节点从 Follower 转为 Candidate 发起选举，选举出Leader 后从 Candidate 转为 Leader 状态；
-
-Term（任期）
-- 在 Raft 中使用了一个可以理解为周期（第几届、任期）的概念，用 Term 作为一个周期，每个 Term 都是一个连续递增的编号，每一轮选举都是一个 Term 周期，在一个 Term 中只能产生一个 Leader；当某节点收到的请求中 Term 比当前 Term 小时则拒绝该请求
-
-RPC
-- Raft算法中服务器节点之间通信使用远程过程调用（RPC），并且基本的一致性算法只需要两种类型的RPC，为了在服务器之间传输快照增加了第三种 RPC。
-  - RequestVote RPC：候选人在选举期间发起。
-  - AppendEntries RPC：领导人发起的一种心跳机制，复制日志也在该命令中完成。
-  - InstallSnapshot RPC：领导者使用该RPC来发送快照给太落后的追随者。
-
-选举（Election）
-
-Raft 的选举由定时器来触发，每个节点的选举定时器时间都是不一样的，开始时状态都为 Follower 某个节点定时器触发选举后 Term 递增，状态由 Follower 转为 Candidate，向其他节点 发起 RequestVote RPC 请求，这时候有三种可能的情况发生
-- 1：该 RequestVote 请求接收到 n/2+1（过半数）个节点的投票，从 Candidate 转为 Leader， 向其他节点发送 heartBeat 以保持 Leader 的正常运转。
-  - 赢得了多数的选票，成功选举为Leader
-- 2：在此期间如果收到其他节点发送过来的 AppendEntries RPC 请求，如该节点的 Term 大 则当前节点转为 Follower，否则保持 Candidate 拒绝该请求。
-  - 收到了Leader的消息，表示有其它服务器已经抢先当选了Leader
-- 3：Election timeout 发生则 Term 递增，重新发起选举
-  - 没有服务器赢得多数的选票，Leader选举失败，等待选举时间超时后发起下一次选举
-
-在一个 Term 期间每个节点只能投票一次，所以当有多个 Candidate 存在时就会出现每个 Candidate 发起的选举都存在接收到的投票数都不过半的问题，这时每个 Candidate 都将 Term 递增、重启定时器并重新发起选举，由于每个节点中定时器的时间都是随机的，所以就不会多次 存在有多个 Candidate 同时发起投票的问题。
-- 如果不设置定时器，或者定时器各节点都是一样的就会出现同时发起选举，但都未得到选票过半，然后选举失败后又重新选举，循环
-
-日志同步
-- 在 Raft 中leader当接收到客户端的日志（事务请求）后先把该日志追加到本地的 Log 中，然后通过 heartbeat 把该 Entry 同步给其他 Follower，Follower 接收到日志后记录日志然后向 Leader 发送 ACK，当 Leader 收到大多数（n/2+1）Follower 的 ACK 信息后将该日志设置为已提交并追加到 本地磁盘中，通知客户端并在下个 heartbeat 中 Leader 将通知所有的 Follower 将该日志存储在 自己的本地磁盘中。
-
-安全性（Safety）
-- 拥有最新的已提交的log entry的Follower才有资格成为Leader
-  - 这个保证是在RequestVote RPC中做的，Candidate在发送RequestVote RPC时，要带上自己的最后一条日志的term和log index，其他节点收到消息时，如果发现自己的日志比请求中携带的更新，则拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term更大，则term大的更新，如果term一样大，则log index更大的更新。
-- Leader只能推进commit index来提交当前term的已经复制到大多数服务器上的日志，旧term日志的提交要等到提交当前term的日志来间接提交（log index 小于 commit index的日志被间接提交）。
 
 #### 哨兵模式的工作方式
 - 每个Sentinel（哨兵）进程以每秒钟一次的频率向整个集群中的 Master 主服务器，Slave 从服务器以及其他Sentinel（哨兵）进程发送一个 PING 命令。
@@ -940,17 +901,21 @@ Redis Cluster是一种服务器 Sharding 技术，3.0版本开始正式提供。
 ##### 数据分区方式
 - 顺序分布
 
-  ![](../img/redis/cluster数据分布方式-顺序分布.png)
+  <img src="../img/redis/cluster数据分布方式-顺序分布.png" width="70%" />
+  
   特点：键值业务相关；数据分散，但是容易造成访问倾斜；支持顺序访问；支持批量操作
 
-- 哈希分布	
-  - ![](../img/redis/cluster数据分布方式-hash分布.png)				
+- 哈希分布
+
+  <img src="../img/redis/cluster数据分布方式-hash分布.png" width="70%" />
+
   特点：数据分散度高；键值分布与业务无关；不支持顺序访问；支持批量操作。
 
 - 一致性哈希分布
   - 问题：对于上面介绍的哈希分布，大家可以想一下，如果向集群中增加节点，或者集群中有节点宕机，这个时候应该怎么处理？
     - 增加节点
-    ![](../img/redis/一致性hash增加节点.png)
+    <img src="../img/redis/一致性hash增加节点" width="70%" />
+    
       - 如上图所示，总共10个数据通过节点取余hash(key)%/3 的方式分布到3个节点，这时候由于访问量变大，要进行扩容，由 3 个节点变为 4 个节点。
       - 我们发现，如图所示，数据除了标红的1 2 没有进行迁移，别的数据都要进行变动，达到了80%，如果这时候并发很高，80%的数据都要从下层节点（比如数据库）获取，会给下层节点造成很大的访问压力，这是不能接受的。
       - 即使我们进行翻倍扩容，从3个节点增加到6个节点，其数据迁移也在50%左右
