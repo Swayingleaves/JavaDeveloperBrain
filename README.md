@@ -24,6 +24,8 @@
 
 <div align=center>
   <img src="img/Java-总览.png" align="center" width="50%" />
+
+  <a href="img/Java-总览.png">大图</a>
 </div>
 
 * [Java-基础部分](#java-基础部分)
