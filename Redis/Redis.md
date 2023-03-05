@@ -948,14 +948,14 @@ Redis Cluster是一种服务器 Sharding 技术，3.0版本开始正式提供。
   - objec1->cache A2 ； objec2->cache A1 ； objec3->cache C1 ； objec4->cache C2 ；
 - 因此对象 object1 和 object2 都被映射到了 cache A 上，而 object3 和 object4 映射到了 cache C 上；平衡性有了很大提高。 引入“虚拟节点”后，映射关系就从 { 对象 -> 节点 } 转换到了 { 对象 -> 虚拟节点 } 。查询物体所在 cache 时的映射关系如下图 所示
 
-![](../img/redis/虚拟节点.png)
+<img src="../img/redis/虚拟节点.png" width="50%" />
 
 #### Redis Cluster虚拟槽分区
 Redis集群数据分布没有使用一致性哈希分布，而是使用虚拟槽分区概念
 
 Redis内部内置了序号 0-16383 个槽位，每个槽位可以用来存储一个数据集合，将这些槽位按顺序分配到集群中的各个节点。每次新的数据到来，会通过哈希函数 CRC16(key) 算出将要存储的槽位下标，然后通过该下标找到前面分配的Redis节点，最后将数据存储到该节点中
 
-![](../img/redis/redis-hash槽.png)	
+<img src="../img/redis/redis-hash槽.png" width="50%" />
 
 特点
 - 解耦 数据 和 节点 之间的关系，简化了节点 扩容 和 收缩 难度。
