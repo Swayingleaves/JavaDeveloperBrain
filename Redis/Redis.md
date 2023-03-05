@@ -180,7 +180,8 @@ ptr 是一个指针，指向实际保存值的数据结构，这个数据结构�
 举个例子，如果一个 redisObject 的 type 属性为 REDIS_LIST ， encoding 属性为 REDIS_ENCODING_LINKEDLIST ，那么这个对象就是一个 Redis 列表，它的值保存在一个双端链表内，而 ptr 指针就指向这个双端链表；
 
 每个类型都会有两种或以上的实现
-![](../img/redis/类型底层实现.png)				
+
+<img src="../img/redis/类型底层实现.png" width="50%" />
 
 ### string
 #### int整数
@@ -191,7 +192,7 @@ ptr 是一个指针，指向实际保存值的数据结构，这个数据结构�
 
 结构图
 
-![](../img/redis/sds结构图.png)		
+<img src="../img/redis/sds结构图.png" width="50%" />
 
 我们把上图中非char数组（变量名为buf）的部分都统称为header
 
@@ -327,7 +328,8 @@ ziplist压缩列表
 #### hashtable字典
 结构体
 
-![](../img/redis/hashtable结构体.png)					
+<img src="../img/redis/hashtable结构体.png" width="50%" />
+
 - dict是字典的包装对象，居于最外层
 - ht[2]是包含两个项的哈希表的数组，一般情况下，只使用h[0]，h[1]只有在rehash的时候才会使用
   - 字典通过“拉链法”来解决冲突问题的，dictEntry结构体的*next指针指向了其拉链列表的下一个节点。
