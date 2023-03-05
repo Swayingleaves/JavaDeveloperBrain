@@ -53,7 +53,8 @@ ChannelPipeline 为 ChannelHandler 链提供了一个容器并定义了用于沿
 一个数据或者事件可能会被多个 Handler 处理，在这个过程中，数据或者事件经流 ChannelPipeline，由 ChannelHandler 处理。在这个处理过程中，一个 ChannelHandler 接收数据后处理完成后交给下一个 ChannelHandler，或者什么都不做直接交给下一个 ChannelHandler
  
 图示
-![](../img/netty/channelPipeline.png)			
+
+<img src="../img/netty/channelPipeline.png" width="50%" />
 
 当一个数据流进入 ChannlePipeline 时，它会从 ChannelPipeline 头部开始传给第一个 ChannelInboundHandler ，当第一个处理完后再传给下一个，一直传递到管道的尾部。与之相对应的是，当数据被写出时，它会从管道的尾部开始，先经过管道尾部的 “最后” 一个ChannelOutboundHandler，当它处理完成后会传递给前一个 ChannelOutboundHandler 。
 ## netty的使用示例
@@ -158,7 +159,7 @@ public void connect(String host, int port) throws Exception {
 基于对象池的 ByteBuf可以重用 ByteBuf对象，内部维护了一个内存池，可以循环利用已创建的 ByteBuf，提升内存的使用效率，降低由于高负载导致的频繁GC。测试表明使用内存池后的Nety在高负载、大并发的冲击下内存和GC更加平稳
 ### 高效的Reactor线程模型
 #### Reactor 单线程模型
-![](../img/netty/reactor单线程.png)
+<img src="../img/netty/reactor单线程.png" width="50%" />
 
 流程
 - Reactor 对象通过 Select 监控客户端请求事件，收到事件后通过 Dispatch 进行分发。
@@ -174,7 +175,8 @@ public void connect(String host, int port) throws Exception {
 
 使用场景：客户端的数量有限，业务处理非常快速，比如 Redis，业务处理的时间复杂度 O(1)。
 #### Reactor 多线程模型
-![](../img/netty/reactor多线程.png)					
+<img src="../img/netty/reactor多线程.png" width="50%" />
+
 流程
 - Reactor 对象通过 Select 监控客户端请求事件，收到事件后通过 Dispatch 进行分发。
 - 如果是建立连接请求事件，则由 Acceptor 通过 Accept 处理连接请求，然后创建一个 Handler 对象处理连接完成后续的各种事件。
@@ -188,7 +190,7 @@ public void connect(String host, int port) throws Exception {
 缺点：多线程数据共享和访问比较复杂；Reactor 承担所有事件的监听和响应，在单线程中运行，高并发场景下容易成为性能瓶颈。
 
 #### （采用）主从 Reactor 多线程模型
-![](../img/netty/主从Reactor多线程模型.png)
+<img src="../img/netty/主从Reactor多线程模型.png" width="50%" />
 
 流程
 - Reactor 主线程 MainReactor 对象通过 Select 监控建立连接事件，收到事件后通过 Acceptor 接收，处理建立连接事件。
