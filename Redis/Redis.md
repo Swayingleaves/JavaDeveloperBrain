@@ -1037,12 +1037,12 @@ Redis Cluster 中的节点会定期检查已经发送 PING 消息的接收方节
 
 # Redis cluster伸缩的原理
 ## 集群扩容
-![](../img/redis/Redis-cluster扩容原理.png)
+<img src="../img/redis/Redis-cluster扩容原理.png" width="50%" />
 
 每个master把一部分槽和数据迁移到新的节点node04
 
 ## 集群收缩
-![](../img/redis/Redis-cluster收缩原理.png)
+<img src="../img/redis/Redis-cluster收缩原理.png" width="50%" />
 
 - 如果下线的是slave，那么通知其他节点忘记下线的节点
 - 如果下线的是master，那么将此master的slot迁移到其他master之后，通知其他节点忘记此master节点
