@@ -935,7 +935,7 @@ Redis Cluster是一种服务器 Sharding 技术，3.0版本开始正式提供。
       
 - 原理图
 
-<img src="../img/redis/一致性hash原理图.png" width="50%" />
+<img src="../img/redis/一致性hash原理图.png" width="30%" />
 
 假设有一个哈希环，从0到2的32次方，均匀的分成三份，中间存放三个节点，沿着顺时针旋转，从Node1到Node2之间的数据，存放在Node2节点上；从Node2到Node3之间的数据，存放在Node3节点上，依次类推。
 
