@@ -78,8 +78,8 @@ public void findStudent() {
 }
 ```
 ## mybatis执行8步骤
+<img src="../img/mybatis/mybatis执行8步走.png" width="50%" />
 
-![](../img/mybatis/mybatis执行8步走.png)
 ```java
 public void testStart() throws IOException {
     //1.mybatis 主配置文件
@@ -122,7 +122,7 @@ public void testStart() throws IOException {
 
 ## MyBatis 整体架构
 
-![](../img/mybatis/mybatis整体架构.png)
+<img src="../img/mybatis/mybatis整体架构.png" width="50%" />
 
 ### 基础支持层
 
@@ -138,7 +138,7 @@ public void testStart() throws IOException {
 
 ### 核心处理层
 
-![](../img/mybatis/核心处理层.png)
+<img src="../img/mybatis/核心处理层.png" width="50%" />
 
 - SqlSession 接口定义了暴露给应用程序调用的 API，接口层在收到请求时会调用核心处理层的相应模块完成具体的数据库操作
 - 配置解析：MyBatis 初始化时会加载配置文件、映射文件和 Mapper 接口的注解信息，解析后会以对象的形式保存到 Configuration 对象中
