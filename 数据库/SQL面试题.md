@@ -51,3 +51,15 @@ EXPLAIN SELECT * FROM test WHERE col1=1;
 4、查找效率： char查找效率会很高，varchar查找效率会更低。
 
 5、尾部空格： char插入时可省略，vaechar插入时不会省略，查找时省略。
+
+## sql in 的最大长度
+
+Oracle中，in语句中可放的最大参数个数是1000个。之前遇到超过1000的情况，可用如下语句，但如此多参数项目会低，可考虑用别的方式优化。
+
+mysql中，in语句中参数个数是不限制的。不过对整段sql语句的长度有了限制（max_allowed_packet）。默认是4M
+
+如果需要处理大量数据，可以考虑增加 max_allowed_packet 的值来提高查询效率。可以通过修改 MySQL 的配置文件或者在启动命令中指定该变量的值来进行修改。例如：
+```text
+mysql --max_allowed_packet=64M
+```
+请注意，在修改此变量的值之前，需要仔细考虑系统资源和性能等方面的因素，以避免对系统造成不必要的负担。
