@@ -48,15 +48,31 @@ Netty 为异步非阻塞，即所有的 I/O 操作都为异步的，因此，我
 - ChannelHandler 为 Netty 中最核心的组件，它充当了所有处理入站和出站数据的应用程序逻辑的容器。ChannelHandler 主要用来处理各种事件，这里的事件很广泛，比如可以是连接、数据接收、异常、数据转换等。
 - ChannelHandler 有两个核心子类 ChannelInboundHandler 和 ChannelOutboundHandler，其中 ChannelInboundHandler 用于接收、处理入站数据和事件，而 ChannelOutboundHandler 则相反
 ### ChannelPipeline
-ChannelPipeline 为 ChannelHandler 链提供了一个容器并定义了用于沿着链传播入站和出站事件流的 API
+Netty 的 ChannelPipeline，它维护了一个 ChannelHandler 责任链，负责拦截或者处理 inbound（入站）和 outbound（出站）的事件和操作。这一节给出更深层次的描述。
 
-一个数据或者事件可能会被多个 Handler 处理，在这个过程中，数据或者事件经流 ChannelPipeline，由 ChannelHandler 处理。在这个处理过程中，一个 ChannelHandler 接收数据后处理完成后交给下一个 ChannelHandler，或者什么都不做直接交给下一个 ChannelHandler
- 
-图示
+ChannelPipeline 实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及 Channel 中各个 ChannelHandler 如何相互交互。
 
-<img src="../img/netty/channelPipeline.png" width="50%" />
+每个 Netty Channel 包含了一个 ChannelPipeline（其实 Channel 和 ChannelPipeline 互相引用），而 ChannelPipeline 又维护了一个由 ChannelHandlerContext 构成的双向循环列表，其中的每一个 ChannelHandlerContext 都包含一个 ChannelHandler。（前文描述的时候为了简便，直接说 ChannelPipeline 包含了一个 ChannelHandler 责任链，这里给出完整的细节。）
 
-当一个数据流进入 ChannlePipeline 时，它会从 ChannelPipeline 头部开始传给第一个 ChannelInboundHandler ，当第一个处理完后再传给下一个，一直传递到管道的尾部。与之相对应的是，当数据被写出时，它会从管道的尾部开始，先经过管道尾部的 “最后” 一个ChannelOutboundHandler，当它处理完成后会传递给前一个 ChannelOutboundHandler 。
+<img src="../img/netty/ChannelPipeline.png" width="50%" />
+
+rContext、ChannelHandler、Channel、ChannelPipeline 这几个组件之间互相引用，互为各自的属性，你中有我、我中有你。
+
+在处理入站事件的时候，入站事件及数据会从 Pipeline 中的双向链表的头 ChannelHandlerContext 流向尾 ChannelHandlerContext，并依次在其中每个 ChannelInboundHandler（例如解码 Handler）中得到处理；出站事件及数据会从 Pipeline 中的双向链表的尾 ChannelHandlerContext 流向头 ChannelHandlerContext，并依次在其中每个 ChannelOutboundHandler（例如编码 Handler）中得到处理。
+
+<img src="../img/netty/ChannelPipeline_inout.png" width="50%" />
+
+### Netty 的 TaskQueue
+在 Netty 的每一个 NioEventLoop 中都有一个 TaskQueue，设计它的目的是在任务提交的速度大于线程的处理速度的时候起到缓冲作用。或者用于异步地处理 Selector 监听到的 IO 事件
+
+<img src="../img/netty/TaskQueue.png" width="50%" />
+
+Netty 中的任务队列有三种使用场景：
+
+1. 处理用户程序的自定义普通任务的时候
+2. 处理用户程序的自定义定时任务的时候
+3. 非当前 Reactor 线程调用当前 Channel 的各种方法的时候。
+
 ## netty的使用示例
 ### 服务端
 ```java
@@ -110,6 +126,26 @@ public void connect(String host, int port) throws Exception {
     }
 }
 ```
+## 服务端 Netty 的工作架构图
+
+![](../img/netty/服务端Netty的工作架构图.png)
+
+关于这张图，作以下几点说明：
+
+1. Netty 抽象出两组线程池：BossGroup 和 WorkerGroup，也可以叫做 BossNioEventLoopGroup 和 WorkerNioEventLoopGroup。每个线程池中都有 NioEventLoop 线程。BossGroup 中的线程专门负责和客户端建立连接，WorkerGroup 中的线程专门负责处理连接上的读写。BossGroup 和 WorkerGroup 的类型都是 NioEventLoopGroup。
+2. NioEventLoopGroup 相当于一个事件循环组，这个组中含有多个事件循环，每个事件循环就是一个 NioEventLoop。
+3. NioEventLoop 表示一个不断循环的执行事件处理的线程，每个 NioEventLoop 都包含一个 Selector，用于监听注册在其上的 Socket 网络连接（Channel）。
+4. NioEventLoopGroup 可以含有多个线程，即可以含有多个 NioEventLoop。
+5. 每个 BossNioEventLoop 中循环执行以下三个步骤：
+   1. select：轮训注册在其上的 ServerSocketChannel 的 accept 事件（OP_ACCEPT 事件）
+   2. processSelectedKeys：处理 accept 事件，与客户端建立连接，生成一个 NioSocketChannel，并将其注册到某个 WorkerNioEventLoop 上的 Selector 上
+   3. runAllTasks：再去以此循环处理任务队列中的其他任务
+6. 每个 WorkerNioEventLoop 中循环执行以下三个步骤：
+   1. select：轮训注册在其上的 NioSocketChannel 的 read/write 事件（OP_READ/OP_WRITE 事件）
+   2. processSelectedKeys：在对应的 NioSocketChannel 上处理 read/write 事件
+   3. runAllTasks：再去以此循环处理任务队列中的其他任务
+7. 在以上两个processSelectedKeys步骤中，会使用 Pipeline（管道），Pipeline 中引用了 Channel，即通过 Pipeline 可以获取到对应的 Channel，Pipeline 中维护了很多的处理器（拦截处理器、过滤处理器、自定义处理器等）。这里暂时不详细展开讲解 Pipeline。
+
 ## TCP粘包/拆包问题
 ### 什么是粘包拆包
 一个完整的包在发送过程中可能会被拆成多个包进行发送
@@ -216,6 +252,116 @@ Netty 默认提供了对Google Protobuf 的支持，通过扩展Netty 的编解�
 - SO_TCPNODELAY：NAGLE 算法通过将缓冲区内的小封包自动相连，组成较大的封包，阻止大量小封包的发送阻塞网络，从而提高网络应用效率。但是对于时延敏感的应用场景需要关闭该优化算法；
 - 软中断：如果Linux 内核版本支持RPS（2.6.35 以上版本），开启RPS 后可以实现软中断，提升网络吞吐量。RPS根据数据包的源地址，目的地址以及目的和源端口，计算出一个hash 值，然后根据这个hash 值来选择软中断运行的cpu，从上层来看，也就是说将每个连接和cpu 绑定，并通过这个hash 值，来均衡软中断在多个cpu 上，提升网络并行处理性能
 
+
+## JUC线程池和Netty线程池在架构设计上有什么区别？
+JUC线程池（Java Util Concurrent线程池）和Netty线程池都是用于管理和复用线程的工具，但它们的架构设计有一些区别：
+
+1. 任务执行方式：JUC线程池是基于阻塞队列的方式执行任务，即将任务放入队列中，然后等待线程来取出并执行任务。而Netty线程池则是基于事件循环的方式执行任务，即通过事件的触发来执行相应的任务。
+2. 线程数量的管理：JUC线程池中线程的数量是固定的，由程序员手动设置。而Netty线程池中线程的数量是动态的，可以根据负载情况自动调整。
+3. 线程池的结构：JUC线程池是一个单一的线程池，所有的任务都是由同一个线程池管理。而Netty线程池采用了多级线程池的结构，即将线程池分成多个层级，不同的层级负责不同的任务，从而提高了性能和效率。
+4. 线程池的作用范围：JUC线程池是一个通用的线程池，可以用于任何类型的应用程序。而Netty线程池是专门为网络应用程序设计的，它使用了一些专门的技术来提高网络通信的效率和性能。
+
+总的来说，JUC线程池更加通用，适用于各种类型的应用程序，而Netty线程池则专门针对网络应用程序进行了优化，能够更好地提高网络通信的效率和性能。
+
+
+## netty的线程池设计中，是如何实现线程懒加载的
+在Netty的线程池设计中，实现线程懒加载主要是通过ChannelPipeline的设计来实现的。
+
+在Netty中，每个Channel都有一个ChannelPipeline，ChannelPipeline由一系列的ChannelHandler组成，每个ChannelHandler都会处理ChannelPipeline中的事件。当一个Channel被创建时，其对应的ChannelPipeline并不会立即创建并初始化所有的ChannelHandler，而是等到第一次有事件触发时才进行初始化。
+
+当有事件发生时，Netty会从线程池中获取一个空闲的线程来执行ChannelPipeline中的ChannelHandler，如果线程池中没有空闲线程，则会根据需要创建新的线程。在这个过程中，线程池会根据负载情况动态调整线程的数量。
+
+由于ChannelPipeline的设计，Netty能够实现线程懒加载，即只有在有事件发生时才会创建和初始化ChannelHandler和对应的线程。这样能够有效地减少线程的创建和销毁，提高了线程的利用率，同时也能够节省系统资源。
+
+## netty的选择器策略设定的目的是什么
+Netty是一个基于NIO（非阻塞I/O）的网络框架，它使用Java的选择器（Selector）来实现事件驱动的网络编程。在Netty中，选择器策略的设定是为了实现更好的网络性能和可靠性。
+
+选择器策略指定了Netty如何处理网络事件，包括连接、读、写和异常等。它的目的是通过调整选择器策略来提高网络的吞吐量和响应速度，并减少网络故障的风险。
+
+具体来说，选择器策略的设定会影响以下方面：
+
+1. 网络吞吐量：选择器策略决定了Netty如何处理网络事件，它可以影响事件处理的效率和网络吞吐量。例如，如果选择的策略是轮询（Round Robin）方式，那么Netty将按照连接的顺序依次处理事件，这种方式可能会导致某些连接被阻塞，从而降低整个网络的吞吐量。
+2. 响应速度：选择器策略也会影响Netty的响应速度。如果选择的策略是优先级（Priority）方式，那么Netty将优先处理重要的事件，这种方式可以提高网络的响应速度。
+3. 网络故障：选择器策略还可以影响网络故障的风险。例如，如果选择的策略是故障转移（Failover）方式，那么Netty将在一个连接失败时自动切换到另一个可用的连接，从而提高网络的可靠性。
+
+因此，选择器策略的设定对于Netty的性能和可靠性都非常重要，需要根据实际的应用场景来选择最适合的策略。
+
+## nioeventloop可以处理普通任务、定时任务以及IO事件，具体的流程是什么
+NioEventLoop是Netty中的一个关键组件，它负责处理所有的I/O事件、定时任务和普通任务。下面是NioEventLoop处理这些任务的具体流程：
+
+1. 初始化：当NioEventLoop创建时，它会初始化一些必要的变量和数据结构，包括选择器（Selector）和任务队列（Task Queue）等。
+2. 运行循环：NioEventLoop会进入一个无限循环中，不断地处理I/O事件、定时任务和普通任务。在循环的每个周期内，NioEventLoop会执行以下步骤：
+   1. 处理I/O事件：NioEventLoop会从选择器中获取已经就绪的I/O事件，并将其分发到相应的ChannelHandler中进行处理。具体来说，NioEventLoop会调用ChannelHandler的相应方法（如channelRead()）来处理读取事件、写入事件和连接事件等。
+   2. 处理定时任务：NioEventLoop会检查当前是否有定时任务需要执行。如果有，它会从定时任务队列中获取任务，并执行相应的操作。例如，如果定时任务是定时发送心跳包，则NioEventLoop会将心跳包发送到相应的服务器。
+   3. 处理普通任务：NioEventLoop还可以处理普通任务，包括用户自定义的任务和Netty内部的任务。当有普通任务需要执行时，NioEventLoop会将其加入到任务队列中，并在下一个周期中执行。
+   4. 处理关闭事件：如果NioEventLoop被关闭，则循环会停止并退出。
+3. 优化：NioEventLoop还会执行一些优化操作，例如调整I/O事件的顺序、批量处理任务、调整定时任务的延迟等，以提高系统的性能和响应速度。
+
+总体来说，NioEventLoop采用一个高效的事件循环模型，通过不断地处理I/O事件、定时任务和普通任务，实现了高性能、低延迟的网络通信。
+
+## eventloop可以对于多个channel，两者之间是如何绑定的
+在Netty中，一个EventLoop对象可以被多个Channel对象共享，而一个Channel对象也只会绑定到一个EventLoop对象上。这种关系是通过EventLoopGroup来建立的。
+
+在Netty中，每个EventLoopGroup对象都包含一个或多个EventLoop对象，而每个EventLoop对象则维护着一个选择器（Selector）以及一个任务队列（TaskQueue）。当一个Channel对象被创建时，它会被绑定到一个EventLoop对象上，而EventLoop对象则负责处理该Channel上的所有事件。
+
+多个Channel对象可以共享一个EventLoop对象，因为EventLoop对象内部使用的是事件循环机制。EventLoop对象会维护一个任务队列，以此来处理Channel对象的所有事件。当多个Channel对象共享一个EventLoop对象时，它们的事件会被加入到同一个任务队列中，并由同一个EventLoop对象来处理。
+
+在Netty中，Channel对象和EventLoop对象之间的绑定关系是通过EventLoopGroup对象来实现的，EventLoopGroup对象会根据一定的算法选择一个EventLoop对象来绑定Channel对象，这种绑定关系是动态的，可以随着系统负载的变化而自动调整。这样做的目的是为了最大化地利用系统资源，提高系统的性能和稳定性。
+
+## 什么是水平触发，什么是边缘触发
+水平触发（Level-Triggered）和边缘触发（Edge-Triggered）是两种不同的IO事件触发模式，常用于IO多路复用中。
+
+水平触发是指在IO事件未被处理的情况下，只要该IO事件的状态处于“可读”或“可写”状态，系统就会不断地通知该IO事件的处理程序去处理该事件。也就是说，水平触发是在IO事件状态未变化的情况下，不断地通知事件处理程序去处理事件。通常情况下，IO事件的状态变化比较频繁，因此水平触发的方式会不断地触发事件处理程序，导致系统资源的浪费。
+
+边缘触发是指只有在IO事件状态发生变化时才会通知事件处理程序去处理该事件。也就是说，边缘触发是在IO事件状态发生变化时，才触发事件处理程序去处理事件。由于边缘触发只在事件状态变化时触发事件处理程序，因此可以避免不必要的事件处理，减少系统资源的浪费，提高系统性能。
+
+在Netty中，默认情况下采用的是水平触发的方式，但也提供了边缘触发的选项。边缘触发需要调用ChannelOption.TCP_NODELAY方法来设置，一旦设置了边缘触发模式，Netty就会在事件状态变化时触发事件处理程序去处理事件。
+
+Java NIO（New IO）使用的是水平触发（Level-Triggered）的方式，也就是说，只要IO事件的状态处于“可读”或“可写”状态，系统就会不断地通知该IO事件的处理程序去处理该事件，直到该事件被处理完成。Java NIO是通过Selector来实现多路复用，Selector会不断地轮询已经注册的Channel，当Channel有就绪事件时，Selector就会通知事件处理程序去处理该事件。因此，Java NIO使用的是水平触发的方式，而非边缘触发。
+
+## netty的AttributeKey、AttributeMap和Attribute
+在Netty中，AttributeKey、AttributeMap和Attribute都是用于在Channel和ChannelHandlerContext之间共享数据的机制。
+
+AttributeKey是一个类似于Map中的键值对，可以被用于在Channel和ChannelHandlerContext之间存储和共享数据。每个AttributeKey对象都对应一个唯一的key值。
+
+AttributeMap是一个接口，表示一个存储Attribute对象的容器。它是一个可扩展的接口，定义了一些常用的方法，如添加、获取和删除Attribute对象等。在Netty中，Channel和ChannelHandlerContext都实现了AttributeMap接口，因此都可以用于存储和共享数据。
+
+Attribute是一个类，它是AttributeMap中的一个元素。每个Attribute对象都与一个唯一的AttributeKey相关联，可以用于在Channel和ChannelHandlerContext之间存储和共享数据。在Netty中，Attribute对象通过AttributeMap接口的方法进行添加、获取和删除等操作。
+
+通过使用AttributeKey、AttributeMap和Attribute，Netty提供了一种方便的机制，可以在不同的Channel和ChannelHandlerContext之间共享数据，实现了数据在不同组件之间的传递和共享。
+
+## netty的fastThreadLocal fast在什么地方
+在Netty中，FastThreadLocal是一个高性能的ThreadLocal实现，其中的Fast表示其具有较高的性能。
+
+与JDK提供的ThreadLocal相比，FastThreadLocal具有更快的访问速度和更低的内存占用，这是由于它的底层实现方式不同。JDK的ThreadLocal底层使用的是Map数据结构，而FastThreadLocal则使用的是数组，通过使用数组可以避免Map的开销。
+
+在FastThreadLocal的底层实现中，每个线程都有自己的数组，这些数组中存储了该线程对应的FastThreadLocal变量的值。这样，在访问线程局部变量时，不需要进行同步操作，从而提高了访问的性能。
+
+因此，FastThreadLocal在Netty中被称为“Fast”，因为它能够提供更快的线程局部变量的访问速度和更低的内存占用，从而提高了Netty的性能表现。
+
+## guava和netty的异步回调模式
+Guava和Netty都提供了异步回调模式的支持。
+
+在Guava中，异步回调模式的核心是ListenableFuture接口，它表示一个异步操作的结果，并且可以通过注册回调函数的方式获取异步操作的结果。ListenableFuture是一个可监听的Future，可以在异步操作完成后触发回调函数，从而实现异步回调的功能。
+
+在Netty中，异步回调模式的核心是ChannelFuture接口，它表示一个I/O操作的结果，并且可以通过注册回调函数的方式获取I/O操作的结果。ChannelFuture也是一个可监听的Future，可以在I/O操作完成后触发回调函数，从而实现异步回调的功能。
+
+虽然Guava和Netty都提供了异步回调模式的支持，但它们在实现上有一些不同。Guava的异步回调模式更加通用，可以应用于任何异步操作，而Netty的异步回调模式则是针对I/O操作的，因此更加专业化。
+
+此外，在使用上，Guava的异步回调模式可以通过Futures.addCallback()方法注册回调函数，而Netty的异步回调模式则可以通过ChannelFuture.addListener()方法注册回调函数。
+
+## handler是怎么连接起来的
+在Netty中，Handler是事件处理器，用于处理与Channel相关的事件。多个Handler被组成一个ChannelPipeline，构成事件处理器链。ChannelPipeline是Netty中处理事件的核心组件之一，通过它将多个Handler串联在一起，形成一个处理事件的链条。每个Channel都有一个ChannelPipeline。
+
+当一个Channel的I/O事件发生时，事件将被传递到ChannelPipeline中，从而被事件处理器链中的某个Handler进行处理。事件处理器链中的每个Handler都可以决定将事件传递到下一个Handler，或者将事件截止在当前Handler。这个过程类似于Java中的责任链模式，每个Handler负责处理一部分事件，然后将其传递给下一个Handler。
+
+在Netty中，ChannelPipeline中的Handler是有序的，每个Handler都有自己的名字（name），通过名字可以唯一标识一个Handler。当一个新的Handler被加入到ChannelPipeline中时，它会被插入到ChannelPipeline的指定位置。ChannelPipeline会维护Handler的顺序，并保证事件按照顺序依次被处理。
+
+在创建ChannelPipeline时，可以通过addFirst()、addLast()、addBefore()、addAfter()等方法来添加Handler，这些方法会根据不同的位置要求将Handler插入到事件处理器链的不同位置。
+
+在ChannelPipeline中，Handler之间的连接是通过ChannelHandlerContext实现的。ChannelHandlerContext是ChannelPipeline中的一个上下文对象，它维护了ChannelPipeline中的一些状态信息，以及当前Handler在ChannelPipeline中的位置。当一个Handler需要将事件传递给下一个Handler时，它会通过ChannelHandlerContext来获得下一个Handler的引用，从而完成事件的传递。因此，ChannelHandlerContext在事件处理器链中扮演了一个关键的角色，它将不同的Handler连接起来，形成一个处理事件的链条。
+
 # 参考文章
 - https://blog.csdn.net/chenssy/article/details/78703551
 - https://www.baiyp.ren/Linux%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.html
+- https://cloud.tencent.com/developer/article/1754078
