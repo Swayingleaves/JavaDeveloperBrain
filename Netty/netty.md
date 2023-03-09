@@ -6,9 +6,11 @@
         * [EventLoop](#eventloop)
         * [ChannelHandler](#channelhandler)
         * [ChannelPipeline](#channelpipeline)
+        * [TaskQueue](#taskqueue)
     * [netty的使用示例](#netty的使用示例)
         * [服务端](#服务端)
         * [客户端](#客户端)
+    * [服务端 Netty 的工作架构图](#服务端-netty-的工作架构图)
     * [TCP粘包/拆包问题](#tcp粘包拆包问题)
         * [什么是粘包拆包](#什么是粘包拆包)
         * [发生的原因](#发生的原因)
@@ -31,6 +33,17 @@
         * [无锁化串行设计](#无锁化串行设计)
         * [高性能的序列化框架](#高性能的序列化框架)
         * [灵活的TCP 参数配置能力](#灵活的tcp-参数配置能力)
+* [netty相关问题](#netty相关问题)
+    * [JUC线程池和Netty线程池在架构设计上有什么区别？](#juc线程池和netty线程池在架构设计上有什么区别)
+    * [netty的线程池设计中，是如何实现线程懒加载的](#netty的线程池设计中是如何实现线程懒加载的)
+    * [netty的选择器策略设定的目的是什么](#netty的选择器策略设定的目的是什么)
+    * [nioeventloop可以处理普通任务、定时任务以及IO事件，具体的流程是什么](#nioeventloop可以处理普通任务定时任务以及io事件具体的流程是什么)
+    * [eventloop可以对于多个channel，两者之间是如何绑定的](#eventloop可以对于多个channel两者之间是如何绑定的)
+    * [什么是水平触发，什么是边缘触发](#什么是水平触发什么是边缘触发)
+    * [netty的AttributeKey、AttributeMap和Attribute](#netty的attributekeyattributemap和attribute)
+    * [netty的fastThreadLocal fast在什么地方](#netty的fastthreadlocal-fast在什么地方)
+    * [guava和netty的异步回调模式](#guava和netty的异步回调模式)
+    * [handler是怎么连接起来的](#handler是怎么连接起来的)
 * [参考文章](#参考文章)
 
 
@@ -62,7 +75,7 @@ rContext、ChannelHandler、Channel、ChannelPipeline 这几个组件之间互�
 
 <img src="../img/netty/ChannelPipeline_inout.png" width="50%" />
 
-### Netty 的 TaskQueue
+### TaskQueue
 在 Netty 的每一个 NioEventLoop 中都有一个 TaskQueue，设计它的目的是在任务提交的速度大于线程的处理速度的时候起到缓冲作用。或者用于异步地处理 Selector 监听到的 IO 事件
 
 <img src="../img/netty/TaskQueue.png" width="50%" />
@@ -252,6 +265,7 @@ Netty 默认提供了对Google Protobuf 的支持，通过扩展Netty 的编解�
 - SO_TCPNODELAY：NAGLE 算法通过将缓冲区内的小封包自动相连，组成较大的封包，阻止大量小封包的发送阻塞网络，从而提高网络应用效率。但是对于时延敏感的应用场景需要关闭该优化算法；
 - 软中断：如果Linux 内核版本支持RPS（2.6.35 以上版本），开启RPS 后可以实现软中断，提升网络吞吐量。RPS根据数据包的源地址，目的地址以及目的和源端口，计算出一个hash 值，然后根据这个hash 值来选择软中断运行的cpu，从上层来看，也就是说将每个连接和cpu 绑定，并通过这个hash 值，来均衡软中断在多个cpu 上，提升网络并行处理性能
 
+# netty相关问题
 
 ## JUC线程池和Netty线程池在架构设计上有什么区别？
 JUC线程池（Java Util Concurrent线程池）和Netty线程池都是用于管理和复用线程的工具，但它们的架构设计有一些区别：
