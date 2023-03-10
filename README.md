@@ -770,24 +770,28 @@
 
 ## <a>Linux</a>[↑↑](#内容概览)
 
-- [文件和目录的操作](Linux/linux.md#文件和目录的操作)
-- [查看文件](Linux/linux.md#查看文件)
-- [管理用户](Linux/linux.md#管理用户)
-- [进程管理](Linux/linux.md#进程管理)
-- [打包和压缩文件](Linux/linux.md#打包和压缩文件)
-- [grep+正则表达式](Linux/linux.md#grep)
-- [Vi编辑器](Linux/linux.md#Vi编辑器)
-- [权限管理](Linux/linux.md#权限管理)
-- [网络管理](Linux/linux.md#网络管理)
-- [cpu100%怎么排查](Linux/linux.md#cpu100怎么排查)
-- [用户空间与内核空间](Linux/linux.md#用户空间与内核空间)
-- [Linux的进程、线程、文件描述符是什么](Linux/linux.md#linux-的进程线程文件描述符是什么)
-- [进程切换](Linux/linux.md#进程切换)
-- [进程的阻塞](Linux/linux.md#进程的阻塞)
-- [文件描述符fd](Linux/linux.md#文件描述符fd)
-- [缓存 I/O](Linux/linux.md#缓存-io)
-- [IO模型](Linux/linux.md#io模型)
-- [select、poll、epoll](Linux/linux.md#selectpollepoll)
+* [文件和目录的操作](Linux/linux.md#文件和目录的操作)
+* [查看文件](Linux/linux.md#查看文件)
+* [管理用户](Linux/linux.md#管理用户)
+* [进程管理](Linux/linux.md#进程管理)
+* [打包和压缩文件](Linux/linux.md#打包和压缩文件)
+* [grep+正则表达式](Linux/linux.md#grep)
+* [Vi编辑器](Linux/linux.md#Vi编辑器)
+* [权限管理](Linux/linux.md#权限管理)
+* [网络管理](Linux/linux.md#网络管理)
+* [cpu100%怎么排查](Linux/linux.md#cpu100怎么排查)
+* [用户空间与内核空间](Linux/linux.md#用户空间与内核空间)
+* [Linux的进程、线程、文件描述符是什么](Linux/linux.md#linux-的进程线程文件描述符是什么)
+* [进程切换](Linux/linux.md#进程切换)
+* [进程的阻塞](Linux/linux.md#进程的阻塞)
+* [文件描述符fd](Linux/linux.md#文件描述符fd)
+* [缓存 I/O](Linux/linux.md#缓存-io)
+* [IO模型](Linux/linux.md#io模型)
+* [select、poll、epoll](Linux/linux.md#selectpollepoll)
+* [进程间8种通信方式详解](Linux/linux.md#进程间8种通信方式详解)
+* [Linux物理内存和虚拟内存](Linux/linux.md#linux物理内存和虚拟内存)
+* [页面置换算法](Linux/linux.md#页面置换算法)
+* [进程调度算法](Linux/linux.md#进程调度算法)
 
 ## <a>Mybatis</a>[↑↑](#内容概览)
 
@@ -950,7 +954,10 @@
 - [某人进行10次打靶，每次打靶可能的得分为0到10分，10次打靶共得90分的可能性有多少种](智力题/智力题.md)
 
 ## <a>项目架构</a>[↑↑](#内容概览)
-- TODO
+
+* [系统设计](架构/系统设计.md)
+* [计算和储存分离](架构/计算和储存分离.md)
+
 ## <a>面试解答</a>[↑↑](#内容概览)
 
 - [HR会问什么](面试解答/HR会问什么.md)
