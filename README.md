@@ -105,6 +105,7 @@
    - [网络io](Java-基础/JavaIO.md#网络io)
    - [NIO](Java-基础/JavaIO.md#nio)
  - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
+ - [Java虚拟线程](Java-基础/虚拟线程.md)
 
 ## <a>Java-JVM</a>[↑↑](#内容概览)
 - [内存结构](Java-JVM/内存结构.md)
