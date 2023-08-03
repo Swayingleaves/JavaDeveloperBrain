@@ -982,7 +982,8 @@
 # 最后[↑↑](#内容概览)
 > 不积跬步无以至千里
 
-# 微信交流
+## 微信交流
 
 > 有问题可以加我微信进群，一起交流学习，一起进步
-![weichat.png](img%2Fweichat.png)
+
+<img src="img%2Fweichat.png" align="center" width="50%" />
