@@ -986,4 +986,4 @@
 
 > 有问题可以加我微信进群，一起交流学习，一起进步
 
-<img src="img%2Fweichat.png" align="center" width="50%" />
+<img src="img%2Fweichat.png" align="center" width="25%" />
