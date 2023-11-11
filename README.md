@@ -987,7 +987,7 @@
 ## 微信交流
 
 
-> 有问题可以加我微信群里聊,非公众号,纯交流,摸鱼/交流学习
+> 可以关注我的微信公众号，一些学习资料关注后可以分享给你
 
 
-<img src="img%2Fweichat.png" align="center" width="25%" />
+<img src="img%2F微信公共号二维码.png" align="center" width="25%" />
