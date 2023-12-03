@@ -45,10 +45,10 @@
 </thead>
 <tbody>
   <tr>
-    <th rowspan="1">Java</th>
+    <th >Java</th>
     <th ><a href="#java-基础部分">基础部分</a></th>
-    <th ><a href="java-jvm">JVM</a></th>
-    <th ><a href="java-多线程">多线程</a></th>
+    <th ><a href="#java-jvm">JVM</a></th>
+    <th ><a href="#java-多线程">多线程</a></th>
     <td ></td>
   </tr>
   <tr>
@@ -59,65 +59,88 @@
     <td ></td>
   </tr>
   <tr>
-    <td >数据库</td>
-    <th ><a href="mysql">MySQL</a></th>
-    <th ><a href="mysql">MongoDB</a></th>
-    <td ></td>
-    <td ></td>
-    <td ></td>
+    <td rowspan="2">数据库</td>
+    <th ><a href="#mysql">MySQL</a></th>
+    <th ><a href="#mongodb">MongoDB</a></th>
+    <th ><a href="#hbase">HBASE</a></th>
+    <th ><a href="#nebula-graph">Nebula Graph</a></th>
+    <th ><a href="#elasticsearch">Elasticsearch</a></th>
   </tr>
   <tr>
-    <td >消息队列</td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
+    <th ><a href="#redis-1">Redis</a></th>
+    <th ><a href="#sql问题">SQL问题</a></th>
+    <th ></th>
+    <th ></th>
+    <th ></th>
+  </tr>
+  <tr>
+    <td rowspan="2">消息队列</td>
+    <th ><a href="#redis">Redis</a></th>
+    <th ><a href="#rabbitmq">RabbitMQ</a></th>
+    <th ><a href="#rocketmq">RocketMQ</a></th>
+    <th ><a href="#kafka">Kafka</a></th>
+    <th ><a href="#zookeeper">Zookeeper</a></th>
+  </tr>
+  <tr>
+    <th ><a href="#pulsar">Pulsar</a></th>
+    <th ></th>
+    <th ></th>
+    <th ></th>
+    <th ></th>
   </tr>
 
   <tr>
-    <td >框架</td>
+    <td rowspan="2">框架</td>
+    <td ><a href="#spring">Spring</a></td>
+    <td ><a href="#springmvc">SpringMVC</a></td>
+    <td ><a href="#springboot">SpringBoot</a></td>
+    <td ><a href="#springcloud">SpringCloud</a></td>
+    <td ><a href="#springcloudalibaba">SpringCloudAlibaba</a></td>
+  </tr>
+ <tr>
+    <td ><a href="#mybatis">Mybatis</a></td>
+    <td ><a href="#netty">Netty</a></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
+  </tr>
+  <tr>
+    <td ><a href="#linux">Linux</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >Linux</td>
+    <td ><a href="#分布式相关">分布式相关</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >分布式相关</td>
+    <td ><a href="#架构">架构</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >架构</td>
+    <td ><a href="#容器技术">容器技术</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >容器技术</td>
+    <td ><a href="#数据结构和算法">数据结构和算法</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >数据结构和算法</td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-  </tr>
-  <tr>
-    <td >设计模式</td>
+    <td ><a href="#设计模式">设计模式</a></td>
     <td ></td>
     <td ></td>
     <td ></td>
@@ -125,10 +148,11 @@
   </tr>
   <tr>
     <td >面试</td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
+    <td ><a href="#职业规划和学习习惯">职业规划和学习习惯</a></td>
+    <td ><a href="#场景设计">场景设计</a></td>
+    <td ><a href="#智力题">智力题</a></td>
+    <td ><a href="#面试解答">面试解答</a></td>
+    <td ><a href="#商城类问题">商城类问题</a></td>
   </tr>
 </tbody>
 </table>
