@@ -56,8 +56,8 @@
     <td ><a href="#计算机网络">网络协议分层</a></td>
     <td ><a href="#tcp报文">TCP</a></td>
     <td ><a href="#UDP报文">UDP</a></td>
-    <td ><a href="#计算机网络">三次握手</a></td>
-    <td ><a href="#计算机网络">四次挥手</a></td>
+    <td ><a href="#三次握手">三次握手</a></td>
+    <td ><a href="#四次挥手">四次挥手</a></td>
   </tr>
   <tr>
     <td rowspan="2">数据库</td>
@@ -427,8 +427,10 @@
     * [UDP 和 TCP 的特点](计算机网络/TCP_IP.md#udp-和-tcp-的特点)
         * [UDP](计算机网络/TCP_IP.md#udp)
         * [TCP](计算机网络/TCP_IP.md#tcp)
-    * [三次握手](计算机网络/TCP_IP.md#三次握手)
-    * [四次挥手](计算机网络/TCP_IP.md#四次挥手)
+
+    * #### <a href="计算机网络/TCP_IP.md#三次握手">三次握手</a>    
+    * #### <a href="计算机网络/TCP_IP.md#四次挥手">四次挥手</a>    
+ 
     * [TCP怎么保障可靠传输](计算机网络/TCP_IP.md#tcp怎么保障可靠传输)
         * [数据合理分片和排序](计算机网络/TCP_IP.md#数据合理分片和排序)
         * [数据校验：校验和](计算机网络/TCP_IP.md#数据校验校验和)
