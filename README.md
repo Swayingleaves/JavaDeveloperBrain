@@ -53,11 +53,11 @@
   </tr>
   <tr>
     <td >计算机网络</td>
-    <td ><a href="#网络协议分层">网络协议分层</a></td>
-    <td ><a href="#TCP报文">TCP</a></td>
-    <td ><a href="#UDP报文">UDP</a></td>
-    <td ><a href="#三次握手">三次握手</a></td>
-    <td ><a href="#四次挥手">四次挥手</a></td>
+    <td ><a href="#计算机网络">网络协议分层</a></td>
+    <td ><a href="#计算机网络">TCP</a></td>
+    <td ><a href="#计算机网络">UDP</a></td>
+    <td ><a href="#计算机网络">三次握手</a></td>
+    <td ><a href="#计算机网络">四次挥手</a></td>
   </tr>
   <tr>
     <td rowspan="2">数据库</td>
