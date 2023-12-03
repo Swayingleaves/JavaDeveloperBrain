@@ -67,7 +67,7 @@
     <td ></td>
   </tr>
   <tr>
-    <td rowspan="2">数据库</td>
+    <td rowspan="2"><b>数据库</b></td>
     <th ><a href="#mysql">MySQL</a></th>
     <th ><a href="#mongodb">MongoDB</a></th>
     <th ><a href="#hbase">HBASE</a></th>
@@ -82,7 +82,7 @@
     <th ></th>
   </tr>
   <tr>
-    <td rowspan="2">消息队列</td>
+    <td rowspan="2"><b>消息队列</b></td>
     <th ><a href="#redis">Redis</a></th>
     <th ><a href="#rabbitmq">RabbitMQ</a></th>
     <th ><a href="#rocketmq">RocketMQ</a></th>
@@ -98,7 +98,7 @@
   </tr>
 
   <tr>
-    <td rowspan="2">框架</td>
+    <td rowspan="2"><b>框架</b></td>
     <td ><a href="#spring">Spring</a></td>
     <td ><a href="#springmvc">SpringMVC</a></td>
     <td ><a href="#springboot">SpringBoot</a></td>
@@ -113,49 +113,49 @@
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#linux">Linux</a></td>
+    <td ><a href="#linux"><b>Linux</b></a></td>
     <td ><a href="#linux的进程线程文件描述符是什么">进程、线程、文件描述符</a></td>
     <td ><a href="#IO模型">IO模型</a></td>
     <td ><a href="#selectpollepoll">select、poll、epoll</a></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#分布式相关">分布式相关</a></td>
+    <td ><a href="#分布式相关"><b>分布式相关</b></a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#架构">架构</a></td>
+    <td ><a href="#架构"><b>架构</b></a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#容器技术">容器技术</a></td>
+    <td ><a href="#容器技术"><b>容器技术</b></a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#数据结构和算法">数据结构和算法</a></td>
+    <td ><a href="#数据结构和算法"><b>数据结构和算法</b></a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#设计模式">设计模式</a></td>
+    <td ><a href="#设计模式"><b>设计模式</b></a></td>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td >面试</td>
+    <td ><b>面试</b></td>
     <td ><a href="#职业规划和学习习惯">职业规划和学习习惯</a></td>
     <td ><a href="#场景设计">场景设计</a></td>
     <td ><a href="#智力题">智力题</a></td>
