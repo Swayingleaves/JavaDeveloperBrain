@@ -53,7 +53,7 @@
   </tr>
   <tr>
     <td  rowspan="2"><b>计算机网络</b></td>
-    <td ><a href="#计算机网络">网络协议分层</a></td>
+    <td style="text-align:center" ><a href="#计算机网络">网络协议分层</a></td>
     <td ><a href="#tcp报文">TCP</a></td>
     <td ><a href="#UDP报文">UDP</a></td>
     <td ><a href="#三次握手">三次握手</a></td>
