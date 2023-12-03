@@ -114,9 +114,9 @@
   </tr>
   <tr>
     <td ><a href="#linux">Linux</a></td>
-    <td ><a href="#Linux的进程、线程、文件描述符是什么">进程、线程、文件描述符</a></td>
+    <td ><a href="#linux的进程线程文件描述符是什么">进程、线程、文件描述符</a></td>
     <td ><a href="#IO模型">IO模型</a></td>
-    <td ><a href="#select、poll、epoll">select、poll、epoll</a></td>
+    <td ><a href="#selectpollepoll">select、poll、epoll</a></td>
     <td ></td>
   </tr>
   <tr>
