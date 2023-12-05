@@ -13,31 +13,9 @@
 
 ---
 
-[//]: # (<h3 align="center">:star2::star2::star2:总结归纳，不白嫖，来个star:star2::star2::star2:</h3>)
-
-[//]: # ()
-
-[//]: # ()
-
-[//]: # (<h3 align="center">:muscle:欢迎大家一起来完善仓库内容:muscle:</h3>)
-
-[//]: # ()
-
-[//]: # (<h3 align="center">:wave:缺内容或者需要补内容可以提issues:wave:</h3>)
-
 <h3 align="center">:star2:<a href="TODO.md">TODO list</a>:star2:</h3>
 
 # 内容概览[↓↓](#最后)
-
-[//]: # (<div align=center>)
-
-[//]: # (  <img src="img/Java-总览.png" align="center" width="50%" />)
-
-[//]: # ()
-
-[//]: # (  <a href="img/Java.png">大图</a>)
-
-[//]: # (</div>)
 
 <table>
 <thead>
@@ -121,10 +99,11 @@
   </tr>
   <tr>
     <td ><a href="#分布式相关"><b>分布式相关</b></a></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
+    <td ><a href="#分布式锁">分布式锁</a></td>
+    <td ><a href="#分布式事务">分布式事务</a></td>
+    <td ><a href="#分布式唯一ID设计">分布式唯一ID设计</a></td>
+    <td ><a href="#CAP理论">CAP理论</a></td>
+    <td ><a href="#一致性算法">一致性算法</a></td>
   </tr>
   <tr>
     <td ><a href="#架构"><b>架构</b></a></td>
@@ -166,10 +145,6 @@
 </table>
 
 # 内容详情
-
-[comment]: <> (<details><summary></summary>)
-
-[comment]: <> (</details>)
 
 ## <a>Java-基础部分</a>[↑↑](#内容概览)
 
@@ -966,23 +941,24 @@
 
 ## <a>分布式相关</a>[↑↑](#内容概览)
 
-- [分布式锁](分布式相关/分布式锁.md)
+- #### <a href="分布式相关/分布式锁.md">分布式锁</a>
     * [基于数据库](分布式相关/分布式锁.md#基于数据库)
     * [Redis](分布式相关/分布式锁.md#redis)
     * [zookeeper](分布式相关/分布式锁.md#zookeeper)
+- #### <a href="分布式相关/分布式事务.md">分布式事务</a>
 - [分布式事务](分布式相关/分布式事务.md)
     * [两阶段提交](分布式相关/分布式事务.md#两阶段提交)
     * [TCC（Try-Confirm-Cancel）](分布式相关/分布式事务.md#tcctry-confirm-cancel)
     * [本地消息表](分布式相关/分布式事务.md#本地消息表)
     * [可靠消息最终一致性](分布式相关/分布式事务.md#可靠消息最终一致性)
     * [尽最大努力通知](分布式相关/分布式事务.md#尽最大努力通知)
-- [分布式唯一ID设计](分布式相关/分布式ID.md#分布式唯一id设计)
+- #### <a href="分布式相关/分布式ID.md#分布式唯一id设计">分布式唯一ID设计</a>
     * [UUID](分布式相关/分布式ID.md##uuid)
     * [多台MySQL服务器](分布式相关/分布式ID.md##多台mysql服务器)
     * [Twitter Snowflake](分布式相关/分布式ID.md##twitter-snowflake)
     * [百度UidGenerator算法](分布式相关/分布式ID.md##百度uidgenerator算法)
     * [美团Leaf算法](分布式相关/分布式ID.md##美团leaf算法)
-- [CAP理论](分布式相关/CAP.md)
+- #### <a href="分布式相关/CAP.md">CAP理论</a>  
     * [一致性 Consistency](分布式相关/CAP.md#一致性-consistency)
     * [可用性 Availability](分布式相关/CAP.md#可用性-availability)
     * [分区容错性 Partition Tolerance](分布式相关/CAP.md#分区容错性-partition-tolerance)
@@ -991,7 +967,7 @@
     * [基本可以  Basically Available](分布式相关/BASE.md#基本可以--basically-available)
     * [软状态  Soft-state](分布式相关/BASE.md#软状态--soft-state)
     * [最终一致性  Eventually Consistent](分布式相关/BASE.md#最终一致性--eventually-consistent)
-- [一致性算法](分布式相关/一致性算法.md)
+- #### <a href="分布式相关/一致性算法.md">一致性算法</a>
     * [Paxos](分布式相关/一致性算法.md#paxos)
     * [Raft](分布式相关/一致性算法.md#raft)
 
