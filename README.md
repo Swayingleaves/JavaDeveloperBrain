@@ -23,14 +23,14 @@
 </thead>
 <tbody>
   <tr>
-    <th ><b>Java</b></th>
+    <th ><b>Java</b><a href="#java-基础部分">↓↓</a></th>
     <td ><a href="#java-基础部分">基础部分</a></td>
     <td ><a href="#java-jvm">JVM</a></td>
     <td ><a href="#java-多线程">多线程</a></td>
     <td ></td>
   </tr>
   <tr>
-    <th  rowspan="2"><b>计算机网络</b></th>
+    <th  rowspan="2"><b>计算机网络</b><a href="#计算机网络">↓↓</a></th>
     <td ><a href="#计算机网络">网络协议分层</a></td>
     <td ><a href="#tcp报文">TCP</a></td>
     <td ><a href="#UDP报文">UDP</a></td>
