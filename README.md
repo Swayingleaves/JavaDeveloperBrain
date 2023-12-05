@@ -24,13 +24,13 @@
 <tbody>
   <tr>
     <th ><b>Java</b></th>
-    <th ><a href="#java-基础部分">基础部分</a></th>
-    <th ><a href="#java-jvm">JVM</a></th>
-    <th ><a href="#java-多线程">多线程</a></th>
+    <td ><a href="#java-基础部分">基础部分</a></td>
+    <td ><a href="#java-jvm">JVM</a></td>
+    <td ><a href="#java-多线程">多线程</a></td>
     <td ></td>
   </tr>
   <tr>
-    <td  rowspan="2"><b>计算机网络</b></td>
+    <th  rowspan="2"><b>计算机网络</b></th>
     <td ><a href="#计算机网络">网络协议分层</a></td>
     <td ><a href="#tcp报文">TCP</a></td>
     <td ><a href="#UDP报文">UDP</a></td>
@@ -45,38 +45,38 @@
     <td ></td>
   </tr>
   <tr>
-    <td rowspan="2"><b>数据库</b></td>
-    <th ><a href="#mysql">MySQL</a></th>
-    <th ><a href="#mongodb">MongoDB</a></th>
-    <th ><a href="#hbase">HBASE</a></th>
-    <th ><a href="#nebula-graph">Nebula Graph</a></th>
-    <th ><a href="#elasticsearch">Elasticsearch</a></th>
+    <th rowspan="2"><b>数据库</b></th>
+    <td ><a href="#mysql">MySQL</a></td>
+    <td ><a href="#mongodb">MongoDB</a></td>
+    <td ><a href="#hbase">HBASE</a></td>
+    <td ><a href="#nebula-graph">Nebula Graph</a></td>
+    <td ><a href="#elasticsearch">Elasticsearch</a></td>
   </tr>
   <tr>
-    <th ><a href="#redis-1">Redis</a></th>
-    <th ><a href="#sql问题">SQL问题</a></th>
-    <th ></th>
-    <th ></th>
-    <th ></th>
+    <td ><a href="#redis-1">Redis</a></td>
+    <td ><a href="#sql问题">SQL问题</a></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
   </tr>
   <tr>
-    <td rowspan="2"><b>消息队列</b></td>
-    <th ><a href="#redis">Redis</a></th>
-    <th ><a href="#rabbitmq">RabbitMQ</a></th>
-    <th ><a href="#rocketmq">RocketMQ</a></th>
-    <th ><a href="#kafka">Kafka</a></th>
-    <th ><a href="#zookeeper">Zookeeper</a></th>
+    <th rowspan="2"><b>消息队列</b></th>
+    <td ><a href="#redis">Redis</a></td>
+    <td ><a href="#rabbitmq">RabbitMQ</a></td>
+    <td ><a href="#rocketmq">RocketMQ</a></td>
+    <td ><a href="#kafka">Kafka</a></td>
+    <td ><a href="#zookeeper">Zookeeper</a></td>
   </tr>
   <tr>
-    <th ><a href="#pulsar">Pulsar</a></th>
-    <th ></th>
-    <th ></th>
-    <th ></th>
-    <th ></th>
+    <td ><a href="#pulsar">Pulsar</a></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
   </tr>
 
   <tr>
-    <td rowspan="2"><b>框架</b></td>
+    <th rowspan="2"><b>框架</b></th>
     <td ><a href="#spring">Spring</a></td>
     <td ><a href="#springmvc">SpringMVC</a></td>
     <td ><a href="#springboot">SpringBoot</a></td>
@@ -91,14 +91,14 @@
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#linux"><b>Linux</b></a></td>
+    <th ><a href="#linux"><b>Linux</b></a></th>
     <td ><a href="#linux的进程线程文件描述符是什么">进程、线程、文件描述符</a></td>
     <td ><a href="#IO模型">IO模型</a></td>
     <td ><a href="#selectpollepoll">select、poll、epoll</a></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#分布式相关"><b>分布式相关</b></a></td>
+    <th ><a href="#分布式相关"><b>分布式相关</b></a></th>
     <td ><a href="#分布式锁">分布式锁</a></td>
     <td ><a href="#分布式事务">分布式事务</a></td>
     <td ><a href="#分布式唯一ID设计">分布式唯一ID设计</a></td>
@@ -106,21 +106,21 @@
     <td ><a href="#一致性算法">一致性算法</a></td>
   </tr>
   <tr>
-    <td ><a href="#架构"><b>架构</b></a></td>
+    <th ><a href="#架构"><b>架构</b></a></th>
     <td ><a href="#系统设计">系统设计</a></td>
     <td ><a href="#计算和储存分离">计算和储存分离</a></td>
     <td ><a href="#DDD领域驱动设计">DDD领域驱动设计</a></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#容器技术"><b>容器技术</b></a></td>
+    <th ><a href="#容器技术"><b>容器技术</b></a></th>
     <td ><a href="#docker">Docker</a></td>
     <td ><a href="#kubernetes">Kubernetes</a></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td rowspan="2"><a href="#数据结构和算法"><b>数据结构和算法</b></a></td>
+    <th rowspan="2"><a href="#数据结构和算法"><b>数据结构和算法</b></a></th>
     <td ><a href="#排序算法">排序算法</a></td>
     <td ><a href="#树相关">树相关</a></td>
     <td ><a href="#BFS">BFS</a></td>
@@ -135,14 +135,14 @@
     <td ></td>
   </tr>
   <tr>
-    <td ><a href="#设计模式"><b>设计模式</b></a></td>
+    <th ><a href="#设计模式"><b>设计模式</b></a></th>
     <td ></td>
     <td ></td>
     <td ></td>
     <td ></td>
   </tr>
   <tr>
-    <td ><b>面试</b></td>
+    <th ><b>面试</b></th>
     <td ><a href="#职业规划和学习习惯">职业规划和学习习惯</a></td>
     <td ><a href="#场景设计">场景设计</a></td>
     <td ><a href="#智力题">智力题</a></td>
