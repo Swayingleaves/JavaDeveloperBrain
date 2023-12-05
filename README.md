@@ -49,7 +49,7 @@
     <td ><a href="#mysql">MySQL</a></td>
     <td ><a href="#mongodb">MongoDB</a></td>
     <td ><a href="#hbase">HBASE</a></td>
-    <td ><a href="#nebula-graph">Nebula Graph</a></td>
+    <td ><a href="#nebula-graph">NebulaGraph</a></td>
     <td ><a href="#elasticsearch">Elasticsearch</a></td>
   </tr>
   <tr>
