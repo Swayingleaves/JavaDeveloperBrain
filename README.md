@@ -830,6 +830,7 @@
     * [事务](Spring/Spring.md#事务)
         * [Spring 支持两种方式的事务管理](Spring/Spring.md#spring-支持两种方式的事务管理)
         * [事务的传播性 Propagation](Spring/Spring.md#事务的传播性-propagation)
+        * [spring事务失效的场景](Spring/Spring.md#spring事务失效的场景)
     * [spring使用的设计模式](Spring/Spring.md#spring使用的设计模式)
         * [简单工厂](Spring/Spring.md#简单工厂)
         * [工厂方法](Spring/Spring.md#工厂方法)

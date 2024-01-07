@@ -30,7 +30,8 @@
         * [循环依赖问题](#循环依赖问题)
             * [三级缓存](#三级缓存)
             * [解决循环依赖](#解决循环依赖)
-    * [Spring框架中的单例bean是线程安全的吗？它是如何处理线程并发问题的?](#spring框架中的单例bean是线程安全的吗它是如何处理线程并发问题的)
+    * [BeanFactory与FactoryBean的区别](#beanfactory与factorybean的区别)
+    * [Spring框架中的单例bean是否线程安全](#spring框架中的单例bean是否线程安全)
     * [AOP](#aop)
         * [AOP原理](#aop原理)
         * [JDK动态代理](#jdk动态代理)
@@ -47,14 +48,17 @@
         * [引入依赖](#引入依赖)
         * [定义注解](#定义注解)
             * [元注解](#元注解)
-                * [@Retention – 定义该注解的生命周期](#retention--定义该注解的生命周期)
-                * [@Target – 表示该注解用于什么地方。默认值为任何元素，表示该注解用于什么地方。可用的ElementType 参数包括](#target--表示该注解用于什么地方默认值为任何元素表示该注解用于什么地方可用的elementtype-参数包括)
-                * [@Documented – 一个简单的Annotations 标记注解，表示是否将注解信息添加在java文档中。](#documented--一个简单的annotations-标记注解表示是否将注解信息添加在java文档中)
-                * [@Inherited – 定义该注释和子类的关系](#inherited--定义该注释和子类的关系)
+                * [@Retention](#retention)
+                * [@Target](#target)
+                * [@Documented](#documented)
+                * [@Inherited](#inherited)
         * [示例](#示例)
     * [事务](#事务)
         * [Spring 支持两种方式的事务管理](#spring-支持两种方式的事务管理)
+            * [1、编程式事务管理](#1编程式事务管理)
+            * [2、注解](#2注解)
         * [事务的传播性 Propagation](#事务的传播性-propagation)
+        * [spring事务失效的场景](#spring事务失效的场景)
     * [spring使用的设计模式](#spring使用的设计模式)
         * [简单工厂](#简单工厂)
         * [工厂方法](#工厂方法)
@@ -69,6 +73,7 @@
         * [BeanFactory](#beanfactory)
         * [FactoryBean](#factorybean)
 * [参考文章](#参考文章)
+
 
 # spring
 
@@ -466,7 +471,9 @@ todo
 
 - https://juejin.cn/post/6844903967600836621
 
-## Spring框架中的单例bean是线程安全的吗？它是如何处理线程并发问题的?
+## Spring框架中的单例bean是否线程安全
+
+Spring框架中的单例bean是线程安全的吗？它是如何处理线程并发问题的?
 
 不是，Spring框架中的单例bean不是线程安全的。
 
@@ -596,13 +603,15 @@ java.lang.annotation 提供了四种元注解，专门注解其他的注解（�
 - @Target – 注解用于什么地方
 - @Inherited – 是否允许子类继承该注解
 
-##### @Retention – 定义该注解的生命周期
+##### @Retention
+定义该注解的生命周期
 
 - RetentionPolicy.SOURCE : 在编译阶段丢弃。这些注解在编译结束之后就不再有任何意义，所以它们不会写入字节码。@Override, @SuppressWarnings都属于这类注解。
 - RetentionPolicy.CLASS : 在类加载的时候丢弃。在字节码文件的处理中有用。注解默认使用这种方式
 - RetentionPolicy.RUNTIME : 始终不会丢弃，运行期也保留该注解，因此可以使用反射机制读取该注解的信息。我们自定义的注解通常使用这种方式。
 
-##### @Target – 表示该注解用于什么地方。默认值为任何元素，表示该注解用于什么地方。可用的ElementType 参数包括
+##### @Target
+表示该注解用于什么地方。默认值为任何元素，表示该注解用于什么地方。可用的ElementType 参数包括
 
 - ElementType.CONSTRUCTOR: 用于描述构造器
 - ElementType.FIELD: 成员变量、对象、属性（包括enum实例）
@@ -612,9 +621,11 @@ java.lang.annotation 提供了四种元注解，专门注解其他的注解（�
 - ElementType.PARAMETER: 用于描述参数
 - ElementType.TYPE: 用于描述类、接口(包括注解类型) 或enum声明
 
-##### @Documented – 一个简单的Annotations 标记注解，表示是否将注解信息添加在java文档中。
+##### @Documented
+一个简单的Annotations 标记注解，表示是否将注解信息添加在java文档中。
 
-##### @Inherited – 定义该注释和子类的关系
+##### @Inherited
+定义该注释和子类的关系
 
 @Inherited 元注解是一个标记注解，@Inherited 阐述了某个被标注的类型是被继承的。如果一个使用了@Inherited 修饰的annotation 类型被用于一个class，则这个annotation 将被用于该class
 的子类。
@@ -697,7 +708,7 @@ public class AccountController {
 
 ### Spring 支持两种方式的事务管理
 
-编程式事务管理
+#### 1、编程式事务管理
 
 - TransactionTemplate
 
@@ -736,7 +747,7 @@ public void testTransaction2(){
 }
 ```
 
-注解
+#### 2、注解
 
 - @Transactional
 
@@ -755,6 +766,44 @@ public void testTransaction2(){
 ⑥ PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。
 
 ⑦ PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按REQUIRED属性执行。
+
+### spring事务失效的场景
+
+1. 非被Spring管理的Bean上的事务： 如果你在一个非被Spring容器管理的Bean（例如通过new关键字直接创建的对象）上使用事务注解，事务将不会生效。Spring的事务管理是基于AOP（面向切面编程）实现的，因此只能在由Spring容器管理的Bean上起作用。
+
+2. 未捕获的异常： 如果在事务内发生未捕获的运行时异常，事务将回滚。但是，如果异常被捕获并在方法内处理，事务可能不会回滚。确保在事务边界内处理异常或者允许异常传播到事务管理器以便正确回滚。
+
+    ```java
+    @Transactional
+    public void transactionalMethod() {
+        try {
+            // some code that may throw an exception
+        } catch (Exception e) {
+            // handle the exception (not recommended within a transaction)
+        }
+    }
+    ```
+
+3. 嵌套事务问题： Spring事务支持嵌套事务，但是嵌套事务的行为取决于底层事务管理器的支持。如果使用的事务管理器不支持嵌套事务，嵌套事务可能会被忽略，导致事务行为不一致。
+
+4. 方法调用问题： Spring事务是通过AOP实现的，它依赖于代理对象来拦截方法调用并处理事务。如果你在同一个类内部调用一个带有事务注解的方法，事务可能不会起作用，因为代理对象无法拦截内部方法的调用。确保事务注解生效，要么调用方法是通过代理对象，要么通过self-invocation，例如通过this关键字。
+    ```java
+    @Transactional
+    public class MyService {
+        public void outerMethod() {
+            innerMethod(); // Transactional annotation may not work here
+            this.innerMethod(); // Transactional annotation should work here
+        }
+    
+        @Transactional
+        public void innerMethod() {
+            // some transactional logic
+        }
+    }
+    
+    ```
+5. 异步方法问题： 如果使用了异步方法（通过@Async注解），事务可能会失效。在异步方法内，事务上下文可能无法正确传播，导致事务不起作用。要在异步方法中使用事务，可以使用TransactionContext传播方式。
+
 
 ## spring使用的设计模式
 
