@@ -30,7 +30,6 @@
         * [循环依赖问题](#循环依赖问题)
             * [三级缓存](#三级缓存)
             * [解决循环依赖](#解决循环依赖)
-    * [BeanFactory与FactoryBean的区别](#beanfactory与factorybean的区别)
     * [Spring框架中的单例bean是否线程安全](#spring框架中的单例bean是否线程安全)
     * [AOP](#aop)
         * [AOP原理](#aop原理)
@@ -73,7 +72,6 @@
         * [BeanFactory](#beanfactory)
         * [FactoryBean](#factorybean)
 * [参考文章](#参考文章)
-
 
 # spring
 
@@ -466,10 +464,6 @@ Spring 是如何通过上面介绍的三级缓存来解决循环依赖的呢？�
 9. 对象 A 得到对象 B，将对象 B 注入到对象 A 中。（对象 A 得到的是一个完整的对象 B）
 10. 对象 A 完成属性填充，执行初始化方法，并放入到一级缓存中，同时删除二级缓存中的对象 A。
 
-## BeanFactory与FactoryBean的区别
-todo
-
-- https://juejin.cn/post/6844903967600836621
 
 ## Spring框架中的单例bean是否线程安全
 
