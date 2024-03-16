@@ -840,8 +840,38 @@ aof文件的自动重写
   - 执行事务(EXEC)。
 - `DISCARD` 取消一个事务，它会清空事务队列中保存的所有命令
 - `WATCH` 用于监听指定的键，当调用 EXEC 命令执行事务时，如果一个被 WATCH 命令监视的键被修改的话，整个事务都不会执行，直接返回失败
-#### Redis 是不支持 roll back 的，因而不满足原子性的（而且不满足持久性）
-#### Redis 事务提供了一种将多个命令请求打包的功能。然后，再按顺序执行打包的所有命令，并且不会被中途打断。
+
+- Redis 是不支持 roll back 的，因而不满足原子性的（而且不满足持久性）
+
+- Redis 事务提供了一种将多个命令请求打包的功能。然后，再按顺序执行打包的所有命令，并且不会被中途打断。
+
+### Java操作
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.stereotype.Service;
+
+@Service
+public class RedisService {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    public void executeTransaction() {
+        redisTemplate.execute(new SessionCallback<Object>() {
+            @Override
+            public <K, V> Object execute(org.springframework.data.redis.core.RedisOperations<K, V> operations) throws DataAccessException {
+                operations.multi(); // 开始事务
+                operations.opsForValue().set("key1", "value1");
+                operations.opsForValue().set("key2", "value2");
+                return operations.exec(); // 执行事务
+            }
+        });
+    }
+}
+
+```
 ## 常问故障场景
 ### 缓存雪崩
 什么是 缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。 这就好比雪崩一样，摧枯拉朽之势，数据库的压力可想而知，可能直接就被这么多请求弄宕机了
