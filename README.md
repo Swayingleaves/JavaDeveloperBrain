@@ -955,7 +955,6 @@
     * [Redis](分布式相关/分布式锁.md#redis)
     * [zookeeper](分布式相关/分布式锁.md#zookeeper)
 - #### <a href="分布式相关/分布式事务.md">分布式事务</a>
-- [分布式事务](分布式相关/分布式事务.md)
     * [两阶段提交](分布式相关/分布式事务.md#两阶段提交)
     * [TCC（Try-Confirm-Cancel）](分布式相关/分布式事务.md#tcctry-confirm-cancel)
     * [本地消息表](分布式相关/分布式事务.md#本地消息表)
