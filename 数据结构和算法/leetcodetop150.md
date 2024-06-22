@@ -204,8 +204,6 @@ i<k;i++){
 - -104 <= nums[i] <= 104
 - nums 已按 非严格递增 排列
 
-## 题解
-
 ```java
 class Solution {
     public int removeDuplicates(int[] nums) {
