@@ -2302,3 +2302,564 @@ class Solution {
     }
 }
 ```
+# 矩阵
+## 36. 有效的数独
+https://leetcode.cn/problems/valid-sudoku/description/?envType=study-plan-v2&envId=top-interview-150
+
+请你判断一个 9 x 9 的数独是否有效。只需要 根据以下规则 ，验证已经填入的数字是否有效即可。
+
+- 数字 1-9 在每一行只能出现一次。
+- 数字 1-9 在每一列只能出现一次。
+- 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
+
+
+注意：
+
+- 一个有效的数独（部分已被填充）不一定是可解的。
+- 只需要根据以上规则，验证已经填入的数字是否有效即可。
+- 空白格用 '.' 表示。
+
+
+示例 1：
+
+![有效的数独.png](..%2Fimg%2F%CB%E3%B7%A8%2F%D3%D0%D0%A7%B5%C4%CA%FD%B6%C0.png)
+
+输入：board =
+
+[["5","3",".",".","7",".",".",".","."]
+
+,["6",".",".","1","9","5",".",".","."]
+
+,[".","9","8",".",".",".",".","6","."]
+
+,["8",".",".",".","6",".",".",".","3"]
+
+,["4",".",".","8",".","3",".",".","1"]
+
+,["7",".",".",".","2",".",".",".","6"]
+
+,[".","6",".",".",".",".","2","8","."]
+
+,[".",".",".","4","1","9",".",".","5"]
+
+,[".",".",".",".","8",".",".","7","9"]]
+
+输出：true
+
+示例 2：
+
+输入：board =
+
+[["8","3",".",".","7",".",".",".","."]
+
+,["6",".",".","1","9","5",".",".","."]
+
+,[".","9","8",".",".",".",".","6","."]
+
+,["8",".",".",".","6",".",".",".","3"]
+
+,["4",".",".","8",".","3",".",".","1"]
+
+,["7",".",".",".","2",".",".",".","6"]
+
+,[".","6",".",".",".",".","2","8","."]
+
+,[".",".",".","4","1","9",".",".","5"]
+
+,[".",".",".",".","8",".",".","7","9"]]
+
+输出：false
+
+解释：除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。 但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
+
+
+提示：
+
+- board.length == 9
+- board[i].length == 9
+- board[i][j] 是一位数字（1-9）或者 '.'
+
+```java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        boolean[][] row = new boolean[10][10];
+        boolean[][] col = new boolean[10][10];
+        boolean[][] area = new boolean[10][10];
+
+        for(int i = 0;i< 9;i++){
+            for(int j=0;j<9;j++){
+                char c = board[i][j];
+                if(c == '.'){
+                    continue;
+                }
+                int idx = i /3 * 3 + j/3;
+                int n = c - '0';
+                if(row[i][n] || col[j][n] || area[idx][n]){
+                    return false;
+                }
+                row[i][n] = col[j][n] = area[idx][n] = true;
+            }
+        }
+        return true;
+    }
+}
+```
+
+## 54. 螺旋矩阵
+https://leetcode.cn/problems/spiral-matrix/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。
+
+
+
+示例 1：
+
+![螺旋矩阵1.png](..%2Fimg%2F%CB%E3%B7%A8%2F%C2%DD%D0%FD%BE%D8%D5%F31.png)
+
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+
+输出：[1,2,3,6,9,8,7,4,5]
+
+示例 2：
+
+![螺旋矩阵2.png](..%2Fimg%2F%CB%E3%B7%A8%2F%C2%DD%D0%FD%BE%D8%D5%F32.png)
+
+输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+
+
+提示：
+
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= m, n <= 10
+- -100 <= matrix[i][j] <= 100
+
+```java
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList<>();
+        int m =matrix.length;
+        int n = matrix[0].length;
+        int left = 0,right = n-1,top = 0,boom = m-1;
+        int cnt = m*n;
+        while(cnt>=1){
+            for(int i=left;i<=right && cnt>=1;i++){
+                res.add(matrix[top][i]);
+                cnt--;
+            }
+            top++;
+            for(int i=top;i<=boom&& cnt>=1;i++){
+                res.add(matrix[i][right]);
+                cnt--;
+            }
+            right--;
+            for(int i=right;i>=left&& cnt>=1;i--){
+                res.add(matrix[boom][i]);
+                cnt--;
+            }
+            boom--;
+            for(int i=boom;i>=top&& cnt>=1;i--){
+                res.add(matrix[i][left]);
+                cnt--;
+            }
+            left++;
+        }
+        return res; 
+    }
+}
+```
+
+## 48. 旋转图像
+https://leetcode.cn/problems/rotate-image/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
+
+你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。
+
+示例 1：
+
+![旋转图像1.png](..%2Fimg%2F%CB%E3%B7%A8%2F%D0%FD%D7%AA%CD%BC%CF%F11.png)
+
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+
+输出：[[7,4,1],[8,5,2],[9,6,3]]
+
+示例 2：
+
+![旋转图像2.png](..%2Fimg%2F%CB%E3%B7%A8%2F%D0%FD%D7%AA%CD%BC%CF%F12.png)
+
+输入：matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+
+输出：[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+
+提示：
+
+- n == matrix.length == matrix[i].length
+- 1 <= n <= 20
+- -1000 <= matrix[i][j] <= 1000
+
+```java
+class Solution {
+    public void rotate(int[][] matrix) {
+        int len = matrix.length;
+
+        for(int i=0;i<len;i++){
+            for(int j=0;j<i;j++){
+                int temp = matrix[j][i];
+                matrix[j][i] = matrix[i][j];
+                matrix[i][j] = temp;
+            }
+        }
+
+        for(int i=0;i<len;i++){
+            for(int j=0;j<len/2;j++){
+                int temp = matrix[i][len-j-1];
+                matrix[i][len-j-1] = matrix[i][j];
+                matrix[i][j] = temp;
+            }
+        }
+    }
+}
+```
+
+## 73. 矩阵置零
+https://leetcode.cn/problems/set-matrix-zeroes/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个 m x n 的矩阵，如果一个元素为 0 ，则将其所在行和列的所有元素都设为 0 。请使用 原地 算法。
+
+示例 1：
+
+![矩阵置零1.png](..%2Fimg%2F%CB%E3%B7%A8%2F%BE%D8%D5%F3%D6%C3%C1%E31.png)
+
+输入：matrix = [[1,1,1],[1,0,1],[1,1,1]]
+
+输出：[[1,0,1],[0,0,0],[1,0,1]]
+
+示例 2：
+
+![矩阵置零2.png](..%2Fimg%2F%CB%E3%B7%A8%2F%BE%D8%D5%F3%D6%C3%C1%E32.png)
+
+输入：matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+
+输出：[[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+
+
+提示：
+
+- m == matrix.length
+- n == matrix[0].length
+- 1 <= m, n <= 200
+- -231 <= matrix[i][j] <= 231 - 1
+
+```java
+我们可以用两个标记数组分别记录每一行和每一列是否有零出现。
+
+具体地，我们首先遍历该数组一次，如果某个元素为 000，那么就将该元素所在的行和列所对应标记数组的位置置为 true。最后我们再次遍历该数组，用标记数组更新原数组即可。
+
+class Solution {
+  public void setZeroes(int[][] matrix) {
+    int m = matrix.length, n = matrix[0].length;
+    boolean[] row = new boolean[m];
+    boolean[] col = new boolean[n];
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        if (matrix[i][j] == 0) {
+          row[i] = col[j] = true;
+        }
+      }
+    }
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        if (row[i] || col[j]) {
+          matrix[i][j] = 0;
+        }
+      }
+    }
+  }
+}
+
+```
+
+## 289. 生命游戏
+https://leetcode.cn/problems/game-of-life/description/?envType=study-plan-v2&envId=top-interview-150
+
+根据 百度百科 ， 生命游戏 ，简称为 生命 ，是英国数学家约翰·何顿·康威在 1970 年发明的细胞自动机。
+
+给定一个包含 m × n 个格子的面板，每一个格子都可以看成是一个细胞。每个细胞都具有一个初始状态： 1 即为 活细胞 （live），或 0 即为 死细胞 （dead）。每个细胞与其八个相邻位置（水平，垂直，对角线）的细胞都遵循以下四条生存定律：
+
+1. 如果活细胞周围八个位置的活细胞数少于两个，则该位置活细胞死亡；
+1. 如果活细胞周围八个位置有两个或三个活细胞，则该位置活细胞仍然存活；
+1. 如果活细胞周围八个位置有超过三个活细胞，则该位置活细胞死亡；
+1. 如果死细胞周围正好有三个活细胞，则该位置死细胞复活；
+
+下一个状态是通过将上述规则同时应用于当前状态下的每个细胞所形成的，其中细胞的出生和死亡是同时发生的。给你 m x n 网格面板 board 的当前状态，返回下一个状态。
+
+
+
+示例 1：
+
+![生命游戏1.png](..%2Fimg%2F%CB%E3%B7%A8%2F%C9%FA%C3%FC%D3%CE%CF%B71.png)
+
+输入：board = [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]
+
+输出：[[0,0,0],[1,0,1],[0,1,1],[0,1,0]]
+
+示例 2：
+
+![生命游戏2.png](..%2Fimg%2F%CB%E3%B7%A8%2F%C9%FA%C3%FC%D3%CE%CF%B72.png)
+
+输入：board = [[1,1],[1,0]]
+
+输出：[[1,1],[1,1]]
+
+
+提示：
+
+- m == board.length
+- n == board[i].length
+- 1 <= m, n <= 25
+- board[i][j] 为 0 或 1
+
+```java
+class Solution {
+    public void gameOfLife(int[][] board) {
+        int[] neighbors = {0, 1, -1};
+
+        int rows = board.length;
+        int cols = board[0].length;
+
+        // 遍历面板每一个格子里的细胞
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+
+                // 对于每一个细胞统计其八个相邻位置里的活细胞数量
+                int liveNeighbors = 0;
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+
+                        if (!(neighbors[i] == 0 && neighbors[j] == 0)) {
+                            // 相邻位置的坐标
+                            int r = (row + neighbors[i]);
+                            int c = (col + neighbors[j]);
+
+                            // 查看相邻的细胞是否是活细胞
+                            if ((r < rows && r >= 0) && (c < cols && c >= 0) && (Math.abs(board[r][c]) == 1)) {
+                                liveNeighbors += 1;
+                            }
+                        }
+                    }
+                }
+
+                // 规则 1 或规则 3 
+                if ((board[row][col] == 1) && (liveNeighbors < 2 || liveNeighbors > 3)) {
+                    // -1 代表这个细胞过去是活的现在死了
+                    board[row][col] = -1;
+                }
+                // 规则 4
+                if (board[row][col] == 0 && liveNeighbors == 3) {
+                    // 2 代表这个细胞过去是死的现在活了
+                    board[row][col] = 2;
+                }
+            }
+        }
+
+        // 遍历 board 得到一次更新后的状态
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (board[row][col] > 0) {
+                    board[row][col] = 1;
+                } else {
+                    board[row][col] = 0;
+                }
+            }
+        }
+    }
+}
+```
+
+# 哈希表
+## 383. 赎金信
+https://leetcode.cn/problems/ransom-note/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你两个字符串：ransomNote 和 magazine ，判断 ransomNote 能不能由 magazine 里面的字符构成。
+
+如果可以，返回 true ；否则返回 false 。
+
+magazine 中的每个字符只能在 ransomNote 中使用一次。
+
+
+
+示例 1：
+
+输入：ransomNote = "a", magazine = "b"
+
+输出：false
+
+示例 2：
+
+输入：ransomNote = "aa", magazine = "ab"
+
+输出：false
+
+示例 3：
+
+输入：ransomNote = "aa", magazine = "aab"
+
+输出：true
+
+
+提示：
+
+- 1 <= ransomNote.length, magazine.length <= 105
+- ransomNote 和 magazine 由小写英文字母组成
+
+```java
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        if (ransomNote.length() > magazine.length()) {
+            return false;
+        }
+        int[] cnt = new int[26];
+        for (char c : magazine.toCharArray()) {
+            cnt[c - 'a']++;
+        }
+        for (char c : ransomNote.toCharArray()) {
+            cnt[c - 'a']--;
+            if(cnt[c - 'a'] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+## 205. 同构字符串
+https://leetcode.cn/problems/isomorphic-strings/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个字符串 s 和 t ，判断它们是否是同构的。
+
+如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。
+
+每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。
+
+
+
+示例 1:
+
+输入：s = "egg", t = "add"
+
+输出：true
+
+示例 2：
+
+输入：s = "foo", t = "bar"
+
+输出：false
+
+示例 3：
+
+输入：s = "paper", t = "title"
+
+输出：true
+
+
+提示：
+
+- 1 <= s.length <= 5 * 104
+- t.length == s.length
+- s 和 t 由任意有效的 ASCII 字符组成
+
+```java
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        Map<Character, Character> s2t = new HashMap<Character, Character>();
+        Map<Character, Character> t2s = new HashMap<Character, Character>();
+        int len = s.length();
+        for (int i = 0; i < len; ++i) {
+            char x = s.charAt(i), y = t.charAt(i);
+            if ((s2t.containsKey(x) && s2t.get(x) != y) || (t2s.containsKey(y) && t2s.get(y) != x)) {
+                return false;
+            }
+            s2t.put(x, y);
+            t2s.put(y, x);
+        }
+        return true;
+    }
+}
+```
+
+## 290. 单词规律
+https://leetcode.cn/problems/word-pattern/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一种规律 pattern 和一个字符串 s ，判断 s 是否遵循相同的规律。
+
+这里的 遵循 指完全匹配，例如， pattern 里的每个字母和字符串 s 中的每个非空单词之间存在着双向连接的对应规律。
+
+
+
+示例1:
+
+输入: pattern = "abba", s = "dog cat cat dog"
+
+输出: true
+
+示例 2:
+
+输入:pattern = "abba", s = "dog cat cat fish"
+
+输出: false
+
+示例 3:
+
+输入: pattern = "aaaa", s = "dog cat cat dog"
+
+输出: false
+
+
+提示:
+
+- 1 <= pattern.length <= 300
+- pattern 只包含小写英文字母
+- 1 <= s.length <= 3000
+- s 只包含小写英文字母和 ' '
+- s 不包含 任何前导或尾随对空格
+- s 中每个单词都被 单个空格 分隔
+
+```java
+class Solution {
+    public boolean wordPattern(String pattern, String str) {
+        Map<String, Character> str2ch = new HashMap<String, Character>();
+        Map<Character, String> ch2str = new HashMap<Character, String>();
+        int m = str.length();
+        int i = 0;
+        for (int p = 0; p < pattern.length(); ++p) {
+            char ch = pattern.charAt(p);
+            if (i >= m) {
+                return false;
+            }
+            int j = i;
+            while (j < m && str.charAt(j) != ' ') {
+                j++;
+            }
+            String tmp = str.substring(i, j);
+            if (str2ch.containsKey(tmp) && str2ch.get(tmp) != ch) {
+                return false;
+            }
+            if (ch2str.containsKey(ch) && !tmp.equals(ch2str.get(ch))) {
+                return false;
+            }
+            str2ch.put(tmp, ch);
+            ch2str.put(ch, tmp);
+            i = j + 1;
+        }
+        return i >= m;
+    }
+}
+```
+
+
