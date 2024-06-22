@@ -2862,4 +2862,1050 @@ class Solution {
 }
 ```
 
+## 242. 有效的字母异位词
+https://leetcode.cn/problems/valid-anagram/description/?envType=study-plan-v2&envId=top-interview-150
 
+给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
+
+注意：若 s 和 t 中每个字符出现的次数都相同，则称 s 和 t 互为字母异位词。
+
+
+
+示例 1:
+
+输入: s = "anagram", t = "nagaram"
+
+输出: true
+
+示例 2:
+
+输入: s = "rat", t = "car"
+
+输出: false
+
+
+提示:
+
+- 1 <= s.length, t.length <= 5 * 104
+- s 和 t 仅包含小写字母
+
+```java
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        int[] table = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            table[s.charAt(i) - 'a']++;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            table[t.charAt(i) - 'a']--;
+            if (table[t.charAt(i) - 'a'] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+## 49. 字母异位词分组
+https://leetcode.cn/problems/group-anagrams/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+
+字母异位词 是由重新排列源单词的所有字母得到的一个新单词。
+
+
+
+示例 1:
+
+输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+
+输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+示例 2:
+
+输入: strs = [""]
+
+输出: [[""]]
+
+示例 3:
+
+输入: strs = ["a"]
+
+输出: [["a"]]
+
+
+提示：
+
+- 1 <= strs.length <= 104
+- 0 <= strs[i].length <= 100
+- strs[i] 仅包含小写字母
+
+```java
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String str : strs) {
+            char[] array = str.toCharArray();
+            Arrays.sort(array);
+            String key = new String(array);
+            List<String> list = map.getOrDefault(key, new ArrayList<String>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+}
+```
+
+## 1. 两数之和
+https://leetcode.cn/problems/two-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target  的那 两个 整数，并返回它们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。
+
+你可以按任意顺序返回答案。
+
+
+
+示例 1：
+
+输入：nums = [2,7,11,15], target = 9
+
+输出：[0,1]
+
+解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+
+示例 2：
+
+输入：nums = [3,2,4], target = 6
+
+输出：[1,2]
+
+示例 3：
+
+输入：nums = [3,3], target = 6
+
+输出：[0,1]
+
+```java
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer,Integer> map =new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(map.containsKey(nums[i])){
+                return new int[]{i,map.get(nums[i])};
+            }else{
+                map.put(target-nums[i],i);
+            }
+        }
+        return new int[]{};
+    }
+}
+```
+
+## 202. 快乐数
+https://leetcode.cn/problems/happy-number/description/?envType=study-plan-v2&envId=top-interview-150
+
+编写一个算法来判断一个数 n 是不是快乐数。
+
+「快乐数」 定义为：
+
+- 对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。
+- 然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。
+- 如果这个过程 结果为 1，那么这个数就是快乐数。
+
+如果 n 是 快乐数 就返回 true ；不是，则返回 false 。
+
+
+
+示例 1：
+
+输入：n = 19
+
+输出：true
+
+解释：
+
+12 + 92 = 82
+
+82 + 22 = 68
+
+62 + 82 = 100
+
+12 + 02 + 02 = 1
+
+示例 2：
+
+输入：n = 2
+
+输出：false
+
+
+提示：
+
+- 1 <= n <= 231 - 1
+
+```java
+//快慢指针法
+
+class Solution {
+
+     public int getNext(int n) {
+        int totalSum = 0;
+        while (n > 0) {
+            int d = n % 10;
+            n = n / 10;
+            totalSum += d * d;
+        }
+        return totalSum;
+    }
+
+    public boolean isHappy(int n) {
+        int slowRunner = n;
+        int fastRunner = getNext(n);
+        while (fastRunner != 1 && slowRunner != fastRunner) {
+            slowRunner = getNext(slowRunner);
+            fastRunner = getNext(getNext(fastRunner));
+        }
+        return fastRunner == 1;
+    }
+}
+```
+
+## 219. 存在重复元素 II
+https://leetcode.cn/problems/contains-duplicate-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 nums 和一个整数 k ，判断数组中是否存在两个 不同的索引 i 和 j ，满足 nums[i] == nums[j] 且 abs(i - j) <= k 。如果存在，返回 true ；否则，返回 false 。
+
+
+
+示例 1：
+
+输入：nums = [1,2,3,1], k = 3
+
+输出：true
+
+示例 2：
+
+输入：nums = [1,0,1,1], k = 1
+
+输出：true
+
+示例 3：
+
+输入：nums = [1,2,3,1,2,3], k = 2
+
+输出：false
+
+
+
+
+提示：
+
+- 1 <= nums.length <= 105
+- -109 <= nums[i] <= 109
+- 0 <= k <= 105
+
+```java
+//滑动窗口
+class Solution {
+  public boolean containsNearbyDuplicate(int[] nums, int k) {
+    Set<Integer> set = new HashSet<Integer>();
+    int length = nums.length;
+    for (int i = 0; i < length; i++) {
+      if (i > k) {
+        set.remove(nums[i - k - 1]);
+      }
+      if (!set.add(nums[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+```
+
+## 128. 最长连续序列
+https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+
+
+示例 1：
+
+输入：nums = [100,4,200,1,3,2]
+
+输出：4
+
+解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。
+
+示例 2：
+
+输入：nums = [0,3,7,2,5,8,4,6,0,1]
+
+输出：9
+
+
+提示：
+
+- 0 <= nums.length <= 105
+- -109 <= nums[i] <= 109
+
+```java
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for(int n:nums){
+            set.add(n);
+        }
+        int max=0;
+        for(int n:nums){
+            if(!set.contains(n-1)){
+                int cnt = 1;
+                int cur = n;
+                while(set.contains(cur+1)){
+                    cur+=1;
+                    cnt+=1;
+                }
+                max = Math.max(max,cnt);
+            }
+        }
+        return max;
+    }
+}   
+```
+# 区间
+## 228. 汇总区间
+https://leetcode.cn/problems/summary-ranges/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个  无重复元素 的 有序 整数数组 nums 。
+
+返回 恰好覆盖数组中所有数字 的 最小有序 区间范围列表 。也就是说，nums 的每个元素都恰好被某个区间范围所覆盖，并且不存在属于某个范围但不属于 nums 的数字 x 。
+
+列表中的每个区间范围 [a,b] 应该按如下格式输出：
+
+- "a->b" ，如果 a != b
+- "a" ，如果 a == b
+
+
+示例 1：
+
+输入：nums = [0,1,2,4,5,7]
+
+输出：["0->2","4->5","7"]
+
+解释：区间范围是：
+
+[0,2] --> "0->2"
+
+[4,5] --> "4->5"
+
+[7,7] --> "7"
+
+示例 2：
+
+输入：nums = [0,2,3,4,6,8,9]
+
+输出：["0","2->4","6","8->9"]
+
+解释：区间范围是：
+
+[0,0] --> "0"
+
+[2,4] --> "2->4"
+
+[6,6] --> "6"
+
+[8,9] --> "8->9"
+
+
+提示：
+
+- 0 <= nums.length <= 20
+- -231 <= nums[i] <= 231 - 1
+- nums 中的所有值都 互不相同
+- nums 按升序排列
+
+```java
+class Solution {
+    public List<String> summaryRanges(int[] nums) {
+        List<String> ret = new ArrayList<String>();
+        int i = 0;
+        int n = nums.length;
+        while (i < n) {
+            int low = i;
+            i++;
+            while (i < n && nums[i] == nums[i - 1] + 1) {
+                i++;
+            }
+            int high = i - 1;
+            StringBuffer temp = new StringBuffer(Integer.toString(nums[low]));
+            if (low < high) {
+                temp.append("->");
+                temp.append(Integer.toString(nums[high]));
+            }
+            ret.add(temp.toString());
+        }
+        return ret;
+    }
+}
+```
+
+## 56. 合并区间
+https://leetcode.cn/problems/merge-intervals/description/?envType=study-plan-v2&envId=top-interview-150
+
+以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
+
+
+
+示例 1：
+
+输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+
+输出：[[1,6],[8,10],[15,18]]
+
+解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+
+示例 2：
+
+输入：intervals = [[1,4],[4,5]]
+
+输出：[[1,5]]
+
+解释：区间 [1,4] 和 [4,5] 可被视为重叠区间。
+
+
+提示：
+
+- 1 <= intervals.length <= 104
+- intervals[i].length == 2
+- 0 <= starti <= endi <= 104
+
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals,(o1,o2)->Integer.compare(o1[0],o2[0]));
+        List<int[]> res = new ArrayList<>();
+        for(int i=0;i< intervals.length;i++){
+            int left = intervals[i][0],right = intervals[i][1];
+            int size = res.size();
+            if(size==0 || res.get(size-1)[1] < left){
+                res.add(new int[]{left,right});
+            }else{
+                res.get(size-1)[1] = Math.max(res.get(size-1)[1],right); 
+            }
+        }
+        return res.toArray(new int[res.size()][]);
+    }
+}
+```
+## 57. 插入区间
+https://leetcode.cn/problems/insert-interval/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个 无重叠的 ，按照区间起始端点排序的区间列表 intervals，其中 intervals[i] = [starti, endi] 表示第 i 个区间的开始和结束，并且 intervals 按照 starti 升序排列。同样给定一个区间 newInterval = [start, end] 表示另一个区间的开始和结束。
+
+在 intervals 中插入区间 newInterval，使得 intervals 依然按照 starti 升序排列，且区间之间不重叠（如果有必要的话，可以合并区间）。
+
+返回插入之后的 intervals。
+
+注意 你不需要原地修改 intervals。你可以创建一个新数组然后返回它。
+
+
+
+示例 1：
+
+输入：intervals = [[1,3],[6,9]], newInterval = [2,5]
+
+输出：[[1,5],[6,9]]
+
+示例 2：
+
+输入：intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+
+输出：[[1,2],[3,10],[12,16]]
+
+解释：这是因为新的区间 [4,8] 与 [3,5],[6,7],[8,10] 重叠。
+
+
+提示：
+
+- 0 <= intervals.length <= 104
+- intervals[i].length == 2
+- 0 <= starti <= endi <= 105
+- intervals 根据 starti 按 升序 排列
+- newInterval.length == 2
+- 0 <= start <= end <= 105
+
+```java
+class Solution {
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        int left = newInterval[0];
+        int right = newInterval[1];
+        boolean placed = false;
+        List<int[]> ansList = new ArrayList<int[]>();
+        for (int[] interval : intervals) {
+            if (interval[0] > right) {
+                // 在插入区间的右侧且无交集
+                if (!placed) {
+                    ansList.add(new int[]{left, right});
+                    placed = true;                    
+                }
+                ansList.add(interval);
+            } else if (interval[1] < left) {
+                // 在插入区间的左侧且无交集
+                ansList.add(interval);
+            } else {
+                // 与插入区间有交集，计算它们的并集
+                left = Math.min(left, interval[0]);
+                right = Math.max(right, interval[1]);
+            }
+        }
+        if (!placed) {
+            ansList.add(new int[]{left, right});
+        }
+        int[][] ans = new int[ansList.size()][2];
+        for (int i = 0; i < ansList.size(); ++i) {
+            ans[i] = ansList.get(i);
+        }
+        return ans;
+    }
+}
+```
+
+## 452. 用最少数量的箭引爆气球
+https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/description/?envType=study-plan-v2&envId=top-interview-150
+
+有一些球形气球贴在一堵用 XY 平面表示的墙面上。墙面上的气球记录在整数数组 points ，其中points[i] = [xstart, xend] 表示水平直径在 xstart 和 xend之间的气球。你不知道气球的确切 y 坐标。
+
+一支弓箭可以沿着 x 轴从不同点 完全垂直 地射出。在坐标 x 处射出一支箭，若有一个气球的直径的开始和结束坐标为 xstart，xend， 且满足  xstart ≤ x ≤ xend，则该气球会被 引爆 。可以射出的弓箭的数量 没有限制 。 弓箭一旦被射出之后，可以无限地前进。
+
+给你一个数组 points ，返回引爆所有气球所必须射出的 最小 弓箭数 。
+
+
+示例 1：
+
+输入：points = [[10,16],[2,8],[1,6],[7,12]]
+
+输出：2
+
+解释：气球可以用2支箭来爆破:
+
+-在x = 6处射出箭，击破气球[2,8]和[1,6]。
+
+-在x = 11处发射箭，击破气球[10,16]和[7,12]。
+
+示例 2：
+
+输入：points = [[1,2],[3,4],[5,6],[7,8]]
+
+输出：4
+
+解释：每个气球需要射出一支箭，总共需要4支箭。
+
+示例 3：
+
+输入：points = [[1,2],[2,3],[3,4],[4,5]]
+
+输出：2
+
+解释：气球可以用2支箭来爆破:
+- 在x = 2处发射箭，击破气球[1,2]和[2,3]。
+- 在x = 4处射出箭，击破气球[3,4]和[4,5]。
+
+
+提示:
+
+- 1 <= points.length <= 105
+- points[i].length == 2
+- -231 <= xstart < xend <= 231 - 1
+
+```java
+class Solution {
+    public int findMinArrowShots(int[][] points) {
+        if(points.length ==0){
+            return 0;
+        }
+        Arrays.sort(points,Comparator.comparingInt(o->o[1]));
+        int cnt=1;
+        int end = points[0][1];
+        for(int i=1;i<points.length;i++){
+            if(points[i][0]<=end){
+                continue;
+            }
+            cnt++;
+            end = points[i][1];
+        }
+        return cnt;
+    }
+}
+```
+
+## 栈
+## 20. 有效的括号
+https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+有效字符串需满足：
+
+- 左括号必须用相同类型的右括号闭合。
+- 左括号必须以正确的顺序闭合。
+- 每个右括号都有一个对应的相同类型的左括号。
+
+
+示例 1：
+
+输入：s = "()"
+
+输出：true
+
+示例 2：
+
+输入：s = "()[]{}"
+
+输出：true
+
+示例 3：
+
+输入：s = "(]"
+
+输出：false
+
+
+提示：
+
+- 1 <= s.length <= 104
+- s 仅由括号 '()[]{}' 组成
+
+```java
+class Solution {
+  public boolean isValid(String s) {
+    if(s == null || s.length()%2!=0){
+      return false;
+    }
+    Map<Character,Character> map = new HashMap<>(){
+      {
+        put(')','(');
+        put('}','{');
+        put(']','[');
+      }
+    };
+    Deque<Character> dq = new LinkedList<>();
+    for(int i=0;i<s.length();i++){
+      char c = s.charAt(i);
+      if(map.containsKey(c)){
+        if(dq.isEmpty() || map.get(c) != dq.peek()){
+          return false;
+        }
+        dq.pop();
+      }else{
+        dq.push(c);
+      }
+    }
+    return dq.isEmpty();
+  }
+}
+```
+
+## 71. 简化路径
+https://leetcode.cn/problems/simplify-path/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串 path ，表示指向某一文件或目录的 Unix 风格 绝对路径 （以 '/' 开头），请你将其转化为更加简洁的规范路径。
+
+在 Unix 风格的文件系统中，一个点（.）表示当前目录本身；此外，两个点 （..） 表示将目录切换到上一级（指向父目录）；两者都可以是复杂相对路径的组成部分。任意多个连续的斜杠（即，'//'）都被视为单个斜杠 '/' 。 对于此问题，任何其他格式的点（例如，'...'）均被视为文件/目录名称。
+
+请注意，返回的 规范路径 必须遵循下述格式：
+
+- 始终以斜杠 '/' 开头。
+- 两个目录名之间必须只有一个斜杠 '/' 。
+- 最后一个目录名（如果存在）不能 以 '/' 结尾。
+- 此外，路径仅包含从根目录到目标文件或目录的路径上的目录（即，不含 '.' 或 '..'）。
+
+返回简化后得到的 规范路径 。
+
+
+
+示例 1：
+
+输入：path = "/home/"
+
+输出："/home"
+
+解释：注意，最后一个目录名后面没有斜杠。
+
+示例 2：
+
+输入：path = "/../"
+
+输出："/"
+
+解释：从根目录向上一级是不可行的，因为根目录是你可以到达的最高级。
+
+示例 3：
+
+输入：path = "/home//foo/"
+
+输出："/home/foo"
+
+解释：在规范路径中，多个连续斜杠需要用一个斜杠替换。
+
+示例 4：
+
+输入：path = "/a/./b/../../c/"
+
+输出："/c"
+
+
+提示：
+
+- 1 <= path.length <= 3000
+- path 由英文字母，数字，'.'，'/' 或 '_' 组成。
+- path 是一个有效的 Unix 风格绝对路径。
+
+```java
+class Solution {
+    public String simplifyPath(String path) {
+        String[] names = path.split("/");
+        Deque<String> stack = new ArrayDeque<String>();
+        for (String name : names) {
+            if ("..".equals(name)) {
+                if (!stack.isEmpty()) {
+                    stack.pollLast();
+                }
+            } else if (name.length() > 0 && !".".equals(name)) {
+                stack.offerLast(name);
+            }
+        }
+        StringBuffer ans = new StringBuffer();
+        if (stack.isEmpty()) {
+            ans.append('/');
+        } else {
+            while (!stack.isEmpty()) {
+                ans.append('/');
+                ans.append(stack.pollFirst());
+            }
+        }
+        return ans.toString();
+    }
+}
+```
+
+## 155. 最小栈
+https://leetcode.cn/problems/min-stack/description/?envType=study-plan-v2&envId=top-interview-150
+
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+
+实现 MinStack 类:
+
+- MinStack() 初始化堆栈对象。
+- void push(int val) 将元素val推入堆栈。
+- void pop() 删除堆栈顶部的元素。
+- int top() 获取堆栈顶部的元素。
+- int getMin() 获取堆栈中的最小元素。
+
+
+示例 1:
+
+输入：
+
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+
+[[],[-2],[0],[-3],[],[],[],[]]
+
+输出：
+
+[null,null,null,null,-3,null,0,-2]
+
+解释：
+- MinStack minStack = new MinStack();
+- minStack.push(-2);
+- minStack.push(0);
+- minStack.push(-3);
+- minStack.getMin();   --> 返回 -3.
+- minStack.pop();
+- minStack.top();      --> 返回 0.
+- minStack.getMin();   --> 返回 -2.
+
+
+提示：
+
+- -231 <= val <= 231 - 1
+- pop、top 和 getMin 操作总是在 非空栈 上调用
+- push, pop, top, and getMin最多被调用 3 * 104 次
+
+```java
+class MinStack {
+    public static class Node{
+        int val;
+        int min;
+        Node next;
+
+        public Node(int val,int min,Node next){
+            this.val = val;
+            this.min = min;
+            this.next = next;
+        }
+
+    }
+
+    Node head;
+    public MinStack() {
+
+    }
+    
+    public void push(int val) {
+        if(head == null){
+            head = new Node(val,val,null);
+        }else{
+            head = new Node(val,Math.min(head.min,val),head);
+        }
+    }
+    
+    public void pop() {
+        head = head.next;
+    }
+    
+    public int top() {
+        return head.val;
+    }
+    
+    public int getMin() {
+        return head.min;
+    }
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
+```
+
+## 150. 逆波兰表达式求值
+https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串数组 tokens ，表示一个根据 逆波兰表示法 表示的算术表达式。
+
+请你计算该表达式。返回一个表示表达式值的整数。
+
+注意：
+
+- 有效的算符为 '+'、'-'、'*' 和 '/' 。
+- 每个操作数（运算对象）都可以是一个整数或者另一个表达式。
+- 两个整数之间的除法总是 向零截断 。
+- 表达式中不含除零运算。
+- 输入是一个根据逆波兰表示法表示的算术表达式。
+- 答案及所有中间计算结果可以用 32 位 整数表示。
+
+
+示例 1：
+
+输入：tokens = ["2","1","+","3","*"]
+
+输出：9
+
+解释：该算式转化为常见的中缀算术表达式为：((2 + 1) * 3) = 9
+
+示例 2：
+
+输入：tokens = ["4","13","5","/","+"]
+
+输出：6
+
+解释：该算式转化为常见的中缀算术表达式为：(4 + (13 / 5)) = 6
+
+示例 3：
+
+输入：tokens = ["10","6","9","3","+","-11","*","/","*","17","+","5","+"]
+
+输出：22
+
+解释：该算式转化为常见的中缀算术表达式为：
+
+((10 * (6 / ((9 + 3) * -11))) + 17) + 5
+
+= ((10 * (6 / (12 * -11))) + 17) + 5
+
+= ((10 * (6 / -132)) + 17) + 5
+
+= ((10 * 0) + 17) + 5
+
+= (0 + 17) + 5
+
+= 17 + 5
+
+= 22
+
+
+提示：
+
+- 1 <= tokens.length <= 104
+- tokens[i] 是一个算符（"+"、"-"、"*" 或 "/"），或是在范围 [-200, 200] 内的一个整数
+
+
+逆波兰表达式：
+逆波兰表达式是一种后缀表达式，所谓后缀就是指算符写在后面。
+
+- 平常使用的算式则是一种中缀表达式，如 ( 1 + 2 ) * ( 3 + 4 ) 。
+- 该算式的逆波兰表达式写法为 ( ( 1 2 + ) ( 3 4 + ) * ) 。
+
+逆波兰表达式主要有以下两个优点：
+
+- 去掉括号后表达式无歧义，上式即便写成 1 2 + 3 4 + * 也可以依据次序计算出正确结果。
+- 适合用栈操作运算：遇到数字则入栈；遇到算符则取出栈顶两个数字进行计算，并将结果压入栈中
+
+```java
+class Solution {
+    public int evalRPN(String[] tokens) {
+        Deque<Integer> stack = new LinkedList<Integer>();
+        int n = tokens.length;
+        for (int i = 0; i < n; i++) {
+            String token = tokens[i];
+            if (isNumber(token)) {
+                stack.push(Integer.parseInt(token));
+            } else {
+                int num2 = stack.pop();
+                int num1 = stack.pop();
+                switch (token) {
+                    case "+":
+                        stack.push(num1 + num2);
+                        break;
+                    case "-":
+                        stack.push(num1 - num2);
+                        break;
+                    case "*":
+                        stack.push(num1 * num2);
+                        break;
+                    case "/":
+                        stack.push(num1 / num2);
+                        break;
+                    default:
+                }
+            }
+        }
+        return stack.pop();
+    }
+
+    public boolean isNumber(String token) {
+        return !("+".equals(token) || "-".equals(token) || "*".equals(token) || "/".equals(token));
+    }
+}
+```
+
+## 224. 基本计算器
+https://leetcode.cn/problems/basic-calculator/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串表达式 s ，请你实现一个基本计算器来计算并返回它的值。
+
+注意:不允许使用任何将字符串作为数学表达式计算的内置函数，比如 eval() 。
+
+
+
+示例 1：
+
+输入：s = "1 + 1"
+
+输出：2
+
+示例 2：
+
+输入：s = " 2-1 + 2 "
+
+输出：3
+
+示例 3：
+
+输入：s = "(1+(4+5+2)-3)+(6+8)"
+
+输出：23
+
+
+提示：
+
+- 1 <= s.length <= 3 * 105
+- s 由数字、'+'、'-'、'('、')'、和 ' ' 组成
+- s 表示一个有效的表达式
+- '+' 不能用作一元运算(例如， "+1" 和 "+(2 + 3)" 无效)
+- '-' 可以用作一元运算(即 "-1" 和 "-(2 + 3)" 是有效的)
+- 输入中不存在两个连续的操作符
+- 每个数字和运行的计算将适合于一个有符号的 32位 整数
+
+```java
+class Solution {
+    public int calculate(String s) {
+        Deque<Integer> nums = new LinkedList<>();
+        nums.addLast(0);
+        Deque<Character> ops = new LinkedList<>();
+        s = s.replaceAll(" ","");
+        char[] arr = s.toCharArray();
+        int len = arr.length;
+        for(int i=0;i < len;i++){
+            char c = arr[i];
+            //(
+            if(c == '('){
+                ops.addLast(c);
+              //)   
+            }else if(c == ')'){
+                while(!ops.isEmpty()){
+                    char op = ops.peekLast();
+                    if(op != '('){
+                        calc(nums,ops);
+                    }else{
+                        ops.pollLast();
+                        break;
+                    }
+                }
+            }else{
+                //数字
+                if(Character.isDigit(c)){
+                    int sum = 0;
+                    int j = i;
+                    while(j < len && Character.isDigit(arr[j])){
+                        sum = sum * 10 + (arr[j++] - '0');
+                    }
+                    nums.addLast(sum);
+                    i = j - 1;
+                }else{
+                    //计算符号
+                    if(i>0 && ( arr[i-1] == '(' || arr[i-1] == '+' ||arr[i-1] == '-')){
+                        nums.addLast(0);
+                    }
+                    while(!ops.isEmpty() && ops.peekLast() != '('){
+                        calc(nums,ops);
+                    }
+                    ops.addLast(c);
+                }
+            }
+        }
+        while(!ops.isEmpty()){
+            calc(nums,ops);
+        }
+        return nums.peekLast();
+    }
+
+    public void calc(Deque<Integer> nums,Deque<Character> ops){
+        if(nums.isEmpty() || nums.size() < 2){
+            return;
+        }
+        if(ops.isEmpty()){
+            return;
+        }
+        int b = nums.pollLast();
+        int a = nums.pollLast();
+        char op = ops.pollLast();
+        int res  = op == '+' ? a+b : a - b;
+        nums.addLast(res);
+    }
+}
+```
