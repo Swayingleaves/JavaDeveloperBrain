@@ -3448,7 +3448,7 @@ class Solution {
 }
 ```
 
-## 栈
+# 栈
 ## 20. 有效的括号
 https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v2&envId=top-interview-150
 
