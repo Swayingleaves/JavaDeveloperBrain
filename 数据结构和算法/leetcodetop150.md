@@ -5442,5 +5442,157 @@ https://leetcode.cn/problems/sum-root-to-leaf-numbers/description/?envType=study
 - 0 <= Node.val <= 9
 - 树的深度不超过 10
 
+```java
 
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 定义 Solution 类，用于计算二叉树中从根到叶子节点路径所代表的数字之和。
+ */
+class Solution {
+    int res = 0; // 初始化用于存储总和的变量
+
+    /**
+     * 计算二叉树中从根到叶子节点路径的数字总和。
+     *
+     * @param root 二叉树的根节点
+     * @return 从根到叶子节点路径所代表的数字之和
+     */
+    public int sumNumbers(TreeNode root) {
+        help(root, 0); // 调用辅助函数，初始累加值为0
+        return res; // 返回最终结果
+    }
+
+    /**
+     * 递归方法，用于计算从根到当前节点路径上的数字总和。
+     *
+     * @param root 当前二叉树节点
+     * @param k 从根节点到当前节点的累加值
+     */
+    public void help(TreeNode root, int k) {
+        if (root == null) {
+            return; // 基本情况：如果当前节点为空，直接返回
+        }
+        
+        int sum = k * 10 + root.val; // 计算从根到当前节点的累加值
+        
+        // 如果是叶子节点，将路径上的值累积到总和中
+        if (root.left == null && root.right == null) {
+            res += sum;
+        }
+        
+        // 递归调用左右子节点，并传递更新后的累加值
+        help(root.left, sum);
+        help(root.right, sum);
+    }
+}
+```
+
+## 124. 二叉树中的最大路径和
+https://leetcode.cn/problems/binary-tree-maximum-path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 root ，返回其 最大路径和 。
+
+ 
+
+示例 1：
+
+![](../img/数据结构和算法/二叉树中的最大路径和1.png)
+
+
+输入：root = [1,2,3]
+
+输出：6
+
+解释：最优路径是 2 -> 1 -> 3 ，路径和为 2 + 1 + 3 = 6
+
+示例 2：
+
+![](../img/数据结构和算法/二叉树中的最大路径和2.png)
+
+输入：root = [-10,9,20,null,null,15,7]
+
+输出：42
+
+解释：最优路径是 15 -> 20 -> 7 ，路径和为 15 + 20 + 7 = 42
+ 
+
+提示：
+
+树中节点数目范围是 [1, 3 * 104]
+-1000 <= Node.val <= 1000
+
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 定义 Solution 类，用于计算二叉树中的最大路径和。
+ */
+class Solution {
+    int sum = Integer.MIN_VALUE; // 初始化变量以存储最大路径和
+
+    /**
+     * 计算二叉树中的最大路径和。
+     *
+     * @param root 二叉树的根节点
+     * @return 最大路径和
+     */
+    public int maxPathSum(TreeNode root) {
+        getMax(root); // 获取最大路径和
+        return sum; // 返回最大路径和
+    }
+
+    /**
+     * 辅助方法，找出从特定节点开始的最大路径和。
+     *
+     * @param root 当前二叉树节点
+     * @return 从当前节点开始的最大路径和
+     */
+    public int getMax(TreeNode root) {
+        if (root == null) {
+            return 0; // 如果当前节点为空，返回0
+        }
+
+        int left = Math.max(0, getMax(root.left)); // 计算左子树的最大路径和
+        int right = Math.max(0, getMax(root.right)); // 计算右子树的最大路径和
+
+        int n = left + right + root.val; // 计算包括当前节点在内的路径和
+
+        sum = Math.max(sum, n); // 更新全局最大路径和
+
+        return Math.max(left, right) + root.val; // 返回从当前节点开始的最大路径和
+    }
+}
+```
 
