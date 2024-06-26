@@ -5596,3 +5596,800 @@ class Solution {
 }
 ```
 
+## 173. 二叉搜索树迭代器
+https://leetcode.cn/problems/binary-search-tree-iterator/description/?envType=study-plan-v2&envId=top-interview-150
+
+实现一个二叉搜索树迭代器类BSTIterator ，表示一个按中序遍历二叉搜索树（BST）的迭代器：
+- BSTIterator(TreeNode root) 初始化 BSTIterator 类的一个对象。BST 的根节点 root 会作为构造函数的一部分给出。指针应初始化为一个不存在于 BST 中的数字，且该数字小于 BST 中的任何元素。
+- boolean hasNext() 如果向指针右侧遍历存在数字，则返回 true ；否则返回 false 。
+- int next()将指针向右移动，然后返回指针处的数字。
+注意，指针初始化为一个不存在于 BST 中的数字，所以对 next() 的首次调用将返回 BST 中的最小元素。
+
+你可以假设 next() 调用总是有效的，也就是说，当调用 next() 时，BST 的中序遍历中至少存在一个下一个数字。
+
+ 
+
+示例：
+
+![](../img/数据结构和算法/二叉搜索迭代树.png)
+
+输入
+
+["BSTIterator", "next", "next", "hasNext", "next", "hasNext", "next", "hasNext", "next", "hasNext"]
+
+[[[7, 3, 15, null, null, 9, 20]], [], [], [], [], [], [], [], [], []]
+
+输出
+
+[null, 3, 7, true, 9, true, 15, true, 20, false]
+
+解释
+
+BSTIterator bSTIterator = new BSTIterator([7, 3, 15, null, null, 9, 20]);
+
+bSTIterator.next();    // 返回 3
+
+bSTIterator.next();    // 返回 7
+
+bSTIterator.hasNext(); // 返回 True
+
+bSTIterator.next();    // 返回 9
+
+bSTIterator.hasNext(); // 返回 True
+
+bSTIterator.next();    // 返回 15
+
+bSTIterator.hasNext(); // 返回 True
+
+bSTIterator.next();    // 返回 20
+
+bSTIterator.hasNext(); // 返回 False
+ 
+
+提示：
+
+- 树中节点的数目在范围 [1, 105] 内
+- 0 <= Node.val <= 106
+- 最多调用 105 次 hasNext 和 next 操作
+ 
+
+进阶：
+
+你可以设计一个满足下述条件的解决方案吗？next() 和 hasNext() 操作均摊时间复杂度为 O(1) ，并使用 O(h) 内存。其中 h 是树的高度。
+
+这段代码是一个用于二叉搜索树（BST）的迭代器实现。下面我会对代码的每一行添加注释来解释其功能。
+
+
+```java
+// 定义BSTIterator类，用于遍历二叉搜索树（BST）
+class BSTIterator {
+    // 当前遍历的节点指针
+    private TreeNode cur;
+    // 用于存储节点的栈，辅助中序遍历
+    private Deque<TreeNode> stack;
+
+    // 构造方法，初始化迭代器的当前节点为根节点，并创建一个空的栈
+    public BSTIterator(TreeNode root) {
+        cur = root;  // 设置当前节点为根节点
+        stack = new LinkedList<TreeNode>();  // 创建一个新的链表作为栈来存储节点
+    }
+    
+    // 返回下一个最小的节点值，实现迭代器的next方法
+    public int next() {
+        // 一直沿着当前节点的左子树走，将走过的节点压入栈中，直到当前节点为空
+        while (cur != null) {
+            stack.push(cur);  // 将当前节点压入栈中
+            cur = cur.left;  // 移动到当前节点的左子节点上
+        }
+        // 取出栈顶元素作为下一个要返回的节点（此时cur指向null，因此下一个节点是栈顶元素）
+        cur = stack.pop();  // 弹出栈顶元素作为当前节点
+        int ret = cur.val;  // 获取当前节点的值并返回
+        // 将当前节点移动到右子树上（准备处理下一个next请求时继续遍历右子树）
+        cur = cur.right;  // 更新当前节点为其右子节点（如果有的话）
+        return ret;  // 返回当前节点的值
+    }
+    
+    // 判断是否还有下一个节点可以遍历，实现迭代器的hasNext方法
+    public boolean hasNext() {
+        // 如果当前节点不为空或者栈不为空（即还有未遍历的节点），则返回true表示还有下一个元素可以遍历
+        return cur != null || !stack.isEmpty();  // 返回是否有下一个节点的标志位（true或false）
+    }
+}
+```
+这段代码的核心思想是利用一个栈来辅助实现中序遍历，从而能够在不知道BST结构的情况下按顺序访问所有节点。`next()`方法用于返回下一个最小的节点值，而`hasNext()`方法用于判断是否还有下一个节点可以遍历。
+
+## 222. 完全二叉树的节点个数
+https://leetcode.cn/problems/count-complete-tree-nodes/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
+
+完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点。
+
+ 
+
+示例 1：
+
+![](../img/数据结构和算法/完全二叉树的节点个数.png)
+
+输入：root = [1,2,3,4,5,6]
+
+输出：6
+
+示例 2：
+
+输入：root = []
+
+输出：0
+
+示例 3：
+
+输入：root = [1]
+
+输出：1
+ 
+
+提示：
+
+- 树中节点的数目范围是[0, 5 * 104]
+- 0 <= Node.val <= 5 * 104
+- 题目数据保证输入的树是 完全二叉树
+
+```java
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
+
+public class Solution {
+    public int countNodes(TreeNode root) {
+        if (root == null) return 0;
+        
+        // 计算左子树高度
+        int leftHeight = getHeight(root.left);
+        // 计算右子树高度
+        int rightHeight = getHeight(root.right);
+        
+        // 如果左右子树高度相等，说明最后一层未满，直接按照满二叉树计算节点数再加1（根节点）
+        if (leftHeight == rightHeight) {
+            return (1 << leftHeight) + countNodes(root.right); // 2^leftHeight 加上右子树的节点数
+        } 
+        // 如果左子树比右子树高1，说明右子树是满的，计算右子树节点数再加1（根节点）加上左子树最后一层的额外节点数
+        else {
+            return (1 << rightHeight) + countNodes(root.left); // 2^rightHeight 加上左子树的节点数
+        }
+    }
+
+    private int getHeight(TreeNode node) {
+        int height = 0;
+        while (node != null) {
+            height++;
+            node = node.left;
+        }
+        return height;
+    }
+}
+```
+
+## 236. 二叉树的最近公共祖先
+https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的最近公共祖先1.png)
+
+输入：root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+
+输出：3
+
+解释：节点 5 和节点 1 的最近公共祖先是节点 3 。
+
+示例 2：
+
+![alt text](../img/数据结构和算法/二叉树的最近公共祖先2.png)
+
+输入：root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+
+输出：5
+
+解释：节点 5 和节点 4 的最近公共祖先是节点 5 。因为根据定义最近公共祖先节点可
+以为节点本身。
+
+示例 3：
+
+输入：root = [1,2], p = 1, q = 2
+
+输出：1
+ 
+
+提示：
+
+- 树中节点数目在范围 [2, 105] 内。
+- -109 <= Node.val <= 109
+- 所有 Node.val 互不相同 。
+- p != q
+- p 和 q 均存在于给定的二叉树中。
+
+```java
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
+
+public class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        // 如果根节点为空或者已经找到了p或q，则返回当前节点
+        if (root == null || root == p || root == q) {
+            return root;
+        }
+        
+        // 在左子树中查找p和q
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        // 在右子树中查找p和q
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        
+        // 如果p和q分别位于当前节点的左右子树中，则当前节点即为最近公共祖先
+        if (left != null && right != null) {
+            return root;
+        }
+        
+        // 如果p和q都在左子树中，则返回左子树查找到的结果
+        if (left != null) {
+            return left;
+        }
+        // 如果p和q都在右子树中，则返回右子树查找到的结果
+        return right;
+    }
+}
+```
+
+# 二叉树层次遍历
+## 199. 二叉树的右视图
+https://leetcode.cn/problems/binary-tree-right-side-view/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+ 
+
+示例 1:
+
+![alt text](../img/数据结构和算法/二叉树的右视图.png)
+
+输入: [1,2,3,null,5,null,4]
+
+输出: [1,3,4]
+
+示例 2:
+
+输入: [1,null,3]
+
+输出: [1,3]
+
+示例 3:
+
+输入: []
+
+输出: []
+ 
+
+提示:
+
+- 二叉树的节点个数的范围是 [0,100]
+- -100 <= Node.val <= 100 
+
+```java
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
+
+public class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode current = queue.poll();
+                // 每一层的最后一个节点添加到结果列表
+                if (i == levelSize - 1) {
+                    result.add(current.val);
+                }
+                
+                // 将当前节点的左右子节点加入队列，以便下一轮遍历
+                if (current.left != null) {
+                    queue.offer(current.left);
+                }
+                if (current.right != null) {
+                    queue.offer(current.right);
+                }
+            }
+        }
+        return result;
+    }
+}
+```
+
+## 637. 二叉树的层平均值
+https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个非空二叉树的根节点 root , 以数组的形式返回每一层节点的平均值。与实际答案相差 10-5 以内的答案可以被接受。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的层平均值1.png)
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：[3.00000,14.50000,11.00000]
+
+解释：第 0 层的平均值为 3,第 1 层的平均值为 14.5,第 2 层的平均值为 11 。
+
+因此返回 [3, 14.5, 11] 。
+
+示例 2:
+
+![alt text](../img/数据结构和算法/二叉树的层平均值2.png)
+
+输入：root = [3,9,20,15,7]
+
+输出：[3.00000,14.50000,11.00000]
+ 
+
+提示：
+
+- 树中节点数量在 [1, 104] 范围内
+- -231 <= Node.val <= 231 - 1
+
+```java
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
+
+/**
+ * 平均值计算类，用于计算二叉树各层的平均值。
+ */
+public class Solution {
+    /**
+     * 计算二叉树各层的平均值。
+     * 
+     * @param root 二叉树的根节点。
+     * @return 各层的平均值列表。
+     */
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> averages = new ArrayList<>();
+        // 如果根节点为空，则直接返回空列表
+        if (root == null) return averages;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        // 使用广度优先搜索遍历二叉树的每一层
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            double sum = 0;
+            // 遍历当前层的节点，计算这一层的节点值总和
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode currentNode = queue.poll();
+                sum += currentNode.val;
+
+                // 如果当前节点有左子节点，将左子节点加入队列
+                if (currentNode.left != null) {
+                    queue.offer(currentNode.left);
+                }
+                // 如果当前节点有右子节点，将右子节点加入队列
+                if (currentNode.right != null) {
+                    queue.offer(currentNode.right);
+                }
+            }
+            // 计算当前层的平均值，并加入结果列表
+            // 计算当前层的平均值并添加到结果列表中
+            averages.add(sum / levelSize);
+        }
+        return averages;
+    }
+}
+
+```
+
+## 102. 二叉树的层序遍历
+https://leetcode.cn/problems/binary-tree-level-order-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你二叉树的根节点 root ，返回其节点值的 层序遍历 。 （即逐层地，从左到右访问所有节点）。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的层序遍历.png)
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：[[3],[9,20],[15,7]]
+
+示例 2：
+
+输入：root = [1]
+
+输出：[[1]]
+
+示例 3：
+
+输入：root = []
+
+输出：[]
+ 
+
+提示：
+
+- 树中节点数目在范围 [0, 2000] 内
+- -1000 <= Node.val <= 1000
+
+```java
+/**
+ * 二叉树的层序遍历实现。
+ * 
+ * @param root 二叉树的根节点。
+ * @return 层序遍历的结果，以二维列表表示。
+ */
+public List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> result = new ArrayList<>();
+    if (root == null) return result;
+
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.offer(root);
+
+    while (!queue.isEmpty()) {
+        int levelSize = queue.size();
+        List<Integer> currentLevel = new ArrayList<>();
+        // 遍历当前层的节点
+        for (int i = 0; i < levelSize; i++) {
+            TreeNode currentNode = queue.poll();
+            currentLevel.add(currentNode.val);
+
+            // 将当前节点的子节点加入队列，以便下一轮遍历
+            if (currentNode.left != null) {
+                queue.offer(currentNode.left);
+            }
+            if (currentNode.right != null) {
+                queue.offer(currentNode.right);
+            }
+        }
+        // 将当前层的节点值加入结果列表
+        result.add(currentLevel);
+    }
+    return result;
+}
+```
+
+## 103. 二叉树的锯齿形层序遍历
+https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你二叉树的根节点 root ，返回其节点值的 锯齿形层序遍历 。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的锯齿形层序遍历.png)
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：[[3],[20,9],[15,7]]
+
+示例 2：
+
+输入：root = [1]
+
+输出：[[1]]
+
+示例 3：
+
+输入：root = []
+
+输出：[]
+ 
+
+提示：
+
+- 树中节点数目在范围 [0, 2000] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 二叉树的锯齿形层序遍历实现。
+ *
+ * @param root 二叉树的根节点。
+ * @return 锯齿形层序遍历的结果，以二维列表表示。
+ */
+public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+    List<List<Integer>> result = new ArrayList<>();
+    if (root == null) return result;
+
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.offer(root);
+    boolean leftToRight = true; // 标记当前层的遍历方向
+
+    while (!queue.isEmpty()) {
+        int levelSize = queue.size();
+        List<Integer> currentLevel = new ArrayList<>(levelSize);
+
+        for (int i = 0; i < levelSize; i++) {
+            TreeNode currentNode = queue.poll();
+            // 根据当前层的遍历方向决定添加顺序
+            if (leftToRight) {
+                currentLevel.add(currentNode.val);
+            } else {
+                currentLevel.add(0, currentNode.val); // 在列表头部添加元素以实现从右向左
+            }
+
+            // 添加子节点到队列中，以便下一层的遍历
+            if (currentNode.left != null) {
+                queue.offer(currentNode.left);
+            }
+            if (currentNode.right != null) {
+                queue.offer(currentNode.right);
+            }
+        }
+        // 完成一层后，切换遍历方向
+        leftToRight = !leftToRight;
+        result.add(currentLevel);
+    }
+    return result;
+}
+```
+
+# 二叉搜索树
+## 530. 二叉搜索树的最小绝对差
+https://leetcode.cn/problems/minimum-absolute-difference-in-bst/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个二叉搜索树的根节点 root ，返回 树中任意两不同节点值之间的最小差值 。
+
+差值是一个正数，其数值等于两值之差的绝对值。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉搜索树的最小绝对差1.png)
+
+输入：root = [4,2,6,1,3]
+
+输出：1
+
+示例 2：
+
+![alt text](../img/数据结构和算法/二叉搜索树的最小绝对差2.png)
+
+输入：root = [1,0,48,null,null,12,49]
+
+输出：1
+ 
+
+提示：
+
+- 树中节点的数目范围是 [2, 104]
+- 0 <= Node.val <= 105
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+public class Solution {
+    private int minDiff = Integer.MAX_VALUE; // 初始化最小差值为最大整数
+    private TreeNode prev = null; // 用于记录上一个访问的节点
+
+    public int getMinimumDifference(TreeNode root) {
+        inorderTraversal(root); // 进行中序遍历
+        return minDiff;
+    }
+
+    /**
+     * 中序遍历二叉搜索树，同时更新最小差值。
+     * 
+     * @param node 当前访问的节点。
+     */
+    private void inorderTraversal(TreeNode node) {
+        if (node == null) return;
+
+        inorderTraversal(node.left); // 先遍历左子树
+
+        // 处理当前节点，如果prev不为空，则计算与prev的差值并更新minDiff
+        if (prev != null) {
+            minDiff = Math.min(minDiff, node.val - prev.val);
+        }
+        prev = node; // 更新prev为当前节点
+
+        inorderTraversal(node.right); // 遍历右子树
+    }
+}
+```
+
+## 230. 二叉搜索树中第K小的元素
+https://leetcode.cn/problems/kth-smallest-element-in-a-bst/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉搜索树的根节点 root ，和一个整数 k ，请你设计一个算法查找其中第 k 小的元素（从 1 开始计数）。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉搜索树中第K小的元素1.png)
+
+输入：root = [3,1,4,null,2], k = 1
+
+输出：1
+
+示例 2：
+
+![alt text](../img/数据结构和算法/二叉搜索树中第K小的元素2.png)
+
+输入：root = [5,3,6,2,4,null,null,1], k = 3
+
+输出：3
+ 
+提示：
+
+- 树中的节点数为 n 。
+- 1 <= k <= n <= 104
+- 0 <= Node.val <= 104
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    private int count = 0; // 计数器，用于记录已经遍历过的节点数量
+    private int kthVal = -1; // 用于存储第k小的元素的值
+
+    public int kthSmallest(TreeNode root, int k) {
+        inorderTraversal(root, k); // 进行中序遍历
+        return kthVal;
+    }
+
+    /**
+     * 中序遍历二叉搜索树的递归辅助函数，同时寻找第k小的元素。
+     * 
+     * @param node 当前访问的节点。
+     * @param k 目标是找到第k小的元素。
+     */
+    private void inorderTraversal(TreeNode node, int k) {
+        if (node == null || count >= k) return;
+
+        inorderTraversal(node.left, k); // 先遍历左子树
+
+        // 访问当前节点，计数器加一
+        count++;
+        if (count == k) {
+            kthVal = node.val; // 找到第k小的元素，将其值赋给kthVal
+            return; // 已经找到，无需继续遍历
+        }
+
+        inorderTraversal(node.right, k); // 继续遍历右子树
+    }
+}
+```
+
+## 98. 验证二叉搜索树
+https://leetcode.cn/problems/validate-binary-search-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+
+有效 二叉搜索树定义如下：
+
+- 节点的左子树只包含 小于 当前节点的数。
+- 节点的右子树只包含 大于 当前节点的数。
+- 所有左子树和右子树自身必须也是二叉搜索树。
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/验证二叉搜索树1.png)
+
+输入：root = [2,1,3]
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/验证二叉搜索树2.png)
+
+输入：root = [5,1,4,null,null,3,6]
+
+输出：false
+
+解释：根节点的值是 5 ，但是右子节点的值是 4 。
+ 
+
+提示：
+
+- 树中节点数目范围在[1, 104] 内
+- -231 <= Node.val <= 231 - 1
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    private long pre = Long.MIN_VALUE; // 用于记录前一个遍历节点的值
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+
+        // 首先检查左子树是否为二叉搜索树
+        if (!isValidBST(root.left)) {
+            return false;
+        }
+
+        // 检查当前节点的值是否大于前一个节点的值
+        if (root.val <= pre) {
+            return false;
+        }
+        pre = root.val; // 更新pre为当前节点的值，供后续节点比较使用
+
+        // 最后检查右子树是否为二叉搜索树
+        return isValidBST(root.right);
+    }
+}
+```
+
+# 图
+## 
