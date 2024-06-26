@@ -4129,3 +4129,1318 @@ class Solution {
     }
 }
 ```
+
+## 138. 随机链表的复制
+https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个长度为 n 的链表，每个节点包含一个额外增加的随机指针 random ，该指针可以指向链表中的任何节点或空节点。
+
+构造这个链表的 深拷贝。 深拷贝应该正好由 n 个 全新 节点组成，其中每个新节点的值都设为其对应的原节点的值。新节点的 next 指针和 random 指针也都应指向复制链表中的新节点，并使原链表和复制链表中的这些指针能够表示相同的链表状态。复制链表中的指针都不应指向原链表中的节点 。
+
+例如，如果原链表中有 X 和 Y 两个节点，其中 X.random --> Y 。那么在复制链表中对应的两个节点 x 和 y ，同样有 x.random --> y 。
+
+返回复制链表的头节点。
+
+用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个 [val, random_index] 表示：
+
+- val：一个表示 Node.val 的整数。
+- random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为  null 。
+
+你的代码 只 接受原链表的头节点 head 作为传入参数。
+
+
+
+示例 1：
+
+![随机链表的复制1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B61.png)
+
+输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+示例 2：
+
+![随机链表的复制2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B62.png)
+
+输入：head = [[1,1],[2,1]]
+
+输出：[[1,1],[2,1]]
+
+示例 3：
+
+![随机链表的复制3.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B63.png)
+
+输入：head = [[3,null],[3,0],[3,null]]
+
+输出：[[3,null],[3,0],[3,null]]
+
+
+提示：
+
+- 0 <= n <= 1000
+- -104 <= Node.val <= 104
+- Node.random 为 null 或指向链表中的节点。
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null){
+            return head;
+        }
+        Node node = head;
+        Map<Node,Node> map  = new HashMap<>();
+        while(node != null){
+            Node clone  = new Node(node.val);
+            map.put(node,clone);
+            node = node.next;
+        }
+        node = head;
+        while(node != null){
+            map.get(node).next = map.get(node.next);
+            map.get(node).random = map.get(node.random);
+            node = node.next;
+        }
+        return map.get(head);
+    }
+}
+```
+
+## 92. 反转链表 II
+https://leetcode.cn/problems/reverse-linked-list-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
+
+
+示例 1：
+
+![翻转链表2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A82.png)
+
+输入：head = [1,2,3,4,5], left = 2, right = 4
+
+输出：[1,4,3,2,5]
+
+示例 2：
+
+输入：head = [5], left = 1, right = 1
+
+输出：[5]
+
+
+提示：
+
+- 链表中节点数目为 n
+- 1 <= n <= 500
+- -500 <= Node.val <= 500
+- 1 <= left <= right <= n
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+        ListNode pre = dummy;
+        for(int i=1;i<left;i++){
+            pre = pre.next;
+        }
+        ListNode cur = pre.next;
+        ListNode next = null;
+        //1-2-3-4
+        for(int i = left;i<right;i++){
+            next = cur.next;
+            //1-2-4 3-4
+            cur.next = next.next;
+            //1-2-4 3-2
+            next.next = pre.next;
+            //1-3-2-4
+            pre.next = next;
+        }
+        return dummy.next;
+    }
+}
+```
+
+## 25. K 个一组翻转链表
+https://leetcode.cn/problems/reverse-nodes-in-k-group/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
+
+k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+
+
+示例 1：
+
+![k个一组翻转链表1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2Fk%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A81.png)
+
+输入：head = [1,2,3,4,5], k = 2
+
+输出：[2,1,4,3,5]
+
+示例 2：
+
+![k个一组翻转链表2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2Fk%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A82.png)
+
+输入：head = [1,2,3,4,5], k = 3
+
+输出：[3,2,1,4,5]
+
+
+提示：
+- 链表中的节点数目为 n
+- 1 <= k <= n <= 5000
+- 0 <= Node.val <= 1000
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode tail = head;
+        for(int i =0;i<k;i++){
+            if(tail == null){
+                return head;
+            }
+            tail = tail.next;
+        }
+        ListNode newHead = reverse(head,tail);
+        head.next= reverseKGroup(tail,k);
+        return newHead;
+    }
+
+    public ListNode reverse(ListNode head,ListNode tail){
+        ListNode pre = null,next = null;
+        while(head != tail){
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+}
+```
+
+## 19. 删除链表的倒数第 N 个结点
+https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+
+
+
+示例 1：
+
+![删除链表的倒数第n个节点.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACn%E4%B8%AA%E8%8A%82%E7%82%B9.png)
+
+输入：head = [1,2,3,4,5], n = 2
+
+输出：[1,2,3,5]
+
+示例 2：
+
+输入：head = [1], n = 1
+
+输出：[]
+
+示例 3：
+
+输入：head = [1,2], n = 1
+
+输出：[1]
+
+
+提示：
+
+- 链表中结点的数目为 sz
+- 1 <= sz <= 30
+- 0 <= Node.val <= 100
+- 1 <= n <= sz
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+
+        ListNode fast = head;
+        ListNode slow = head;
+        while(fast!=null && n-->0){
+            fast = fast.next;
+        }
+        ListNode pre = dummy;
+        while(fast!=null){
+            pre = slow;
+            fast = fast.next;
+            slow = slow.next;
+        }
+        pre.next = slow.next;
+        return dummy.next;
+    }
+}
+```
+
+## 82. 删除排序链表中的重复元素 II
+https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个已排序的链表的头 head ， 删除原始链表中所有重复数字的节点，只留下不同的数字 。返回 已排序的链表 。
+
+
+
+示例 1：
+
+![删除排序链表中的重复元素2-1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A02-1.png)
+
+输入：head = [1,2,3,3,4,4,5]
+
+输出：[1,2,5]
+
+示例 2：
+
+![删除排序链表中的重复元素2-2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A02-2.png)
+
+输入：head = [1,1,1,2,3]
+
+输出：[2,3]
+
+
+提示：
+
+- 链表中节点数目在范围 [0, 300] 内
+- -100 <= Node.val <= 100
+- 题目数据保证链表已经按升序 排列
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null){
+            return null;
+        }
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+        ListNode pre = dummy;
+        ListNode cur = head;
+
+        while(cur!= null && cur.next != null){
+            if(cur.val == cur.next.val){
+                int v = cur.val;
+                while(cur!= null && cur.val == v){
+                    cur = cur.next;
+                }
+                pre.next = cur;
+            }else{
+                pre = cur;
+                cur = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+}
+```
+
+## 61. 旋转链表
+https://leetcode.cn/problems/rotate-list/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+
+
+
+示例 1：
+
+![旋转链表1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A81.png)
+
+输入：head = [1,2,3,4,5], k = 2
+
+输出：[4,5,1,2,3]
+
+示例 2：
+
+![旋转链表2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A82.png)
+
+输入：head = [0,1,2], k = 4
+
+输出：[2,0,1]
+
+
+提示：
+
+- 链表中节点的数目在范围 [0, 500] 内
+- -100 <= Node.val <= 100
+- 0 <= k <= 2 * 109
+
+```java
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        // 如果k为0或者链表为空或者链表只有一个节点，直接返回原始链表
+        if (k == 0 || head == null || head.next == null) {
+            return head;
+        }
+
+        int n = 1; // 链表中节点的个数
+        ListNode iter = head;
+
+        // 遍历链表，找到链表长度n
+        while (iter.next != null) {
+            iter = iter.next;
+            n++;
+        }
+
+        // 计算需要移动的步数
+        int add = n - k % n;
+        
+        // 如果移动的步数等于链表长度，说明不需要移动，直接返回原始链表
+        if (add == n) {
+            return head;
+        }
+
+        // 将链表连接成环形
+        iter.next = head;
+
+        // 找到新的链表头节点的位置
+        while (add-- > 0) {
+            iter = iter.next;
+        }
+        
+        // 分割链表，得到新的头节点
+        ListNode ret = iter.next;
+        iter.next = null;
+        
+        return ret;
+    }
+}
+```
+
+## 86. 分隔链表
+https://leetcode.cn/problems/partition-list/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个链表的头节点 head 和一个特定值 x ，请你对链表进行分隔，使得所有 小于 x 的节点都出现在 大于或等于 x 的节点之前。
+
+你应当 保留 两个分区中每个节点的初始相对位置。
+
+
+
+示例 1：
+
+![分隔链表.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%86%E9%9A%94%E9%93%BE%E8%A1%A8.png)
+
+输入：head = [1,4,3,2,5,2], x = 3
+
+输出：[1,2,2,4,3,5]
+
+示例 2：
+
+输入：head = [2,1], x = 2
+
+输出：[1,2]
+
+
+提示：
+
+- 链表中节点的数目在范围 [0, 200] 内
+- -100 <= Node.val <= 100
+- -200 <= x <= 200
+
+```java
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        // 创建两个虚拟节点，用来存储小于 x 和大于等于 x 的节点
+        ListNode small = new ListNode(0); // 小于 x 的节点
+        ListNode smallHead = small; // 小节点的头部
+        ListNode large = new ListNode(0); // 大于等于 x 的节点
+        ListNode largeHead = large; // 大节点的头部
+        
+        // 遍历原始链表
+        while (head != null) {
+            if (head.val < x) {
+                // 将小于 x 的节点放入 small 链表中
+                small.next = head;
+                small = small.next;
+            } else {
+                // 将大于等于 x 的节点放入 large 链表中
+                large.next = head;
+                large = large.next;
+            }
+            // 移动原始链表指针
+            head = head.next;
+        }
+        
+        // 将large链表结尾指向null，避免循环
+        large.next = null;
+        
+        // 将小节点链表和大节点链表连接起来
+        small.next = largeHead.next;
+        
+        // 返回新链表的头部（小节点链表的头部）
+        return smallHead.next;
+    }
+}
+
+这段代码将根据给定值 x 将链表分为两部分，一部分是小于 x 的节点，另一部分是大于等于 x 的节点。最后将这两部分重新连接起来并返回新链表的头部。
+```
+
+## 146. LRU 缓存
+
+https://leetcode.cn/problems/lru-cache/description/?envType=study-plan-v2&envId=top-interview-150
+
+请你设计并实现一个满足  LRU (最近最少使用) 缓存 约束的数据结构。
+
+实现 LRUCache 类：
+- LRUCache(int capacity) 以 正整数 作为容量 capacity 初始化 LRU 缓存
+- int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+- void put(int key, int value) 如果关键字 key 已经存在，则变更其数据值 value ；如果不存在，则向缓存中插入该组 key-value 。如果插入操作导致关键字数量超过 capacity ，则应该 逐出 最久未使用的关键字。
+
+函数 get 和 put 必须以 O(1) 的平均时间复杂度运行。
+
+
+
+示例：
+
+输入
+
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+
+输出
+
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+
+LRUCache lRUCache = new LRUCache(2);
+
+lRUCache.put(1, 1); // 缓存是 {1=1}
+
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+
+lRUCache.get(1);    // 返回 1
+
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+
+lRUCache.get(2);    // 返回 -1 (未找到)
+
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+
+lRUCache.get(1);    // 返回 -1 (未找到)
+
+lRUCache.get(3);    // 返回 3
+
+lRUCache.get(4);    // 返回 4
+
+
+提示：
+
+- 1 <= capacity <= 3000
+- 0 <= key <= 10000
+- 0 <= value <= 105
+- 最多调用 2 * 105 次 get 和 put
+
+```java
+class LRUCache {
+
+    static class Node{
+        int key;
+        int value;
+        Node pre;
+        Node next;
+
+        public Node(){
+
+        }
+        public Node(int key,int value){
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    Map<Integer,Node> map = new HashMap<>();
+    Node head,tail;
+    int size;
+    int cap;
+
+    public LRUCache(int capacity) {
+        this.cap = capacity;
+        head = new Node();
+        tail = new Node();
+        head.next = tail;
+        tail.pre = head;
+    }
+    
+    public int get(int key) {
+        Node n = map.get(key);
+        if(n == null){
+            return -1;
+        }
+        moveToHead(n);
+        return n.value;
+    }
+    
+    public void put(int key, int value) {
+        Node n = map.get(key);
+        if(n == null){
+            Node node = new Node(key,value);
+            map.put(key,node);
+            addToHead(node);
+            if(++size > cap){
+                Node re = removeTail();
+                map.remove(re.key);
+            }
+        }else{
+            n.value = value;
+            moveToHead(n);
+        }
+    }
+
+    public Node remove(Node n){
+        n.next.pre = n.pre;
+        n.pre.next = n.next;
+        return n;
+    }
+
+    public Node removeTail(){
+        Node n = tail.pre;
+        remove(n);
+        return n;
+    }
+
+    public void addToHead(Node n){
+        n.next = head.next;
+        n.pre = head;
+        head.next.pre = n;
+        head.next = n;
+        
+    }
+
+    public void moveToHead(Node n){
+        remove(n);
+        addToHead(n);
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+```
+
+# 二叉树
+## 104. 二叉树的最大深度
+https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉树 root ，返回其最大深度。
+
+二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。
+
+
+
+示例 1：
+
+
+![二叉树的最大深度.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.png)
+
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：3
+
+示例 2：
+
+输入：root = [1,null,2]
+
+输出：2
+
+
+提示：
+
+- 树中节点的数量在 [0, 104] 区间内。
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int maxDepth(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        return Math.max(left,right)+1;
+    }
+}
+```
+
+## 100. 相同的树
+https://leetcode.cn/problems/same-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你两棵二叉树的根节点 p 和 q ，编写一个函数来检验这两棵树是否相同。
+
+如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+
+
+
+示例 1：
+
+![相同的树1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%9B%B8%E5%90%8C%E7%9A%84%E6%A0%911.png)
+
+输入：p = [1,2,3], q = [1,2,3]
+
+输出：true
+
+示例 2：
+
+![相同的树2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%9B%B8%E5%90%8C%E7%9A%84%E6%A0%912.png)
+
+输入：p = [1,2], q = [1,null,2]
+
+输出：false
+
+示例 3：
+
+![相同的树3.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%9B%B8%E5%90%8C%E7%9A%84%E6%A0%913.png)
+
+输入：p = [1,2,1], q = [1,1,2]
+
+输出：false
+
+
+提示：
+
+- 两棵树上的节点数目都在范围 [0, 100] 内
+- -104 <= Node.val <= 104
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if(p == null && q==null){
+            return true;
+        }
+        if(p == null || q==null){
+            return false;
+        }
+        return p.val == q.val && isSameTree(p.left,q.left) && isSameTree(p.right,q.right);
+    }
+}
+```
+
+## 226. 翻转二叉树
+https://leetcode.cn/problems/invert-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一棵二叉树的根节点 root ，翻转这棵二叉树，并返回其根节点。
+
+
+
+示例 1：
+
+![翻转二叉树1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%911.png)
+
+输入：root = [4,2,7,1,3,6,9]
+
+输出：[4,7,2,9,6,3,1]
+
+示例 2：
+
+![翻转二叉树2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%912.png)
+
+输入：root = [2,1,3]
+
+输出：[2,3,1]
+
+示例 3：
+
+输入：root = []
+
+输出：[]
+
+
+提示：
+
+- 树中节点数目范围在 [0, 100] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if(root == null || (root.left==null && root.right==null)){
+            return root;
+        }
+        TreeNode temp  = root.left;
+        root.left = root.right;
+        root.right = temp;
+        invertTree(root.left);
+        invertTree(root.right);
+        return root;
+    }
+}
+```
+
+## 101. 对称二叉树
+https://leetcode.cn/problems/symmetric-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+
+给你一个二叉树的根节点 root ， 检查它是否轴对称。
+
+
+
+示例 1：
+
+![对称二叉树1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%911.png)
+
+输入：root = [1,2,2,3,4,4,3]
+
+输出：true
+
+示例 2：
+
+![对称二叉树2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%912.png)
+
+输入：root = [1,2,2,null,3,null,3]
+
+输出：false
+
+
+提示：
+
+- 树中节点数目在范围 [1, 1000] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        if(root==null){
+            return true;
+        }
+        return help(root.left,root.right);
+    }
+
+    public boolean help(TreeNode left,TreeNode right){
+        if(left == null && right == null){
+            return true;
+        }
+        if(left == null || right==null || left.val != right.val){
+            return false;
+        }
+        return help(left.left,right.right) && help(left.right,right.left);
+    }
+}
+```
+
+## 105. 从前序与中序遍历序列构造二叉树
+https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。
+
+
+
+示例 1:
+
+
+输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+
+输出: [3,9,20,null,null,15,7]
+
+示例 2:
+
+输入: preorder = [-1], inorder = [-1]
+
+输出: [-1]
+
+
+提示:
+
+- 1 <= preorder.length <= 3000
+- inorder.length == preorder.length
+- -3000 <= preorder[i], inorder[i] <= 3000
+- preorder 和 inorder 均 无重复 元素
+- inorder 均出现在 preorder
+- preorder 保证 为二叉树的前序遍历序列
+- inorder 保证 为二叉树的中序遍历序列
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int rootIndex = 0;
+    Map<Integer,Integer> map =new HashMap<>();
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        for(int i=0;i<inorder.length;i++){
+            map.put(inorder[i],i);
+        }
+        return build(0,preorder.length-1,preorder);
+    }
+
+    public TreeNode build(int left,int right,int[] preorder){
+        if(left>right){
+            return null;
+        }
+        int rootVal = preorder[rootIndex++];
+        TreeNode root = new TreeNode(rootVal);
+
+        root.left = build(left,map.get(rootVal)-1,preorder);
+        root.right = build(map.get(rootVal)+1,right,preorder);
+
+        return root;
+    }
+}
+```
+
+## 106. 从中序与后序遍历序列构造二叉树
+https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个整数数组 inorder 和 postorder ，其中 inorder 是二叉树的中序遍历， postorder 是同一棵树的后序遍历，请你构造并返回这颗 二叉树 。
+
+
+
+示例 1:
+
+![从中序和后序遍历构造二叉树.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E4%BB%8E%E4%B8%AD%E5%BA%8F%E5%92%8C%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.png)
+
+输入：inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+
+输出：[3,9,20,null,null,15,7]
+
+示例 2:
+
+输入：inorder = [-1], postorder = [-1]
+
+输出：[-1]
+
+
+提示:
+
+- 1 <= inorder.length <= 3000
+- postorder.length == inorder.length
+- -3000 <= inorder[i], postorder[i] <= 3000
+- inorder 和 postorder 都由 不同 的值组成
+- postorder 中每一个值都在 inorder 中
+- inorder 保证是树的中序遍历
+- postorder 保证是树的后序遍历
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        return build(inorder,0,inorder.length-1,postorder,0,postorder.length-1);
+    }
+
+    public TreeNode build(int[] inorder,int inStart,int inEnd,int[] postorder,int postStart,int postEnd){
+        if(inStart>inEnd){
+            return null;
+        }
+        int index = 0;
+        int rootVal = postorder[postEnd];
+
+        for(int i=inStart;i<=inEnd;i++){
+            if(inorder[i]==rootVal){
+                index = i;
+                break;
+            }
+        }
+        TreeNode root = new TreeNode(rootVal);
+        int leftSize = index - inStart;
+        root.left = build(inorder,inStart,index-1,postorder,postStart,postStart+leftSize-1);
+        root.right = build(inorder,index+1,inEnd,postorder,postStart+leftSize,postEnd-1);
+
+        return root;
+    }
+}
+```
+
+## 117. 填充每个节点的下一个右侧节点指针 II
+https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉树：
+
+```java
+struct Node {
+int val;
+Node *left;
+Node *right;
+Node *next;
+}
+```
+
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL 。
+
+初始状态下，所有 next 指针都被设置为 NULL 。
+
+
+
+示例 1：
+
+![删除![填充每个节点的下一个右侧节点指针2-1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%A1%AB%E5%85%85%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E7%9A%84%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%8F%B3%E4%BE%A7%E8%8A%82%E7%82%B9%E6%8C%87%E9%92%882-1.png)排序链表中的重复元素2-1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A02-1.png)
+
+输入：root = [1,2,3,4,5,null,7]
+
+输出：[1,#,2,3,#,4,5,7,#]
+
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。序列化输出按层序遍历顺序（由 next 指针连接），'#' 表示每层的末尾。
+
+示例 2：
+
+输入：root = []
+
+输出：[]
+
+
+提示：
+
+- 树中的节点数在范围 [0, 6000] 内
+- -100 <= Node.val <= 100
+
+```java
+class Solution {
+    public Node connect(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Node head = root; // 当前层的头节点
+
+        // 循环遍历每一层，从上至下
+        while (head != null) {
+            Node dummy = new Node(0); //下一层的虚拟头节点
+            Node temp = dummy; //当前处理的节点
+            
+            // 遍历当前层，连接下一层的节点
+            for (Node cur = head; cur != null; cur = cur.next) {
+                if (cur.left != null) {
+                    temp.next = cur.left;
+                    temp = temp.next; //移动temp
+                }
+                if (cur.right != null) {
+                    temp.next = cur.right;
+                    temp = temp.next; //移动temp
+                }
+            }
+            // 移动到下一层的实际头节点处
+            head = dummy.next;
+        }
+        
+        return root;
+    }
+}
+```
+
+## 114. 二叉树展开为链表
+
+https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/description/?envType=study-plan-v2&envId=top-interview-150
+
+
+给你二叉树的根结点 root ，请你将它展开为一个单链表：
+
+- 展开后的单链表应该同样使用 TreeNode ，其中 right 子指针指向链表中下一个结点，而左子指针始终为 null 。
+- 展开后的单链表应该与二叉树 先序遍历 顺序相同。
+
+
+示例 1：
+
+![二叉树的最大深度.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.png)
+
+输入：root = [1,2,5,3,4,null,6]
+
+输出：[1,null,2,null,3,null,4,null,5,null,6]
+
+示例 2：
+
+输入：root = []
+
+输出：[]
+
+示例 3：
+
+输入：root = [0]
+
+输出：[0]
+
+
+提示：
+
+- 树中结点数在范围 [0, 2000] 内
+- -100 <= Node.val <= 100
+
+```java
+class Solution {
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        
+        // 将左子树展开为链表
+        flatten(root.left);
+        // 将右子树展开为链表
+        flatten(root.right);
+        
+        // 保存右子树
+        TreeNode right = root.right;
+        
+        // 将左子树移到右子树上，连接起来
+        root.right = root.left;
+        root.left = null;
+        
+        // 找到现在链表的最后一个节点
+        while (root.right != null) {
+            root = root.right;
+        }
+        
+        // 将原来的右子树接在链表最后
+        root.right = right;
+    }
+}
+```
+
+## 112. 路径总和
+https://leetcode.cn/problems/path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
+
+叶子节点 是指没有子节点的节点。
+
+
+
+示例 1：
+
+![路径总和1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C1.png)
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+
+输出：true
+
+解释：等于目标和的根节点到叶节点路径如上图所示。
+
+示例 2：
+
+![路径总和2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C2.png)
+
+输入：root = [1,2,3], targetSum = 5
+
+输出：false
+
+解释：树中存在两条根节点到叶子节点的路径：
+- (1 --> 2): 和为 3
+- (1 --> 3): 和为 4
+- 不存在 sum = 5 的根节点到叶子节点的路径。
+
+示例 3：
+
+输入：root = [], targetSum = 0
+
+输出：false
+
+解释：由于树是空的，所以不存在根节点到叶子节点的路径。
+
+
+提示：
+
+- 树中节点的数目在范围 [0, 5000] 内
+- -1000 <= Node.val <= 1000
+- -1000 <= targetSum <= 1000
+
+```java
+class Solution {
+    // 递归函数，判断是否存在从当前节点到叶子节点的路径，使得节点值之和等于目标和
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        // 如果当前节点为空，则返回 false
+        if(root == null){
+            return false;
+        }
+        // 如果当前节点是叶子节点，判断当前节点值是否等于目标和
+        if(root.left == null && root.right == null){
+            return root.val == targetSum;
+        }
+        // 递归判断左子树和右子树，更新目标和为减去当前节点值后的值
+        return hasPathSum(root.left,targetSum-root.val) || hasPathSum(root.right,targetSum-root.val);
+    }
+}
+```
+
+## 129. 求根节点到叶节点数字之和
+https://leetcode.cn/problems/sum-root-to-leaf-numbers/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个二叉树的根节点 root ，树中每个节点都存放有一个 0 到 9 之间的数字。
+
+每条从根节点到叶节点的路径都代表一个数字：
+
+- 例如，从根节点到叶节点的路径 1 -> 2 -> 3 表示数字 123 。
+
+计算从根节点到叶节点生成的 所有数字之和 。
+
+叶节点 是指没有子节点的节点。
+
+
+
+示例 1：
+
+
+输入：root = [1,2,3]
+
+输出：25
+
+解释：
+- 从根到叶子节点路径 1->2 代表数字 12
+- 从根到叶子节点路径 1->3 代表数字 13
+- 因此，数字总和 = 12 + 13 = 25
+
+示例 2：
+
+
+输入：root = [4,9,0,5,1]
+
+输出：1026
+
+解释：
+- 从根到叶子节点路径 4->9->5 代表数字 495
+- 从根到叶子节点路径 4->9->1 代表数字 491
+- 从根到叶子节点路径 4->0 代表数字 40
+
+因此，数字总和 = 495 + 491 + 40 = 1026
+
+
+提示：
+
+- 树中节点的数目在范围 [1, 1000] 内
+- 0 <= Node.val <= 9
+- 树的深度不超过 10
+
+
+
