@@ -8793,5 +8793,558 @@ class Solution {
 }
 ```
 
+# 二分查找
+## 35. 搜索插入位置
+https://leetcode.cn/problems/search-insert-position/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 O(log n) 的算法。
+
+ 
+
+示例 1:
+
+输入: nums = [1,3,5,6], target = 5
+
+输出: 2
+
+示例 2:
+
+输入: nums = [1,3,5,6], target = 2
+
+输出: 1
+
+示例 3:
+
+输入: nums = [1,3,5,6], target = 7
+
+输出: 4
+ 
+
+提示:
+
+- 1 <= nums.length <= 104
+- -104 <= nums[i] <= 104
+- nums 为 无重复元素 的 升序 排列数组
+- -104 <= target <= 104
+
+```java
+/**
+ * 在给定的有序数组中搜索目标值，如果找到则返回其索引，否则返回目标值应插入的位置索引，
+ * 以保持数组的有序状态。此算法保证时间复杂度为 O(log n)。
+ *
+ * @param nums   一个无重复元素的升序排列数组
+ * @param target 要搜索或插入的目标值
+ * @return 目标值在数组中的索引位置，或应该插入的位置索引
+ */
+public int searchInsertPosition(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid; // 目标值找到，返回索引
+        } else if (nums[mid] < target) {
+            left = mid + 1; // 调整左边界，在右半部分继续搜索
+        } else {
+            right = mid - 1; // 调整右边界，在左半部分继续搜索
+        }
+    }
+    
+    // 当left > right时，循环结束，此时left为target应插入的位置
+    return left;
+}
+```
+
+## 74. 搜索二维矩阵
+https://leetcode.cn/problems/search-a-2d-matrix/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个满足下述两条属性的 m x n 整数矩阵：
+
+- 每行中的整数从左到右按非严格递增顺序排列。
+- 每行的第一个整数大于前一行的最后一个整数。
+
+给你一个整数 target ，如果 target 在矩阵中，返回 true ；否则，返回 false 。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/搜索二维数组1.png)
 
 
+输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/搜索二维数组2.png)
+
+输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+
+输出：false
+ 
+
+提示：
+
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= m, n <= 100
+- -104 <= matrix[i][j], target <= 104
+
+```java
+/**
+ * 在一个按照非严格递增顺序排列的二维矩阵中搜索目标值，如果找到则返回 true，否则返回 false。
+ * 矩阵的行也是按非降序排列的。
+ *
+ * @param matrix 二维整数矩阵，满足题目中的条件
+ * @param target 需要搜索的目标值
+ * @return 如果目标值存在于矩阵中返回 true，否则返回 false
+ */
+/**
+ * 在二维矩阵中搜索目标值。
+ * 矩阵每一行的元素从左到右递增，每一列的元素从上到下递增。
+ * @param matrix 二维整数矩阵，可能为空或包含零元素。
+ * @param target 要搜索的目标整数。
+ * @return 如果矩阵中存在目标值，则返回true；否则返回false。
+ */
+public boolean searchMatrix(int[][] matrix, int target) {
+    // 检查矩阵是否为空或没有元素
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+        return false;
+    }
+
+    // 获取矩阵的行数和列数
+    int rows = matrix.length;
+    int cols = matrix[0].length;
+    // 初始化二分查找的左右边界
+    int left = 0, right = rows * cols - 1;
+
+    // 使用二分查找在“扁平化”后的矩阵中搜索目标值
+    while (left <= right) {
+        // 计算中间位置的索引，并避免整数溢出
+        int mid = left + (right - left) / 2;
+        // 根据中间位置的索引计算其在矩阵中的实际位置
+        int midVal = matrix[mid / cols][mid % cols];
+
+        // 如果找到目标值，则返回true
+        if (midVal == target) {
+            return true;
+        } else if (midVal < target) {
+            // 如果中间值小于目标值，则目标值在右侧
+            left = mid + 1;
+        } else {
+            // 如果中间值大于目标值，则目标值在左侧
+            right = mid - 1;
+        }
+    }
+
+    // 如果没有找到目标值，则返回false
+    return false;
+}
+```
+
+## 162. 寻找峰值
+https://leetcode.cn/problems/find-peak-element/description/?envType=study-plan-v2&envId=top-interview-150
+
+峰值元素是指其值严格大于左右相邻值的元素。
+
+给你一个整数数组 nums，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回 任何一个峰值 所在位置即可。
+
+你可以假设 nums[-1] = nums[n] = -∞ 。
+
+你必须实现时间复杂度为 O(log n) 的算法来解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [1,2,3,1]
+
+输出：2
+
+解释：3 是峰值元素，你的函数应该返回其索引 2。
+
+示例 2：
+
+输入：nums = [1,2,1,3,5,6,4]
+
+输出：1 或 5 
+
+解释：你的函数可以返回索引 1，其峰值元素为 2；
+     或者返回索引 5， 其峰值元素为 6。
+ 
+
+提示：
+
+- 1 <= nums.length <= 1000
+- -231 <= nums[i] <= 231 - 1
+- 对于所有有效的 i 都有 nums[i] != nums[i + 1]
+
+```java
+/**
+ * 寻找峰值元素的函数。
+ * 峰值元素是大于其相邻元素的元素，数组两端视为负无穷大。
+ * 实现时间复杂度为O(log n)的二分查找算法。
+ *
+ * @param nums 整型数组，其中包含至少一个峰值元素。
+ * @return 峰值元素的索引位置。
+ */
+public int findPeakElement(int[] nums) {
+    if (nums == null || nums.length == 0) {
+        return -1; // 或根据题目要求抛出异常
+    }
+    
+    int left = 0, right = nums.length - 1;
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] > nums[mid + 1]) {
+            // 下降趋势，峰值可能在左边，包括当前mid
+            right = mid;
+        } else {
+            // 上升趋势，峰值一定在右边，不包括当前mid
+            left = mid + 1;
+        }
+    }
+    
+    // 当left == right时，根据题设nums[-1] = nums[n] = -∞，则left位置为峰值
+    return left;
+}
+```
+
+## 33. 搜索旋转排序数组
+https://leetcode.cn/problems/search-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+整数数组 nums 按升序排列，数组中的值 互不相同 。
+
+在传递给函数之前，nums 在预先未知的某个下标 k（0 <= k < nums.length）上进行了 旋转，使数组变为 [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]（下标 从 0 开始 计数）。例如， [0,1,2,4,5,6,7] 在下标 3 处经旋转后可能变为 [4,5,6,7,0,1,2] 。
+
+给你 旋转后 的数组 nums 和一个整数 target ，如果 nums 中存在这个目标值 target ，则返回它的下标，否则返回 -1 。
+
+你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [4,5,6,7,0,1,2], target = 0
+
+输出：4
+
+示例 2：
+
+输入：nums = [4,5,6,7,0,1,2], target = 3
+
+输出：-1
+
+示例 3：
+
+输入：nums = [1], target = 0
+
+输出：-1
+ 
+
+提示：
+
+- 1 <= nums.length <= 5000
+- -104 <= nums[i] <= 104
+- nums 中的每个值都 独一无二
+- 题目数据保证 nums 在预先未知的某个下标上进行了旋转
+- -104 <= target <= 104
+
+```java
+public int search(int[] nums, int target) {
+    if (nums == null || nums.length == 0) {
+        return -1;
+    }
+    
+    int left = 0, right = nums.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        }
+        
+        // 判断哪边是有序的
+        if (nums[left] <= nums[mid]) { // 左边有序
+            if (target >= nums[left] && target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        } else { // 右边有序
+            if (target > nums[mid] && target <= nums[right]) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+    }
+    
+    return -1;
+}
+```
+
+## 34. 在排序数组中查找元素的第一个和最后一个位置
+https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个按照非递减顺序排列的整数数组 nums，和一个目标值 target。请你找出给定目标值在数组中的开始位置和结束位置。
+
+如果数组中不存在目标值 target，返回 [-1, -1]。
+
+你必须设计并实现时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [5,7,7,8,8,10], target = 8
+
+输出：[3,4]
+
+示例 2：
+
+输入：nums = [5,7,7,8,8,10], target = 6
+
+输出：[-1,-1]
+
+示例 3：
+
+输入：nums = [], target = 0
+
+输出：[-1,-1]
+ 
+
+提示：
+
+- 0 <= nums.length <= 105
+- -109 <= nums[i] <= 109
+- nums 是一个非递减数组
+- -109 <= target <= 109
+
+```java
+/**
+ * 在排序数组中查找给定目标值的起始和结束位置。
+ * 该类提供了一个方法来解决在排序数组中查找元素范围的问题。
+ */
+class Solution {
+    /**
+     * 在排序数组中查找目标值的起始和结束位置。
+     * 
+     * @param nums 排序数组，其中可能包含目标值。
+     * @param target 目标值，我们需要找到它在数组中的起始和结束位置。
+     * @return 包含两个整数的数组，分别表示目标值在数组中的起始和结束位置。
+     *         如果数组中不存在目标值，则返回 [-1, -1]。
+     */
+    public int[] searchRange(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        // 使用二分查找来定位目标值的初始位置
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (target == nums[mid]) {
+                // 一旦找到目标值，向左和向右扫描以确定范围
+                int l = mid, r = mid;
+                // 向左扫描，找到起始位置
+                while (l > 0 && nums[l - 1] == target) {
+                    l--;
+                }
+                // 向右扫描，找到结束位置
+                while (r < nums.length - 1 && nums[r + 1] == target) {
+                    r++;
+                }
+                // 返回目标值的起始和结束位置
+                return new int[]{l, r};
+            } else if (nums[mid] > target) {
+                // 如果中间值大于目标值，缩小右边界
+                right = mid - 1;
+            } else {
+                // 如果中间值小于目标值，增大左边界
+                left = mid + 1;
+            }
+        }
+        // 如果未找到目标值，返回 [-1, -1]
+        return new int[]{-1, -1};
+    }
+}
+```
+
+## 153. 寻找旋转排序数组中的最小值
+https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
+- 若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]
+- 若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]
+
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+
+给你一个元素值 互不相同 的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
+
+你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [3,4,5,1,2]
+
+输出：1
+
+解释：原数组为 [1,2,3,4,5] ，旋转 3 次得到输入数组。
+
+示例 2：
+
+输入：nums = [4,5,6,7,0,1,2]
+
+输出：0
+
+解释：原数组为 [0,1,2,4,5,6,7] ，旋转 3 次得到输入数组。
+
+示例 3：
+
+输入：nums = [11,13,15,17]
+
+输出：11
+
+解释：原数组为 [11,13,15,17] ，旋转 4 次得到输入数组。
+ 
+
+提示：
+
+- n == nums.length
+- 1 <= n <= 5000
+- -5000 <= nums[i] <= 5000
+- nums 中的所有整数 互不相同
+- nums 原来是一个升序排序的数组，并进行了 1 至 n 次旋转
+
+```java
+/**
+ * 解决寻找旋转排序数组中的最小值的问题。
+ * 旋转排序数组是指原数组为非递减数组，将数组从某个位置分割成两部分，然后将两部分的顺序调换后形成的数组。
+ * 例如，原数组[0,1,2,4,5,6,7]在数字4处旋转后变为[4,5,6,7,0,1,2]。
+ */
+class Solution {
+    /**
+     * 寻找旋转排序数组中的最小值。
+     * 
+     * @param nums 一个旋转后的非递减排序数组
+     * @return 数组中的最小值
+     */
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        // 使用二分查找法定位最小值的位置
+        while (left < right) {
+            // 计算中间位置，避免整数溢出
+            int mid = left + (right - left) / 2;
+            // 如果中间位置的值大于最右边的值，说明最小值在mid右侧
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else {
+                // 否则，最小值在mid或其左侧
+                right = mid;
+            }
+        }
+        // 当left等于right时，找到最小值的位置
+        return nums[left];
+    }
+}
+```
+
+## 4. 寻找两个正序数组的中位数
+https://leetcode.cn/problems/median-of-two-sorted-arrays/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
+
+算法的时间复杂度应该为 O(log (m+n)) 。
+
+ 
+
+示例 1：
+
+输入：nums1 = [1,3], nums2 = [2]
+
+输出：2.00000
+
+解释：合并数组 = [1,2,3] ，中位数 2
+
+示例 2：
+
+输入：nums1 = [1,2], nums2 = [3,4]
+
+输出：2.50000
+
+解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5
+ 
+
+ 
+
+提示：
+
+- nums1.length == m
+- nums2.length == n
+- 0 <= m <= 1000
+- 0 <= n <= 1000
+- 1 <= m + n <= 2000
+- -106 <= nums1[i], nums2[i] <= 106
+
+```java
+class Solution {
+    /**
+     * 寻找两个正序数组的中位数。
+     * 使用二分查找法降低时间复杂度至O(log(min(m, n)))，其中m和n分别是两个数组的长度。
+     *
+     * @param nums1 第一个正序数组
+     * @param nums2 第二个正序数组
+     * @return 两个数组合并后的中位数
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        // 确保nums1是较短的数组，优化二分查找过程
+        if (nums1.length > nums2.length) {
+            int[] temp = nums1;
+            nums1 = nums2;
+            nums2 = temp;
+        }
+
+        int x = nums1.length;
+        int y = nums2.length;
+        int low = 0;
+        int high = x;
+
+        while (low <= high) {
+            int partitionX = (low + high) / 2;
+            int partitionY = (x + y + 1) / 2 - partitionX;
+
+            // 寻找左右两侧边界值，注意处理边界情况
+            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : nums1[partitionX - 1];
+            int minRightX = (partitionX == x) ? Integer.MAX_VALUE : nums1[partitionX];
+
+            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : nums2[partitionY - 1];
+            int minRightY = (partitionY == y) ? Integer.MAX_VALUE : nums2[partitionY];
+
+            // 检查划分是否满足条件
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                // 找到正确的划分，计算中位数
+                if ((x + y) % 2 == 0) {
+                    return ((double)Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2;
+                } else {
+                    return (double)Math.max(maxLeftX, maxLeftY);
+                }
+            } else if (maxLeftX > minRightY) {
+                // 缩小nums1的查找范围
+                high = partitionX - 1;
+            } else {
+                // 扩大nums1的查找范围
+                low = partitionX + 1;
+            }
+        }
+
+        throw new IllegalArgumentException("Input arrays are not sorted or not valid.");
+    }
+}
+```
+
+# 堆
