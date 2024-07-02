@@ -3911,8 +3911,6 @@ class Solution {
 ```
 
 # 链表
-
-# 链表
 ## 141. 环形链表
 https://leetcode.cn/problems/linked-list-cycle/description/?envType=study-plan-v2&envId=top-interview-150
 
