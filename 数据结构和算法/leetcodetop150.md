@@ -45,7 +45,7 @@ https://leetcode.cn/problems/merge-sorted-array/description/?envType=study-plan-
 - nums2.length == n
 - 0 <= m, n <= 200
 - 1 <= m + n <= 200
-- -109 <= nums1[i], nums2[j] <= 109
+- -10^9 <= nums1[i], nums2[j] <= 10^9
 
 进阶：你可以设计实现一个时间复杂度为 O(m + n) 的算法解决此问题吗？
 
@@ -200,8 +200,8 @@ i<k;i++){
 
 提示：
 
-- 1 <= nums.length <= 3 * 104
-- -104 <= nums[i] <= 104
+- 1 <= nums.length <= 3 * 10^4
+- -10^4 <= nums[i] <= 10^4
 - nums 已按 非严格递增 排列
 
 ```java
@@ -272,8 +272,8 @@ print(nums[i]);
 
 提示：
 
-- 1 <= nums.length <= 3 * 104
-- -104 <= nums[i] <= 104
+- 1 <= nums.length <= 3 * 10^4
+- -10^4 <= nums[i] <= 10^4
 - nums 已按升序排列
 
 
@@ -321,7 +321,7 @@ https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2
 提示：
 
 - n == nums.length
-- 1 <= n <= 5 * 104
+- 1 <= n <= 5 * 10^4
 - -109 <= nums[i] <= 109
 
 进阶：尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题。
@@ -373,9 +373,9 @@ https://leetcode.cn/problems/rotate-array/description/?envType=study-plan-v2&env
 
 提示：
 
-- 1 <= nums.length <= 105
-- -231 <= nums[i] <= 231 - 1
-- 0 <= k <= 105
+- 1 <= nums.length <= 10^5
+- -2^31 <= nums[i] <= 2^31 - 1
+- 0 <= k <= 10^5
 
 
 
@@ -430,8 +430,8 @@ https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/description/?envTyp
 
 提示：
 
-- 1 <= prices.length <= 105
-- 0 <= prices[i] <= 104
+- 1 <= prices.length <= 10^5
+- 0 <= prices[i] <= 10^4
 
 
 
@@ -491,8 +491,8 @@ https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/description/?env
 
 提示：
 
-- 1 <= prices.length <= 3 * 104
-- 0 <= prices[i] <= 104
+- 1 <= prices.length <= 3 * 10^4
+- 0 <= prices[i] <= 10^4
 
 
 
@@ -539,8 +539,8 @@ https://leetcode.cn/problems/jump-game/description/?envType=study-plan-v2&envId=
 
 提示：
 
-- 1 <= nums.length <= 104
-- 0 <= nums[i] <= 105
+- 1 <= nums.length <= 10^4
+- 0 <= nums[i] <= 10^5
 
 
 
@@ -592,7 +592,7 @@ https://leetcode.cn/problems/jump-game-ii/description/?envType=study-plan-v2&env
 
 提示:
 
-- 1 <= nums.length <= 104
+- 1 <= nums.length <= 10^4
 - 0 <= nums[i] <= 1000
 - 题目保证可以到达 nums[n-1]
 
@@ -708,8 +708,8 @@ randomizedSet.getRandom(); // 由于 2 是集合中唯一的数字，getRandom �
 
 提示：
 
-- -231 <= val <= 231 - 1
-- 最多调用 insert、remove 和 getRandom 函数 2 * 105 次
+- -2^31 <= val <= 2^31 - 1
+- 最多调用 insert、remove 和 getRandom 函数 2 * 10^5 次
 - 在调用 getRandom 方法时，数据结构中 至少存在一个 元素。
 
 
@@ -781,7 +781,7 @@ https://leetcode.cn/problems/product-of-array-except-self/description/?envType=s
 
 提示：
 
-- 2 <= nums.length <= 105
+- 2 <= nums.length <= 10^5
 - -30 <= nums[i] <= 30
 - 保证 数组 nums之中任意元素的全部前缀元素和后缀的乘积都在 32 位 整数范围内
 
@@ -869,8 +869,8 @@ https://leetcode.cn/problems/gas-station/description/?envType=study-plan-v2&envI
 
 - gas.length == n
 - cost.length == n
-- 1 <= n <= 105
-- 0 <= gas[i], cost[i] <= 104
+- 1 <= n <= 10^5
+- 0 <= gas[i], cost[i] <= 10^4
 
 
 
@@ -934,8 +934,8 @@ n 个孩子站成一排。给你一个整数数组 ratings 表示每个孩子的
 提示：
 
 - n == ratings.length
-- 1 <= n <= 2 * 104
-- 0 <= ratings[i] <= 2 * 104
+- 1 <= n <= 2 * 10^4
+- 0 <= ratings[i] <= 2 * 10^4
 
 
 
@@ -990,8 +990,8 @@ https://leetcode.cn/problems/trapping-rain-water/description/?envType=study-plan
 提示：
 
 - n == height.length
-- 1 <= n <= 2 * 104
-- 0 <= height[i] <= 105
+- 1 <= n <= 2 * 10^4
+- 0 <= height[i] <= 10^5
 
 
 
@@ -1243,7 +1243,7 @@ https://leetcode.cn/problems/length-of-last-word/description/?envType=study-plan
 
 提示：
 
-- 1 <= s.length <= 104
+- 1 <= s.length <= 10^4
 - s 仅有英文字母和空格 ' ' 组成
 - s 中至少存在一个单词
 
@@ -1351,7 +1351,7 @@ https://leetcode.cn/problems/reverse-words-in-a-string/description/?envType=stud
 
 提示：
 
-- 1 <= s.length <= 104
+- 1 <= s.length <= 10^4
 - s 包含英文大小写字母、数字和空格 ' '
 - s 中 至少存在一个 单词
 
@@ -1495,7 +1495,7 @@ https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/
 
 提示：
 
-- 1 <= haystack.length, needle.length <= 104
+- 1 <= haystack.length, needle.length <= 10^4
 - haystack 和 needle 仅由小写英文字符组成
 
 
@@ -1714,7 +1714,7 @@ https://leetcode.cn/problems/valid-palindrome/description/?envType=study-plan-v2
 
 提示：
 
-- 1 <= s.length <= 2 * 105
+- 1 <= s.length <= 2 * 10^5
 - s 仅由可打印的 ASCII 字符组成
 
 
@@ -1845,7 +1845,7 @@ https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/description/?envTy
 
 提示：
 
-- 2 <= numbers.length <= 3 * 104
+- 2 <= numbers.length <= 3 * 10^4
 - -1000 <= numbers[i] <= 1000
 - numbers 按 非递减顺序 排列
 - -1000 <= target <= 1000
@@ -1902,8 +1902,8 @@ https://leetcode.cn/problems/container-with-most-water/description/?envType=stud
 提示：
 
 - n == height.length
-- 2 <= n <= 105
-- 0 <= height[i] <= 104
+- 2 <= n <= 10^5
+- 0 <= height[i] <= 10^4
 
 ```java
 class Solution {
@@ -1972,7 +1972,7 @@ https://leetcode.cn/problems/3sum/description/?envType=study-plan-v2&envId=top-i
 提示：
 
 - 3 <= nums.length <= 3000
-- -105 <= nums[i] <= 105
+- -10^5 <= nums[i] <= 10^5
 
 ```java
 class Solution {
@@ -2049,8 +2049,8 @@ https://leetcode.cn/problems/minimum-size-subarray-sum/description/?envType=stud
 提示：
 
 - 1 <= target <= 109
-- 1 <= nums.length <= 105
-- 1 <= nums[i] <= 105
+- 1 <= nums.length <= 10^5
+- 1 <= nums[i] <= 10^5
 
 ```java
 class Solution {
@@ -2110,7 +2110,7 @@ https://leetcode.cn/problems/longest-substring-without-repeating-characters/desc
 
 提示：
 
-- 0 <= s.length <= 5 * 104
+- 0 <= s.length <= 5 * 10^4
 - s 由英文字母、数字、符号和空格组成
 
 ```java
@@ -2181,7 +2181,7 @@ s 中没有子串长度为 16 并且等于 words 的任何顺序排列的连接�
 
 提示：
 
-- 1 <= s.length <= 104
+- 1 <= s.length <= 10^4
 - 1 <= words.length <= 5000
 - 1 <= words[i].length <= 30
 - words[i] 和 s 由小写英文字母组成
@@ -2261,7 +2261,7 @@ https://leetcode.cn/problems/minimum-window-substring/description/?envType=study
 
 - m == s.length
 - n == t.length
-- 1 <= m, n <= 105
+- 1 <= m, n <= 10^5
 - s 和 t 由英文字母组成
 
 ```java
@@ -2552,7 +2552,7 @@ https://leetcode.cn/problems/set-matrix-zeroes/description/?envType=study-plan-v
 - m == matrix.length
 - n == matrix[0].length
 - 1 <= m, n <= 200
-- -231 <= matrix[i][j] <= 231 - 1
+- -2^31 <= matrix[i][j] <= 2^31 - 1
 
 ```java
 我们可以用两个标记数组分别记录每一行和每一列是否有零出现。
@@ -2714,7 +2714,7 @@ magazine 中的每个字符只能在 ransomNote 中使用一次。
 
 提示：
 
-- 1 <= ransomNote.length, magazine.length <= 105
+- 1 <= ransomNote.length, magazine.length <= 10^5
 - ransomNote 和 magazine 由小写英文字母组成
 
 ```java
@@ -2770,7 +2770,7 @@ https://leetcode.cn/problems/isomorphic-strings/description/?envType=study-plan-
 
 提示：
 
-- 1 <= s.length <= 5 * 104
+- 1 <= s.length <= 5 * 10^4
 - t.length == s.length
 - s 和 t 由任意有效的 ASCII 字符组成
 
@@ -2886,7 +2886,7 @@ https://leetcode.cn/problems/valid-anagram/description/?envType=study-plan-v2&en
 
 提示:
 
-- 1 <= s.length, t.length <= 5 * 104
+- 1 <= s.length, t.length <= 5 * 10^4
 - s 和 t 仅包含小写字母
 
 ```java
@@ -2940,7 +2940,7 @@ https://leetcode.cn/problems/group-anagrams/description/?envType=study-plan-v2&e
 
 提示：
 
-- 1 <= strs.length <= 104
+- 1 <= strs.length <= 10^4
 - 0 <= strs[i].length <= 100
 - strs[i] 仅包含小写字母
 
@@ -3048,7 +3048,7 @@ https://leetcode.cn/problems/happy-number/description/?envType=study-plan-v2&env
 
 提示：
 
-- 1 <= n <= 231 - 1
+- 1 <= n <= 2^31 - 1
 
 ```java
 //快慢指针法
@@ -3107,9 +3107,9 @@ https://leetcode.cn/problems/contains-duplicate-ii/description/?envType=study-pl
 
 提示：
 
-- 1 <= nums.length <= 105
+- 1 <= nums.length <= 10^5
 - -109 <= nums[i] <= 109
-- 0 <= k <= 105
+- 0 <= k <= 10^5
 
 ```java
 //滑动窗口
@@ -3156,7 +3156,7 @@ https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=s
 
 提示：
 
-- 0 <= nums.length <= 105
+- 0 <= nums.length <= 10^5
 - -109 <= nums[i] <= 109
 
 ```java
@@ -3230,7 +3230,7 @@ https://leetcode.cn/problems/summary-ranges/description/?envType=study-plan-v2&e
 提示：
 
 - 0 <= nums.length <= 20
-- -231 <= nums[i] <= 231 - 1
+- -2^31 <= nums[i] <= 2^31 - 1
 - nums 中的所有值都 互不相同
 - nums 按升序排列
 
@@ -3285,9 +3285,9 @@ https://leetcode.cn/problems/merge-intervals/description/?envType=study-plan-v2&
 
 提示：
 
-- 1 <= intervals.length <= 104
+- 1 <= intervals.length <= 10^4
 - intervals[i].length == 2
-- 0 <= starti <= endi <= 104
+- 0 <= starti <= endi <= 10^4
 
 ```java
 class Solution {
@@ -3337,12 +3337,12 @@ https://leetcode.cn/problems/insert-interval/description/?envType=study-plan-v2&
 
 提示：
 
-- 0 <= intervals.length <= 104
+- 0 <= intervals.length <= 10^4
 - intervals[i].length == 2
-- 0 <= starti <= endi <= 105
+- 0 <= starti <= endi <= 10^5
 - intervals 根据 starti 按 升序 排列
 - newInterval.length == 2
-- 0 <= start <= end <= 105
+- 0 <= start <= end <= 10^5
 
 ```java
 class Solution {
@@ -3423,9 +3423,9 @@ https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/descript
 
 提示:
 
-- 1 <= points.length <= 105
+- 1 <= points.length <= 10^5
 - points[i].length == 2
-- -231 <= xstart < xend <= 231 - 1
+- -2^31 <= xstart < xend <= 2^31 - 1
 
 ```java
 class Solution {
@@ -3482,7 +3482,7 @@ https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v
 
 提示：
 
-- 1 <= s.length <= 104
+- 1 <= s.length <= 10^4
 - s 仅由括号 '()[]{}' 组成
 
 ```java
@@ -3637,9 +3637,9 @@ https://leetcode.cn/problems/min-stack/description/?envType=study-plan-v2&envId=
 
 提示：
 
-- -231 <= val <= 231 - 1
+- -2^31 <= val <= 2^31 - 1
 - pop、top 和 getMin 操作总是在 非空栈 上调用
-- push, pop, top, and getMin最多被调用 3 * 104 次
+- push, pop, top, and getMin最多被调用 3 * 10^4 次
 
 ```java
 class MinStack {
@@ -3750,7 +3750,7 @@ https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/?envTy
 
 提示：
 
-- 1 <= tokens.length <= 104
+- 1 <= tokens.length <= 10^4
 - tokens[i] 是一个算符（"+"、"-"、"*" 或 "/"），或是在范围 [-200, 200] 内的一个整数
 
 
@@ -3833,7 +3833,7 @@ https://leetcode.cn/problems/basic-calculator/description/?envType=study-plan-v2
 
 提示：
 
-- 1 <= s.length <= 3 * 105
+- 1 <= s.length <= 3 * 10^5
 - s 由数字、'+'、'-'、'('、')'、和 ' ' 组成
 - s 表示一个有效的表达式
 - '+' 不能用作一元运算(例如， "+1" 和 "+(2 + 3)" 无效)
@@ -3953,8 +3953,8 @@ https://leetcode.cn/problems/linked-list-cycle/description/?envType=study-plan-v
 
 提示：
 
-- 链表中节点的数目范围是 [0, 104]
-- -105 <= Node.val <= 105
+- 链表中节点的数目范围是 [0, 10^4]
+- -10^5 <= Node.val <= 10^5
 - pos 为 -1 或者链表中的一个 有效索引 。
 
 
@@ -4176,7 +4176,7 @@ https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=
 提示：
 
 - 0 <= n <= 1000
-- -104 <= Node.val <= 104
+- -10^4 <= Node.val <= 10^4
 - Node.random 为 null 或指向链表中的节点。
 
 ```java
@@ -4683,8 +4683,8 @@ lRUCache.get(4);    // 返回 4
 
 - 1 <= capacity <= 3000
 - 0 <= key <= 10000
-- 0 <= value <= 105
-- 最多调用 2 * 105 次 get 和 put
+- 0 <= value <= 10^5
+- 最多调用 2 * 10^5 次 get 和 put
 
 ```java
 class LRUCache {
@@ -4805,7 +4805,7 @@ https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=s
 
 提示：
 
-- 树中节点的数量在 [0, 104] 区间内。
+- 树中节点的数量在 [0, 10^4] 区间内。
 - -100 <= Node.val <= 100
 
 ```java
@@ -4873,7 +4873,7 @@ https://leetcode.cn/problems/same-tree/description/?envType=study-plan-v2&envId=
 提示：
 
 - 两棵树上的节点数目都在范围 [0, 100] 内
-- -104 <= Node.val <= 104
+- -10^4 <= Node.val <= 10^4
 
 ```java
 /**
@@ -5534,7 +5534,7 @@ https://leetcode.cn/problems/binary-tree-maximum-path-sum/description/?envType=s
 
 提示：
 
-树中节点数目范围是 [1, 3 * 104]
+树中节点数目范围是 [1, 3 * 10^4]
 -1000 <= Node.val <= 1000
 
 
@@ -5646,9 +5646,9 @@ bSTIterator.hasNext(); // 返回 False
 
 提示：
 
-- 树中节点的数目在范围 [1, 105] 内
+- 树中节点的数目在范围 [1, 10^5] 内
 - 0 <= Node.val <= 106
-- 最多调用 105 次 hasNext 和 next 操作
+- 最多调用 10^5 次 hasNext 和 next 操作
  
 
 进阶：
@@ -5728,8 +5728,8 @@ https://leetcode.cn/problems/count-complete-tree-nodes/description/?envType=stud
 
 提示：
 
-- 树中节点的数目范围是[0, 5 * 104]
-- 0 <= Node.val <= 5 * 104
+- 树中节点的数目范围是[0, 5 * 10^4]
+- 0 <= Node.val <= 5 * 10^4
 - 题目数据保证输入的树是 完全二叉树
 
 ```java
@@ -5809,7 +5809,7 @@ https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description
 
 提示：
 
-- 树中节点数目在范围 [2, 105] 内。
+- 树中节点数目在范围 [2, 10^5] 内。
 - -109 <= Node.val <= 109
 - 所有 Node.val 互不相同 。
 - p != q
@@ -5955,8 +5955,8 @@ https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/?envTy
 
 提示：
 
-- 树中节点数量在 [1, 104] 范围内
-- -231 <= Node.val <= 231 - 1
+- 树中节点数量在 [1, 10^4] 范围内
+- -2^31 <= Node.val <= 2^31 - 1
 
 ```java
 import java.util.*;
@@ -6205,8 +6205,8 @@ https://leetcode.cn/problems/minimum-absolute-difference-in-bst/description/?env
 
 提示：
 
-- 树中节点的数目范围是 [2, 104]
-- 0 <= Node.val <= 105
+- 树中节点的数目范围是 [2, 10^4]
+- 0 <= Node.val <= 10^5
 
 ```java
 /**
@@ -6275,8 +6275,8 @@ https://leetcode.cn/problems/kth-smallest-element-in-a-bst/description/?envType=
 提示：
 
 - 树中的节点数为 n 。
-- 1 <= k <= n <= 104
-- 0 <= Node.val <= 104
+- 1 <= k <= n <= 10^4
+- 0 <= Node.val <= 10^4
 
 ```java
 /**
@@ -6353,8 +6353,8 @@ https://leetcode.cn/problems/validate-binary-search-tree/description/?envType=st
 
 提示：
 
-- 树中节点数目范围在[1, 104] 内
-- -231 <= Node.val <= 231 - 1
+- 树中节点数目范围在[1, 10^4] 内
+- -2^31 <= Node.val <= 2^31 - 1
 
 ```java
 /**
@@ -7356,7 +7356,7 @@ Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，�
 
 - 1 <= word.length, prefix.length <= 2000
 - word 和 prefix 仅由小写英文字母组成
-- insert、search 和 startsWith 调用次数 总计 不超过 3 * 104 次
+- insert、search 和 startsWith 调用次数 总计 不超过 3 * 10^4 次
 
 ```java
 /**
@@ -7490,7 +7490,7 @@ https://leetcode.cn/problems/design-add-and-search-words-data-structure/descript
 - 1 <= word.length <= 25
 - addWord 中的 word 由小写英文字母组成
 - search 中的 word 由 '.' 或小写英文字母组成
-- 最多调用 104 次 addWord 和 search
+- 最多调用 10^4 次 addWord 和 search
 
 ```java
 /**
@@ -8211,8 +8211,8 @@ https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/descript
 
 提示：
 
-1 <= nums.length <= 104
--104 <= nums[i] <= 104
+1 <= nums.length <= 10^4
+-10^4 <= nums[i] <= 10^4
 nums 按 严格递增 顺序排列
 
 ```java
@@ -8287,8 +8287,8 @@ https://leetcode.cn/problems/sort-list/description/?envType=study-plan-v2&envId=
 
 提示：
 
-- 链表中节点的数目在范围 [0, 5 * 104] 内
-- -105 <= Node.val <= 105
+- 链表中节点的数目在范围 [0, 5 * 10^4] 内
+- -10^5 <= Node.val <= 10^5
 
 ```java
 /**
@@ -8643,12 +8643,8 @@ class Solution {
 
 # Kadane 算法
 ## 53. 最大子数组和
-给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
-
-子数组
+给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。子数组
 是数组中的一个连续部分。
-
- 
 
 示例 1：
 
@@ -8673,8 +8669,8 @@ class Solution {
 
 提示：
 
-- 1 <= nums.length <= 105
-- -104 <= nums[i] <= 104
+- 1 <= nums.length <= 10^5
+- -10^4 <= nums[i] <= 10^4
 
 ```java
 public class Solution {
@@ -8743,8 +8739,8 @@ https://leetcode.cn/problems/maximum-sum-circular-subarray/description/?envType=
 提示：
 
 - n == nums.length
-- 1 <= n <= 3 * 104
-- -3 * 104 <= nums[i] <= 3 * 104​​​​​​​
+- 1 <= n <= 3 * 10^4
+- -3 * 10^4 <= nums[i] <= 3 * 10^4​​​​​​​
 
 ```java
 /**
@@ -8822,10 +8818,10 @@ https://leetcode.cn/problems/search-insert-position/description/?envType=study-p
 
 提示:
 
-- 1 <= nums.length <= 104
-- -104 <= nums[i] <= 104
+- 1 <= nums.length <= 10^4
+- -10^4 <= nums[i] <= 10^4
 - nums 为 无重复元素 的 升序 排列数组
-- -104 <= target <= 104
+- -10^4 <= target <= 10^4
 
 ```java
 /**
@@ -8890,7 +8886,7 @@ https://leetcode.cn/problems/search-a-2d-matrix/description/?envType=study-plan-
 - m == matrix.length
 - n == matrix[i].length
 - 1 <= m, n <= 100
-- -104 <= matrix[i][j], target <= 104
+- -10^4 <= matrix[i][j], target <= 10^4
 
 ```java
 /**
@@ -8978,7 +8974,7 @@ https://leetcode.cn/problems/find-peak-element/description/?envType=study-plan-v
 提示：
 
 - 1 <= nums.length <= 1000
-- -231 <= nums[i] <= 231 - 1
+- -2^31 <= nums[i] <= 2^31 - 1
 - 对于所有有效的 i 都有 nums[i] != nums[i + 1]
 
 ```java
@@ -9048,10 +9044,10 @@ https://leetcode.cn/problems/search-in-rotated-sorted-array/description/?envType
 提示：
 
 - 1 <= nums.length <= 5000
-- -104 <= nums[i] <= 104
+- -10^4 <= nums[i] <= 10^4
 - nums 中的每个值都 独一无二
 - 题目数据保证 nums 在预先未知的某个下标上进行了旋转
-- -104 <= target <= 104
+- -10^4 <= target <= 10^4
 
 ```java
 public int search(int[] nums, int target) {
@@ -9119,7 +9115,7 @@ https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-a
 
 提示：
 
-- 0 <= nums.length <= 105
+- 0 <= nums.length <= 10^5
 - -109 <= nums[i] <= 109
 - nums 是一个非递减数组
 - -109 <= target <= 109
@@ -9372,8 +9368,8 @@ https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envTyp
 
 提示：
 
-- 1 <= k <= nums.length <= 105
-- -104 <= nums[i] <= 104
+- 1 <= k <= nums.length <= 10^5
+- -10^4 <= nums[i] <= 10^4
 
 ```java
 class Solution {
@@ -9677,7 +9673,7 @@ medianFinder.findMedian(); // return 2.0
 
 - -10^5 <= num <= 10^5
 - 在调用 findMedian 之前，数据结构中至少有一个元素
-- 最多 5 * 104 次调用 addNum 和 findMedian
+- 最多 5 * 10^4 次调用 addNum 和 findMedian
 
 ```java
 import java.util.PriorityQueue;
@@ -9755,7 +9751,7 @@ https://leetcode.cn/problems/add-binary/description/?envType=study-plan-v2&envId
 
 提示：
 
-- 1 <= a.length, b.length <= 104
+- 1 <= a.length, b.length <= 10^4
 - a 和 b 仅由字符 '0' 或 '1' 组成
 - 字符串如果不是 "0" ，就不含前导零
 
@@ -9895,7 +9891,7 @@ https://leetcode.cn/problems/number-of-1-bits/description/?envType=study-plan-v2
 
 提示：
 
-- 1 <= n <= 231 - 1
+- 1 <= n <= 2^31 - 1
 
 ```java
 public class Solution {
@@ -9953,8 +9949,8 @@ https://leetcode.cn/problems/single-number/description/?envType=study-plan-v2&en
 
 提示：
 
-- 1 <= nums.length <= 3 * 104
-- -3 * 104 <= nums[i] <= 3 * 104
+- 1 <= nums.length <= 3 * 10^4
+- -3 * 10^4 <= nums[i] <= 3 * 10^4
 - 除了某个元素只出现一次以外，其余每个元素均出现两次。
 
 ```java
@@ -10006,8 +10002,8 @@ https://leetcode.cn/problems/single-number-ii/description/?envType=study-plan-v2
 
 提示：
 
-- 1 <= nums.length <= 3 * 104
-- -231 <= nums[i] <= 231 - 1
+- 1 <= nums.length <= 3 * 10^4
+- -2^31 <= nums[i] <= 2^31 - 1
 - nums 中，除某个元素仅出现 一次 外，其余每个元素都恰出现 三次
 
 ```java
@@ -10072,7 +10068,7 @@ https://leetcode.cn/problems/bitwise-and-of-numbers-range/description/?envType=s
 
 提示：
 
-- 0 <= left <= right <= 231 - 1
+- 0 <= left <= right <= 2^31 - 1
 
 ```java
 public class Solution {
@@ -10142,7 +10138,7 @@ https://leetcode.cn/problems/palindrome-number/description/?envType=study-plan-v
 
 提示：
 
-- -231 <= x <= 231 - 1
+- -2^31 <= x <= 2^31 - 1
 
 ```java
 public class Solution {
@@ -10351,7 +10347,7 @@ https://leetcode.cn/problems/sqrtx/description/?envType=study-plan-v2&envId=top-
 
 提示：
 
-- 0 <= x <= 231 - 1
+- 0 <= x <= 2^31 - 1
 
 
 ```java
