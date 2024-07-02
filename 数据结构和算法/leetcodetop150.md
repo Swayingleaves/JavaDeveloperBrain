@@ -9348,3 +9348,2296 @@ class Solution {
 ```
 
 # 堆
+## 215. 数组中的第K个最大元素
+https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+你必须设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+ 
+
+示例 1:
+
+输入: [3,2,1,5,6,4], k = 2
+
+输出: 5
+
+示例 2:
+
+输入: [3,2,3,1,2,4,5,5,6], k = 4
+
+输出: 4
+ 
+
+提示：
+
+- 1 <= k <= nums.length <= 105
+- -104 <= nums[i] <= 104
+
+```java
+class Solution {
+    /**
+     * 寻找第k大的元素。
+     * 使用随机化快速选择算法，避免了完整排序的需要，提高了效率。
+     * 
+     * @param nums 输入的整数数组。
+     * @param k 指定的第k大的元素。
+     * @return 返回数组中第k大的元素。
+     */
+    public int findKthLargest(int[] nums, int k) {
+        // 调用处理函数，初始化搜索范围为整个数组，寻找第k大的元素位置
+        return handle(nums, 0, nums.length - 1, nums.length - k);
+    }
+
+    /**
+     * 处理函数，用于寻找第k大的元素。
+     * 通过随机化选择一个基准元素，并进行部分排序，逐步缩小搜索范围。
+     * 
+     * @param nums 输入的整数数组。
+     * @param left 当前搜索范围的左边界。
+     * @param right 当前搜索范围的右边界。
+     * @param k 指定的第k大的元素。
+     * @return 返回数组中第k大的元素。
+     */
+    public int handle(int[] nums, int left, int right, int k) {
+        // 当左边界小于右边界时，继续搜索
+        while (left < right) {
+            // 通过随机选择基准元素，进行部分排序，返回基准元素的最终位置
+            int p = sort(nums, left, right);
+            // 如果基准元素位置等于k，搜索结束
+            if (p == k) {
+                break;
+            } else if (p < k) {
+                // 如果基准元素位置小于k，调整左边界
+                left = p + 1;
+            } else {
+                // 如果基准元素位置大于k，调整右边界
+                right = p - 1;
+            }
+        }
+        // 返回第k大的元素
+        return nums[k];
+    }
+
+    /**
+     * 随机化选择基准元素并进行部分排序。
+     * 使用随机选择的基准元素，将小于基准元素的元素放到基准元素的左边，大于基准元素的元素放到右边。
+     * 
+     * @param nums 输入的整数数组。
+     * @param left 当前搜索范围的左边界。
+     * @param right 当前搜索范围的右边界。
+     * @return 返回基准元素的最终位置。
+     */
+    public int sort(int[] nums, int left, int right) {
+        // 随机选择一个基准元素的位置
+        int random = new Random().nextInt(right - left + 1) + left;
+        swap(nums, left, random);
+        int pd = nums[left];
+        int lt = left;
+        // 遍历数组，将小于基准元素的元素放到基准元素的左边
+        for (int i = left + 1; i <= right; i++) {
+            if (nums[i] < pd) {
+                swap(nums, i, ++lt);
+            }
+        }
+        // 将基准元素放到正确的位置
+        swap(nums, left, lt);
+        // 返回基准元素的最终位置
+        return lt;
+    }
+
+    /**
+     * 交换数组中两个位置的元素。
+     * 
+     * @param nums 输入的整数数组。
+     * @param a 要交换的第一个位置。
+     * @param b 要交换的第二个位置。
+     */
+    public void swap(int[] nums, int a, int b) {
+        // 临时存储a位置的元素
+        int temp = nums[a];
+        // 将a位置的元素换成b位置的元素
+        nums[a] = nums[b];
+        // 将b位置的元素换成临时存储的元素
+        nums[b] = temp;
+    }
+}
+```
+
+## 502. IPO
+https://leetcode.cn/problems/ipo/description/?envType=study-plan-v2&envId=top-interview-150
+
+假设 力扣（LeetCode）即将开始 IPO 。为了以更高的价格将股票卖给风险投资公司，力扣 希望在 IPO 之前开展一些项目以增加其资本。 由于资源有限，它只能在 IPO 之前完成最多 k 个不同的项目。帮助 力扣 设计完成最多 k 个不同项目后得到最大总资本的方式。
+
+给你 n 个项目。对于每个项目 i ，它都有一个纯利润 profits[i] ，和启动该项目需要的最小资本 capital[i] 。
+
+最初，你的资本为 w 。当你完成一个项目时，你将获得纯利润，且利润将被添加到你的总资本中。
+
+总而言之，从给定项目中选择 最多 k 个不同项目的列表，以 最大化最终资本 ，并输出最终可获得的最多资本。
+
+答案保证在 32 位有符号整数范围内。
+
+ 
+
+示例 1：
+
+输入：k = 2, w = 0, profits = [1,2,3], capital = [0,1,1]
+
+输出：4
+
+解释：
+
+由于你的初始资本为 0，你仅可以从 0 号项目开始。
+
+在完成后，你将获得 1 的利润，你的总资本将变为 1。
+
+此时你可以选择开始 1 号或 2 号项目。
+
+由于你最多可以选择两个项目，所以你需要完成 2 号项目以获得最大的资本。
+
+因此，输出最后最大化的资本，为 0 + 1 + 3 = 4。
+
+示例 2：
+
+输入：k = 3, w = 0, profits = [1,2,3], capital = [0,1,2]
+
+输出：6
+ 
+
+提示：
+
+- 1 <= k <= 10^5
+- 0 <= w <= 10^9
+- n == profits.length
+- n == capital.length
+- 1 <= n <= 10^5
+- 0 <= profits[i] <= 10^4
+- 0 <= capital[i] <= 10^9
+
+```java
+import java.util.*;
+
+class Solution {
+    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
+        // 定义项目类，包含利润和所需资本，便于优先队列操作
+        class Project implements Comparable<Project> {
+            int profit;
+            int capital;
+
+            Project(int profit, int capital) {
+                this.profit = profit;
+                this.capital = capital;
+            }
+
+            // 按照所需资本从小到大排序
+            @Override
+            public int compareTo(Project other) {
+                return Integer.compare(this.capital, other.capital);
+            }
+        }
+
+        // 创建优先队列保存项目，按照利润从大到小排序
+        PriorityQueue<Project> maxProfitHeap = new PriorityQueue<>((a, b) -> b.profit - a.profit);
+        // 创建优先队列保存可执行的项目，按照所需资本从小到大排序
+        PriorityQueue<Project> minCapitalHeap = new PriorityQueue<>();
+
+        // 初始化项目到minCapitalHeap
+        for (int i = 0; i < profits.length; i++) {
+            minCapitalHeap.offer(new Project(profits[i], capital[i]));
+        }
+
+        while (k-- > 0) {
+            // 当前资本能执行的项目
+            while (!minCapitalHeap.isEmpty() && minCapitalHeap.peek().capital <= w) {
+                maxProfitHeap.offer(minCapitalHeap.poll());
+            }
+            // 若没有可执行的项目且k还有剩余，则跳出循环
+            if (maxProfitHeap.isEmpty()) break;
+            // 执行利润最大的项目
+            w += maxProfitHeap.poll().profit;
+        }
+
+        return w;
+    }
+}
+```
+
+## 373. 查找和最小的 K 对数字
+https://leetcode.cn/problems/find-k-pairs-with-smallest-sums/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个以 非递减顺序排列 的整数数组 nums1 和 nums2 , 以及一个整数 k 。
+
+定义一对值 (u,v)，其中第一个元素来自 nums1，第二个元素来自 nums2 。
+
+请找到和最小的 k 个数对 (u1,v1),  (u2,v2)  ...  (uk,vk) 。
+
+ 
+
+示例 1:
+
+输入: nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+
+输出: [1,2],[1,4],[1,6]
+
+解释: 返回序列中的前 3 对数：
+     [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+
+示例 2:
+
+输入: nums1 = [1,1,2], nums2 = [1,2,3], k = 2
+
+输出: [1,1],[1,1]
+
+解释: 返回序列中的前 2 对数：
+     [1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+ 
+
+提示:
+
+- 1 <= nums1.length, nums2.length <= 10^5
+- -109 <= nums1[i], nums2[i] <= 10^9
+- nums1 和 nums2 均为 升序排列
+- 1 <= k <= 10^4
+- k <= nums1.length * nums2.length
+
+```java
+import java.util.*;
+
+class Solution {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> a[0] + a[1] - b[0] - b[1]);
+        List<List<Integer>> result = new ArrayList<>();
+
+        if (nums1.length == 0 || nums2.length == 0 || k == 0) {
+            return result;
+        }
+
+        // 将起始组合加入堆
+        for (int i = 0; i < Math.min(nums1.length, k); i++) {
+            minHeap.offer(new int[]{nums1[i], nums2[0], 0});
+        }
+
+        while (k-- > 0 && !minHeap.isEmpty()) {
+            int[] current = minHeap.poll();
+            result.add(Arrays.asList(current[0], current[1]));
+
+            // 如果当前组合的第二个元素不是nums2的最后一个元素，则加入下一个可能的组合
+            if (current[2] < nums2.length - 1) {
+                minHeap.offer(new int[]{current[0], nums2[current[2] + 1], current[2] + 1});
+            }
+        }
+
+        return result;
+    }
+}
+```
+
+## 295. 数据流的中位数
+https://leetcode.cn/problems/find-median-from-data-stream/description/?envType=study-plan-v2&envId=top-interview-150
+
+中位数是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。
+
+- 例如 arr = [2,3,4] 的中位数是 3 。
+- 例如 arr = [2,3] 的中位数是 (2 + 3) / 2 = 2.5 。
+
+实现 MedianFinder 类:
+
+- MedianFinder() 初始化 MedianFinder 对象。
+- void addNum(int num) 将数据流中的整数 num 添加到数据结构中。
+- double findMedian() 返回到目前为止所有元素的中位数。与实际答案相差 10-5 以内的答案将被接受。
+
+示例 1：
+
+输入
+
+["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]
+
+[[], [1], [2], [], [3], []]
+
+输出
+
+[null, null, null, 1.5, null, 2.0]
+
+解释
+
+MedianFinder medianFinder = new MedianFinder();
+
+medianFinder.addNum(1);    // arr = [1]
+
+medianFinder.addNum(2);    // arr = [1, 2]
+
+medianFinder.findMedian(); // 返回 1.5 ((1 + 2) / 2)
+
+medianFinder.addNum(3);    // arr[1, 2, 3]
+
+medianFinder.findMedian(); // return 2.0
+
+提示:
+
+- -10^5 <= num <= 10^5
+- 在调用 findMedian 之前，数据结构中至少有一个元素
+- 最多 5 * 104 次调用 addNum 和 findMedian
+
+```java
+import java.util.PriorityQueue;
+
+public class MedianFinder {
+    // 最大堆，存放较小的一半数字
+    private PriorityQueue<Integer> maxHeap;
+    // 最小堆，存放较大的一半数字
+    private PriorityQueue<Integer> minHeap;
+
+    /** initialize your data structure here */
+    public MedianFinder() {
+        maxHeap = new PriorityQueue<>((a, b) -> b - a); // 最大堆：存放较小的一半数字
+        minHeap = new PriorityQueue<>(); // 最小堆：存放较大的一半数字
+    }
+
+    public void addNum(int num) {
+        // 如果最大堆为空或者当前数字小于最大堆堆顶元素，则放入最大堆
+        if (maxHeap.isEmpty() || num <= maxHeap.peek()) {
+            maxHeap.offer(num);
+            // 如果最大堆的大小超过最小堆，则将最大堆堆顶元素弹出放入最小堆
+            if (maxHeap.size() > minHeap.size() + 1) {
+                minHeap.offer(maxHeap.poll());
+            }
+        } else {
+            minHeap.offer(num); // 放入最小堆
+            // 如果最小堆的大小超过最大堆，则将最小堆堆顶元素弹出放入最大堆
+            if (minHeap.size() > maxHeap.size()) {
+                maxHeap.offer(minHeap.poll());
+            }
+        }
+    }
+
+    public double findMedian() {
+        // 如果最大堆和最小堆大小相同，则取出两个堆的堆顶元素求平均作为中位数
+        if (maxHeap.size() == minHeap.size()) {
+            return (maxHeap.peek() + minHeap.peek()) / 2.0;
+        } else {
+            return maxHeap.peek(); // 否则返回最大堆的堆顶元素作为中位数
+        }
+    }
+
+    public static void main(String[] args) {
+        MedianFinder medianFinder = new MedianFinder();
+        medianFinder.addNum(1);    // arr = [1]
+        medianFinder.addNum(2);    // arr = [1, 2]
+        System.out.println(medianFinder.findMedian()); // 返回 1.5 ((1 + 2) / 2)
+        medianFinder.addNum(3);    // arr = [1, 2, 3]
+        System.out.println(medianFinder.findMedian()); // 返回 2.0
+    }
+}
+```
+
+# 位运算
+## 67. 二进制求和
+
+https://leetcode.cn/problems/add-binary/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你两个二进制字符串 a 和 b ，以二进制字符串的形式返回它们的和。
+
+ 
+
+示例 1：
+
+输入:a = "11", b = "1"
+
+输出："100"
+
+示例 2：
+
+输入：a = "1010", b = "1011"
+
+输出："10101"
+ 
+
+提示：
+
+- 1 <= a.length, b.length <= 104
+- a 和 b 仅由字符 '0' 或 '1' 组成
+- 字符串如果不是 "0" ，就不含前导零
+
+```java
+class Solution {
+    // 定义一个方法来实现二进制字符串相加
+    public String addBinary(String a, String b) {
+        StringBuilder sb = new StringBuilder(); // 用于构建结果字符串
+        int carry = 0; // 进位初始化为0
+        int i = a.length() - 1;
+        int j = b.length() - 1;
+
+        // 从字符串末尾开始遍历，同时考虑进位
+        while (i >= 0 || j >= 0 || carry > 0) {
+            int sum = carry; // 当前位的值等于进位
+
+            // 如果a还有位数，加上a的当前位
+            if (i >= 0) {
+                sum += a.charAt(i--) - '0'; // 将字符转换为数字并累加
+            }
+            // 如果b还有位数，加上b的当前位
+            if (j >= 0) {
+                sum += b.charAt(j--) - '0'; // 将字符转换为数字并累加
+            }
+
+            sb.insert(0, sum % 2); // 将当前位的值加入结果字符串的开头
+            carry = sum / 2; // 更新进位
+        }
+
+        return sb.toString(); // 返回结果字符串
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        String a = "11";
+        String b = "1";
+        System.out.println(solution.addBinary(a, b)); // 输出："100"
+
+        a = "1010";
+        b = "1011";
+        System.out.println(solution.addBinary(a, b)); // 输出："10101"
+    }
+}
+```
+
+## 190. 颠倒二进制位
+https://leetcode.cn/problems/reverse-bits/description/?envType=study-plan-v2&envId=top-interview-150
+
+颠倒给定的 32 位无符号整数的二进制位。
+
+提示：
+
+- 请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。
+- 在 Java 中，编译器使用二进制补码记法来表示有符号整数。因此，在 示例 2 中，输入表示有符号整数 -3，输出表示有符号整数 -1073741825。
+ 
+
+示例 1：
+
+输入：n = 00000010100101000001111010011100
+
+输出：964176192 (00111001011110000010100101000000)
+
+解释：输入的二进制串 00000010100101000001111010011100 表示无符号整数 43261596，
+     因此返回 964176192，其二进制表示形式为 00111001011110000010100101000000。
+
+示例 2：
+
+输入：n = 11111111111111111111111111111101
+
+输出：3221225471 (10111111111111111111111111111111)
+
+解释：输入的二进制串 11111111111111111111111111111101 表示无符号整数 4294967293，
+     因此返回 3221225471 其二进制表示形式为 10111111111111111111111111111111 。
+ 
+
+提示：
+
+- 输入是一个长度为 32 的二进制字符串
+
+```java
+public class Solution {
+    // you need treat n as an unsigned value
+    public int reverseBits(int n) {
+        int result = 0;
+        // 对输入的32位无符号整数进行颠倒
+        for (int i = 0; i < 32; i++) {
+            result <<= 1; // 将结果向左移一位
+            result |= (n & 1); // 将n的最低位加到result的最低位
+            n >>= 1; // 移动n以处理下一位
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int n1 = 43261596;
+        System.out.println(solution.reverseBits(n1)); // 输出：964176192
+
+        int n2 = -3;
+        System.out.println(solution.reverseBits(n2)); // 输出：3221225471
+    }
+}
+```
+
+## 191. 位1的个数
+https://leetcode.cn/problems/number-of-1-bits/description/?envType=study-plan-v2&envId=top-interview-150
+
+编写一个函数，获取一个正整数的二进制形式并返回其二进制表达式中 
+设置位的个数（也被称为汉明重量）。
+
+ 
+
+示例 1：
+
+输入：n = 11
+
+输出：3
+
+解释：输入的二进制串 1011 中，共有 3 个设置位。
+
+示例 2：
+
+输入：n = 128
+
+输出：1
+
+解释：输入的二进制串 10000000 中，共有 1 个设置位。
+
+示例 3：
+
+输入：n = 2147483645
+
+输出：30
+
+解释：输入的二进制串 11111111111111111111111111111101 中，共有 30 个设置位。
+ 
+
+提示：
+
+- 1 <= n <= 231 - 1
+
+```java
+public class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int count = 0;
+        while (n != 0) {
+            count += n & 1; // 检查n的最低位是否为1
+            n = n >>> 1; // 无符号右移，将n的最低位移出
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int n1 = 11;
+        System.out.println(solution.hammingWeight(n1)); // 输出：3
+
+        int n2 = 128;
+        System.out.println(solution.hammingWeight(n2)); // 输出：1
+
+        int n3 = 2147483645;
+        System.out.println(solution.hammingWeight(n3)); // 输出：30
+    }
+}
+```
+
+## 136. 只出现一次的数字
+https://leetcode.cn/problems/single-number/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个 非空 整数数组 nums ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
+
+ 
+
+示例 1 ：
+
+输入：nums = [2,2,1]
+
+输出：1
+
+示例 2 ：
+
+输入：nums = [4,1,2,1,2]
+
+输出：4
+
+示例 3 ：
+
+输入：nums = [1]
+
+输出：1
+ 
+
+提示：
+
+- 1 <= nums.length <= 3 * 104
+- -3 * 104 <= nums[i] <= 3 * 104
+- 除了某个元素只出现一次以外，其余每个元素均出现两次。
+
+```java
+public class Solution {
+    public int singleNumber(int[] nums) {
+        int result = 0;
+        for (int num : nums) {
+            result ^= num; // 利用异或运算找出只出现一次的元素
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[] nums1 = {2, 2, 1};
+        System.out.println(solution.singleNumber(nums1)); // 输出：1
+
+        int[] nums2 = {4, 1, 2, 1, 2};
+        System.out.println(solution.singleNumber(nums2)); // 输出：4
+
+        int[] nums3 = {1};
+        System.out.println(solution.singleNumber(nums3)); // 输出：1
+    }
+}
+```
+
+## 137. 只出现一次的数字 II
+https://leetcode.cn/problems/single-number-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 nums ，除某个元素仅出现 一次 外，其余每个元素都恰出现 三次 。请你找出并返回那个只出现了一次的元素。
+
+你必须设计并实现线性时间复杂度的算法且使用常数级空间来解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [2,2,3,2]
+
+输出：3
+
+示例 2：
+
+输入：nums = [0,1,0,1,0,1,99]
+
+输出：99
+ 
+
+提示：
+
+- 1 <= nums.length <= 3 * 104
+- -231 <= nums[i] <= 231 - 1
+- nums 中，除某个元素仅出现 一次 外，其余每个元素都恰出现 三次
+
+```java
+public class Solution {
+    public int singleNumber(int[] nums) {
+        // 初始化统计每一位出现次数的数组
+        int[] counts = new int[32];
+        
+        // 统计每个数字中每一位出现的次数
+        for (int num : nums) {
+            for (int i = 0; i < 32; i++) {
+                counts[i] += (num >> i) & 1; // 统计第i位上出现的次数
+            }
+        }
+        
+        int result = 0;
+        // 根据统计结果组合出只出现一次的元素
+        for (int i = 0; i < 32; i++) {
+            result |= (counts[i] % 3) << i; // 将每一位的统计结果组合起来
+        }
+        
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[] nums1 = {2, 2, 3, 2};
+        System.out.println(solution.singleNumber(nums1)); // 输出：3
+
+        int[] nums2 = {0, 1, 0, 1, 0, 1, 99};
+        System.out.println(solution.singleNumber(nums2)); // 输出：99
+    }
+}
+```
+
+## 201. 数字范围按位与
+https://leetcode.cn/problems/bitwise-and-of-numbers-range/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你两个整数 left 和 right ，表示区间 [left, right] ，返回此区间内所有数字 按位与 的结果（包含 left 、right 端点）。
+
+ 
+
+示例 1：
+
+输入：left = 5, right = 7
+
+输出：4
+
+示例 2：
+
+输入：left = 0, right = 0
+
+输出：0
+
+示例 3：
+
+输入：left = 1, right = 2147483647
+
+输出：0
+ 
+
+提示：
+
+- 0 <= left <= right <= 231 - 1
+
+```java
+public class Solution {
+    public int rangeBitwiseAnd(int left, int right) {
+        // 初始化位移计数器
+        int shift = 0;
+        
+        // 找到 left 和 right 共同的前缀
+        while (left < right) {
+            left >>= 1; // 将 left 向右位移
+            right >>= 1; // 将 right 向右位移
+            shift++; // 记录位移次数
+        }
+        
+        // 将共同前缀左移（以 0 填充）并返回结果
+        return left << shift;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int left1 = 5, right1 = 7;
+        System.out.println(solution.rangeBitwiseAnd(left1, right1)); // 输出：4
+
+        int left2 = 0, right2 = 0;
+        System.out.println(solution.rangeBitwiseAnd(left2, right2)); // 输出：0
+
+        int left3 = 1, right3 = 2147483647;
+        System.out.println(solution.rangeBitwiseAnd(left3, right3)); // 输出：0
+    }
+}
+```
+
+# 数学
+## 9. 回文数
+https://leetcode.cn/problems/palindrome-number/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数 x ，如果 x 是一个回文整数，返回 true ；否则，返回 false 。
+
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+例如，121 是回文，而 123 不是。
+ 
+
+示例 1：
+
+输入：x = 121
+
+输出：true
+
+示例 2：
+
+输入：x = -121
+
+输出：false
+
+解释：从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+
+示例 3：
+
+输入：x = 10
+
+输出：false
+
+解释：从右向左读, 为 01 。因此它不是一个回文数。
+ 
+
+提示：
+
+- -231 <= x <= 231 - 1
+
+```java
+public class Solution {
+    public boolean isPalindrome(int x) {
+        // 处理负数和以0结尾的数字，它们不可能是回文数
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+
+        int reversed = 0;
+        while (x > reversed) {
+            reversed = reversed * 10 + x % 10;
+            x /= 10;
+        }
+
+        // 根据整数的位数是奇数还是偶数判断是否为回文数
+        return x == reversed || x == reversed / 10;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int x1 = 121;
+        System.out.println(solution.isPalindrome(x1)); // 输出：true
+
+        int x2 = -121;
+        System.out.println(solution.isPalindrome(x2)); // 输出：false
+
+        int x3 = 10;
+        System.out.println(solution.isPalindrome(x3)); // 输出：false
+    }
+}
+```
+
+## 66. 加一
+https://leetcode.cn/problems/plus-one/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个由 整数 组成的 非空 数组所表示的非负整数，在该数的基础上加一。
+
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+
+你可以假设除了整数 0 之外，这个整数不会以零开头。
+
+ 
+
+示例 1：
+
+输入：digits = [1,2,3]
+
+输出：[1,2,4]
+
+解释：输入数组表示数字 123。
+
+示例 2：
+
+输入：digits = [4,3,2,1]
+
+输出：[4,3,2,2]
+
+解释：输入数组表示数字 4321。
+
+示例 3：
+
+输入：digits = [0]
+
+输出：[1]
+ 
+
+提示：
+
+- 1 <= digits.length <= 100
+- 0 <= digits[i] <= 9
+
+```java
+import java.util.Arrays;
+
+public class Solution {
+    public int[] plusOne(int[] digits) {
+        int n = digits.length;
+
+        // 从数组末尾开始向前遍历
+        for (int i = n - 1; i >= 0; i--) {
+            if (digits[i] < 9) {
+                digits[i]++;
+                return digits;
+            }
+            // 当数字为 9 时，当前位置变为 0，继续向前进位
+            digits[i] = 0;
+        }
+
+        // 如果在最高位还需要进位，数组长度需要加一
+        int[] newNumber = new int[n + 1];
+        newNumber[0] = 1;
+
+        return newNumber;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[] digits1 = {1, 2, 3};
+        System.out.println(Arrays.toString(solution.plusOne(digits1))); // 输出：[1, 2, 4]
+
+        int[] digits2 = {4, 3, 2, 1};
+        System.out.println(Arrays.toString(solution.plusOne(digits2))); // 输出：[4, 3, 2, 2]
+
+        int[] digits3 = {0};
+        System.out.println(Arrays.toString(solution.plusOne(digits3))); // 输出：[1]
+    }
+}
+```
+
+## 172. 阶乘后的零
+https://leetcode.cn/problems/factorial-trailing-zeroes/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个整数 n ，返回 n! 结果中尾随零的数量。
+
+提示 n! = n * (n - 1) * (n - 2) * ... * 3 * 2 * 1
+
+ 
+
+示例 1：
+
+输入：n = 3
+
+输出：0
+
+解释：3! = 6 ，不含尾随 0
+
+示例 2：
+
+输入：n = 5
+
+输出：1
+
+解释：5! = 120 ，有一个尾随 0
+
+示例 3：
+
+输入：n = 0
+
+输出：0
+ 
+
+提示：
+
+0 <= n <= 10^4
+
+```java
+计算阶乘后的零的数量其实可以看成是统计乘法过程中因为包含了2和5相乘而产生的0的个数。因为每对2和5相乘会产生一个0，而在阶乘的乘法过程中，2的个数肯定比5多，所以计算5的个数就可以得到0的个数。
+
+public class Solution {
+    public int trailingZeroes(int n) {
+        int count = 0;
+        
+        // 统计包含的5的个数
+        while (n > 0) {
+            n /= 5;
+            count += n;
+        }
+        
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int n1 = 3;
+        System.out.println(solution.trailingZeroes(n1)); // 输出：0
+
+        int n2 = 5;
+        System.out.println(solution.trailingZeroes(n2)); // 输出：1
+
+        int n3 = 0;
+        System.out.println(solution.trailingZeroes(n3)); // 输出：0
+    }
+}
+
+```
+
+## 69. x 的平方根 
+https://leetcode.cn/problems/sqrtx/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个非负整数 x ，计算并返回 x 的 算术平方根 。
+
+由于返回类型是整数，结果只保留 整数部分 ，小数部分将被 舍去 。
+
+注意：不允许使用任何内置指数函数和算符，例如 pow(x, 0.5) 或者 x ** 0.5 。
+
+ 
+
+示例 1：
+
+输入：x = 4
+
+输出：2
+
+示例 2：
+
+输入：x = 8
+
+输出：2
+
+解释：8 的算术平方根是 2.82842..., 由于返回类型是整数，小数部分将被舍去。
+ 
+
+提示：
+
+- 0 <= x <= 231 - 1
+
+
+```java
+class Solution {
+    public int mySqrt(int x) {
+        // 初始化左右边界和结果
+        int left = 0;
+        int right = x;
+        int res = -1;
+
+        // 二分查找
+        while (left <= right) {
+            // 计算中间值
+            int mid = left + (right - left) / 2;
+
+            // 如果中间值的平方小于等于 x，则更新结果为当前中间值，并将左边界向右移动一位
+            if ((long) mid * mid <= x) {
+                res = mid;
+                left = mid + 1;
+            } else {
+                // 如果中间值的平方大于 x，则将右边界向左移动一位
+                right = mid - 1;
+            }
+        }
+
+        return res; // 返回结果
+    }
+}
+```
+
+## 50. Pow(x, n)
+https://leetcode.cn/problems/powx-n/description/?envType=study-plan-v2&envId=top-interview-150
+
+实现 pow(x, n) ，即计算 x 的整数 n 次幂函数（即，xn ）。
+
+ 
+
+示例 1：
+
+输入：x = 2.00000, n = 10
+
+输出：1024.00000
+
+示例 2：
+
+输入：x = 2.10000, n = 3
+
+输出：9.26100
+
+示例 3：
+
+输入：x = 2.00000, n = -2
+
+输出：0.25000
+
+解释：2-2 = 1/22 = 1/4 = 0.25
+ 
+
+提示：
+
+- -100.0 < x < 100.0
+- -2^31 <= n <= 2^31-1
+- n 是一个整数
+- 要么 x 不为零，要么 n > 0 。
+- -10^4 <= xn <= 10^4
+
+```java
+public class Solution {
+    public double myPow(double x, int n) {
+        if (n == 0) {
+            return 1.0;
+        }
+
+        // 转成 long 类型来避免整数溢出
+        long N = n;
+        
+        // 如果n为负数，将x变为1/x，n取相反数
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+
+        double ans = 1.0;
+        double cur_product = x;
+
+        for (long i = N; i > 0; i /= 2) {
+            if (i % 2 == 1) {
+                ans *= cur_product;
+            }
+            cur_product *= cur_product;
+        }
+
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        double x1 = 2.00000;
+        int n1 = 10;
+        System.out.println(solution.myPow(x1, n1)); // 输出：1024.00000
+
+        double x2 = 2.10000;
+        int n2 = 3;
+        System.out.println(solution.myPow(x2, n2)); // 输出：9.26100
+
+        double x3 = 2.00000;
+        int n3 = -2;
+        System.out.println(solution.myPow(x3, n3)); // 输出：0.25000
+    }
+}
+```
+
+## 149. 直线上最多的点数
+https://leetcode.cn/problems/max-points-on-a-line/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个数组 points ，其中 points[i] = [xi, yi] 表示 X-Y 平面上的一个点。求最多有多少个点在同一条直线上。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/直线上最多的点数1.png)
+
+输入：points = [[1,1],[2,2],[3,3]]
+
+输出：3
+
+示例 2：
+
+![alt text](../img/数据结构和算法/直线上最多的点数2.png)
+
+输入：points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+
+输出：4
+ 
+
+提示：
+
+- 1 <= points.length <= 300
+- points[i].length == 2
+- -10^4 <= xi, yi <= 10^4
+- points 中的所有点 互不相同
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+    public int maxPoints(int[][] points) {
+        int n = points.length;
+        if (n <= 2) {
+            return n; // 如果点的数量小于等于2，直接返回点的数量
+        }
+
+        int maxPoints = 1; // 初始化最大点数为1，至少有一个点在同一直线上
+        for (int i = 0; i < n - 1; i++) {
+            Map<String, Integer> slopeCount = new HashMap<>(); // 用于记录当前点i与其他点斜率的Map
+            int samePointCount = 0; // 记录与点i相同位置的点数量
+            int localMax = 0; // 当前最大的点数
+
+            for (int j = i + 1; j < n; j++) {
+                int x1 = points[i][0], y1 = points[i][1];
+                int x2 = points[j][0], y2 = points[j][1];
+
+                if (x1 == x2 && y1 == y2) { // 如果两点相同
+                    samePointCount++; // 增加相同点数量
+                } else {
+                    String slope = getSlope(x1, y1, x2, y2); // 计算斜率
+                    slopeCount.put(slope, slopeCount.getOrDefault(slope, 1) + 1); // 存储斜率及对应的点数
+                    localMax = Math.max(localMax, slopeCount.get(slope)); // 更新当前最大点数
+                }
+                // 更新通过点i的直线上的最大点数
+                maxPoints = Math.max(maxPoints, localMax + samePointCount);
+            }
+        }
+
+        return maxPoints; // 返回最终结果
+    }
+
+    // 计算两点的斜率，并以字符串形式返回，避免精度问题
+    private String getSlope(int x1, int y1, int x2, int y2) {
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+
+        int gcd = getGCD(dx, dy);
+        dx /= gcd;
+        dy /= gcd;
+
+        return dx + "/" + dy; // 返回以字符串表示的斜率
+    }
+
+    // 计算最大公约数
+    private int getGCD(int a, int b) {
+        if (b == 0) {
+            return a; // 辗转相除法计算最大公约数
+        }
+        return getGCD(b, a % b);
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[][] points1 = {{1, 1}, {2, 2}, {3, 3}};
+        System.out.println(solution.maxPoints(points1)); // 输出：3
+
+        int[][] points2 = {{1, 1}, {3, 2}, {5, 3}, {4, 1}, {2, 3}, {1, 4}};
+        System.out.println(solution.maxPoints(points2)); // 输出：4
+    }
+}
+```
+
+# 一维动态规划
+## 70. 爬楼梯
+https://leetcode.cn/problems/climbing-stairs/description/?envType=study-plan-v2&envId=top-interview-150
+
+假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+ 
+
+示例 1：
+
+输入：n = 2
+
+输出：2
+
+解释：有两种方法可以爬到楼顶。
+1. 1 阶 + 1 阶
+2. 2 阶
+
+示例 2：
+
+输入：n = 3
+
+输出：3
+
+解释：有三种方法可以爬到楼顶。
+1. 1 阶 + 1 阶 + 1 阶
+2. 1 阶 + 2 阶
+3. 2 阶 + 1 阶
+ 
+
+提示：
+
+- 1 <= n <= 45
+
+```java
+class Solution {
+    public int climbStairs(int n) {
+        if (n == 1) {
+            return 1; // 如果只有1阶台阶，只有一种方法可以到达楼顶
+        }
+
+        int[] dp = new int[n + 1]; // 创建一个数组来存储到每个台阶的方法数
+        dp[1] = 1; // 到第一阶台阶只有1种方法
+        dp[2] = 2; // 到第二阶台阶有两种方法
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2]; // 当前台阶的方法数是前两个台阶之和
+        }
+
+        return dp[n]; // 返回到达第n阶台阶的方法数
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Test Cases
+        int n1 = 2;
+        System.out.println(solution.climbStairs(n1)); // Output: 2
+
+        int n2 = 3;
+        System.out.println(solution.climbStairs(n2)); // Output: 3
+    }
+}
+```
+
+## 198. 打家劫舍
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+
+ 
+
+示例 1：
+
+输入：[1,2,3,1]
+
+输出：4
+
+解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+
+示例 2：
+
+输入：[2,7,9,3,1]
+
+输出：12
+
+解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+ 
+
+提示：
+
+- 1 <= nums.length <= 100
+- 0 <= nums[i] <= 400
+
+```java
+class Solution {
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0; // 处理边界情况，如果数组为空则直接返回0
+        }
+
+        if (nums.length == 1) {
+            return nums[0]; // 只有一间房屋时直接返回该房屋金额
+        }
+
+        int[] dp = new int[nums.length]; // 创建一个数组用来存储偷盗到每个房屋的最大金额
+
+        dp[0] = nums[0]; // 初始化第一间房屋的偷盗金额
+        dp[1] = Math.max(nums[0], nums[1]); // 初始化第二间房屋的偷盗金额
+
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]); // 当前房屋可以选择偷窃或者不偷窃
+        }
+
+        return dp[nums.length - 1]; // 返回最后一间房屋的最大偷盗金额
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Test Cases
+        int[] nums1 = {1, 2, 3, 1};
+        System.out.println(solution.rob(nums1)); // Output: 4
+
+        int[] nums2 = {2, 7, 9, 3, 1};
+        System.out.println(solution.rob(nums2)); // Output: 12
+    }
+}
+```
+
+## 139. 单词拆分
+https://leetcode.cn/problems/word-break/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串 s 和一个字符串列表 wordDict 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+
+注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+ 
+
+示例 1：
+
+输入: s = "leetcode", wordDict = ["leet", "code"]
+
+输出: true
+
+解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
+
+示例 2：
+
+输入: s = "applepenapple", wordDict = ["apple", "pen"]
+
+输出: true
+
+解释: 返回 true 因为 "applepenapple" 可以由 "apple" "pen" "apple" 拼接成。
+     注意，你可以重复使用字典中的单词。
+
+示例 3：
+
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+
+输出: false
+ 
+
+提示：
+
+- 1 <= s.length <= 300
+- 1 <= wordDict.length <= 1000
+- 1 <= wordDict[i].length <= 20
+- s 和 wordDict[i] 仅由小写英文字母组成
+- wordDict 中的所有字符串 互不相同
+
+```java
+import java.util.List;
+import java.util.Set;
+
+public class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> wordSet = new HashSet<>(wordDict);
+        int n = s.length();
+        
+        // dp[i] 表示前i个字符能否被拆分
+        boolean[] dp = new boolean[n + 1];
+        dp[0] = true;  // 空字符串可以被拆分
+        
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && wordSet.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[n];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Test Cases
+        String s1 = "leetcode";
+        List<String> wordDict1 = List.of("leet", "code");
+        System.out.println(solution.wordBreak(s1, wordDict1));  // Output: true
+
+        String s2 = "applepenapple";
+        List<String> wordDict2 = List.of("apple", "pen");
+        System.out.println(solution.wordBreak(s2, wordDict2));  // Output: true
+
+        String s3 = "catsandog";
+        List<String> wordDict3 = List.of("cats", "dog", "sand", "and", "cat");
+        System.out.println(solution.wordBreak(s3, wordDict3));  // Output: false
+    }
+}
+```
+
+## 322. 零钱兑换
+https://leetcode.cn/problems/coin-change/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 coins ，表示不同面额的硬币；以及一个整数 amount ，表示总金额。
+
+计算并返回可以凑成总金额所需的 最少的硬币个数 。如果没有任何一种硬币组合能组成总金额，返回 -1 。
+
+你可以认为每种硬币的数量是无限的。
+
+ 
+
+示例 1：
+
+输入：coins = [1, 2, 5], amount = 11
+
+输出：3 
+
+解释：11 = 5 + 5 + 1
+
+示例 2：
+
+输入：coins = [2], amount = 3
+
+输出：-1
+
+示例 3：
+
+输入：coins = [1], amount = 0
+
+输出：0
+ 
+
+提示：
+
+- 1 <= coins.length <= 12
+- 1 <= coins[i] <= 2^31 - 1
+- 0 <= amount <= 10^4
+
+```java
+public class Solution {
+    public int coinChange(int[] coins, int amount) {
+        // 创建一个数组dp，dp[i]表示凑成金额i所需的最少硬币数
+        int[] dp = new int[amount + 1];
+        // 初始时，凑成金额为0需要0个硬币，其他金额需要的硬币数初始化为amount+1表示不可达
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0; // 金额为0时，不需要硬币
+
+        // 动态规划过程，遍历金额从1到amount
+        for (int i = 1; i <= amount; i++) {
+            // 对于每个金额i，遍历硬币面额
+            for (int coin : coins) {
+                // 如果当前硬币面额小于等于金额i，并且使用该硬币可以减少所需的硬币数，则更新dp[i]的值
+                if (coin <= i) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+
+        // 如果dp[amount]仍然为初始值amount+1，表示无法凑成总金额，返回-1；否则返回dp[amount]，即最少硬币数
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+}
+```
+
+代码解析：
+
+- 我们创建一个数组dp来存储每个金额所需的最少硬币数。初始时，所有金额的最少硬币数都设为amount+1，表示不可达状态。只有金额为0时，需要的硬币数为0。
+- 然后我们遍历每个金额（从1到amount），对于每个金额，我们尝试使用每一种硬币去凑成这个金额。如果可以凑成并且使用该硬币可以减少所需的硬币数，我们就更新dp数组的值。
+- 最后，我们检查dp[amount]的值。如果它仍然是初始值amount+1，表示无法凑成总金额，返回-1；否则返回dp[amount]的值，即最少硬币数。
+
+## 300. 最长递增子序列
+https://leetcode.cn/problems/longest-increasing-subsequence/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+
+子序列 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的
+子序列
+。
+
+ 
+示例 1：
+
+输入：nums = [10,9,2,5,3,7,101,18]
+
+输出：4
+
+解释：最长递增子序列是 [2,3,7,101]，因此长度为 4 。
+
+示例 2：
+
+输入：nums = [0,1,0,3,2,3]
+
+输出：4
+
+示例 3：
+
+输入：nums = [7,7,7,7,7,7,7]
+
+输出：1
+ 
+
+提示：
+
+- 1 <= nums.length <= 2500
+- -10^4 <= nums[i] <= 10^4
+
+```java
+public class Solution {
+    public int lengthOfLIS(int[] nums) {
+        // 创建一个与nums数组长度相同的dp数组，dp[i]表示以nums[i]结尾的最长递增子序列的长度
+        int[] dp = new int[nums.length];
+        int maxLength = 1;  // 最长递增子序列的初始长度至少为1（单个元素）
+        
+        for (int i = 0; i < nums.length; i++) {
+            dp[i] = 1;  // 每个元素自身可以形成一个长度为1的递增子序列
+            
+            // 遍历之前的元素，寻找可以连接到当前元素的更长递增子序列
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {  // 如果当前元素大于前面的元素，说明可以连接形成一个更长的递增子序列
+                    dp[i] = Math.max(dp[i], dp[j] + 1);  // 更新dp[i]的值
+                }
+            }
+            
+            // 更新最长递增子序列的长度
+            maxLength = Math.max(maxLength, dp[i]);
+        }
+        
+        return maxLength;  // 返回最长递增子序列的长度
+    }
+}
+```
+
+# 多维动态规划
+## 120. 三角形最小路径和
+https://leetcode.cn/problems/triangle/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个三角形 triangle ，找出自顶向下的最小路径和。
+
+每一步只能移动到下一行中相邻的结点上。相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。也就是说，如果正位于当前行的下标 i ，那么下一步可以移动到下一行的下标 i 或 i + 1 。
+
+ 
+
+示例 1：
+
+输入：triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+
+输出：11
+
+解释：如下面简图所示：
+
+   2
+
+  3 4
+
+ 6 5 7
+
+4 1 8 3
+
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）。
+
+示例 2：
+
+输入：triangle = [[-10]]
+
+输出：-10
+ 
+
+提示：
+
+- 1 <= triangle.length <= 200
+- triangle[0].length == 1
+- triangle[i].length == triangle[i - 1].length + 1
+- -10^4 <= triangle[i][j] <= 10^4
+
+
+```java
+class Solution {
+    // 定义公共方法minimumTotal，参数是一个二维列表triangle，表示三角形中的数字。
+    public int minimumTotal(List<List<Integer>> triangle) {
+        // 判断输入的三角形是否为空或者其大小为0，如果是则返回0（这里没有路径可走）。
+        if(triangle == null || triangle.size() == 0){
+            return 0;
+        }
+        
+        int m = triangle.size(); // 获取三角形的高度（行数）
+        int[][] dp = new int[m+1][m+1]; // 创建一个二维数组dp，用于存储中间计算结果。这里比三角形多一行和一列是为了方便计算边界情况。
+        
+        // 从三角形的底部开始向上遍历每一行（每一层）
+        for(int i= m-1; i >= 0; i--){
+            List<Integer> cur = triangle.get(i); // 获取当前行的数字列表
+            for(int j = 0; j < cur.size(); j++){ // 遍历当前行的每一个数字
+                // 对于当前数字，它的最小路径和等于它下方的两个数字（下一层的两个相邻格子）中的较小值加上当前数字自身。这里的公式基于动态规划的思路。dp[i+1][j]、dp[i+1][j+1]表示下一行中两个相邻格子的最小路径和。
+                dp[i][j] = Math.min(dp[i+1][j], dp[i+1][j+1]) + cur.get(j); 
+            }
+        }
+        // 最终答案存储在dp[0][0]中，表示从三角形顶端到底部的最小路径和。返回结果。
+        return dp[0][0];
+    }
+}
+```
+
+## 64. 最小路径和
+给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+ 
+
+示例 1：
+
+
+输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+
+输出：7
+
+解释：因为路径 1→3→1→1→1 的总和最小。
+
+示例 2：
+
+输入：grid = [[1,2,3],[4,5,6]]
+
+输出：12
+ 
+
+提示：
+
+- m == grid.length
+- n == grid[i].length
+- 1 <= m, n <= 200
+- 0 <= grid[i][j] <= 200
+
+```java
+/**
+ * 解决最小路径和问题的类。
+ * 该类提供了一个方法来计算在一个给定的二维网格中，从左上角到右下角的最小路径和。
+ * 网格中的每个单元格包含一个非负整数，路径和是沿途经过的单元格值的总和。
+ */
+class Solution {
+    /**
+     * 计算最小路径和。
+     * 使用动态规划方法，从左上角开始，逐步向右下角计算到达每个单元格的最小路径和。
+     * 
+     * @param grid 二维网格，包含非负整数。
+     * @return 返回从左上角到右下角的最小路径和。
+     */
+    public int minPathSum(int[][] grid) {
+        // 获取网格的行数和列数
+        int m = grid.length;
+        int n = grid[0].length;
+
+        // 初始化一个数组用于存储到达每个列的最小路径和
+        int[] dp = new int[n];
+
+        // 遍历网格的每一行
+        for(int i=0;i<m;i++){
+            // 遍历每一行的每一列
+            for(int j=0;j<n;j++){
+                // 如果当前列是第一列，只能从上方到达，所以当前的最小路径和就是上方的最小路径和
+                if(j==0){
+                    dp[j] = dp[j];
+                }else if(i==0){ // 如果当前行是第一行，只能从左方到达，所以当前的最小路径和是左边的最小路径和
+                    dp[j] = dp[j-1];
+                }else{ // 如果既不在第一行也不在第一列，当前的最小路径和是从左边或上方到达的最小路径和中的较小值
+                    dp[j] = Math.min(dp[j],dp[j-1]);
+                }
+                // 将当前单元格的值加到到达当前单元格的最小路径和上
+                dp[j]+=grid[i][j];
+            }
+        }
+        // 返回到达右下角的最小路径和
+        return dp[n-1];
+    }
+}
+```
+
+## 63. 不同路径 II
+https://leetcode.cn/problems/unique-paths-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish”）。
+
+现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+
+网格中的障碍物和空位置分别用 1 和 0 来表示。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/不同路径2-1.png)
+
+输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+
+输出：2
+
+解释：3x3 网格的正中间有一个障碍物。
+
+从左上角到右下角一共有 2 条不同的路径：
+
+1. 向右 -> 向右 -> 向下 -> 向下
+
+2. 向下 -> 向下 -> 向右 -> 向右
+
+示例 2：
+
+![alt text](../img/数据结构和算法/不同路径2-2.png)
+
+输入：obstacleGrid = [[0,1],[0,0]]
+
+输出：1
+ 
+
+提示：
+
+- m == obstacleGrid.length
+- n == obstacleGrid[i].length
+- 1 <= m, n <= 100
+- obstacleGrid[i][j] 为 0 或 1
+
+```java
+/**
+ * 计算有障碍物的网格中从左上角到右下角的唯一路径数量
+ *
+ * @param obstacleGrid 二维整数数组，表示网格中的障碍物分布。1 表示障碍物，0 表示可通行。
+ * @return 返回一个整数，表示从左上角到右下角的唯一路径数量。如果路径被障碍物阻断，则返回 0。
+ */
+class Solution {
+    /**
+     * 计算有障碍物的网格中从左上角到右下角的唯一路径数量
+     *
+     * @param obstacleGrid 二维整数数组，表示网格中的障碍物分布。1 表示障碍物，0 表示可通行。
+     * @return 返回一个整数，表示从左上角到右下角的唯一路径数量。如果路径被障碍物阻断，则返回 0。
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        // 获取网格的行数和列数
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        
+        // 初始化动态规划数组，比实际网格多一行一列，用于边界处理
+        int[][] dp = new int[m+1][n+1];
+
+        // 初始化第一列的路径数
+        for(int i=0; i<m; i++){
+            if(obstacleGrid[i][0] == 1){
+                break;
+            }
+            dp[i][0] = 1;
+        }
+
+        // 初始化第一行的路径数
+        for(int i=0; i<n; i++){
+            if(obstacleGrid[0][i] == 1){
+                break;
+            }
+            dp[0][i] = 1;
+        }
+
+        // 动态规划计算每一步的路径数
+        for(int i=1; i<m; i++){
+            for(int j = 1; j<n; j++){
+                // 如果当前位置没有障碍物，路径数等于上方和左方的路径数之和
+                dp[i][j] = obstacleGrid[i][j]==1 ? 0 : dp[i][j-1] + dp[i-1][j];
+            }
+        }
+
+        // 返回右下角的路径数
+        return dp[m-1][n-1];
+    }
+}
+```
+
+## 5. 最长回文子串
+https://leetcode.cn/problems/longest-palindromic-substring/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串 s，找到 s 中最长的 回文子串。
+
+ 
+
+示例 1：
+
+输入：s = "babad"
+
+输出："bab"
+
+解释："aba" 同样是符合题意的答案。
+
+示例 2：
+
+输入：s = "cbbd"
+
+输出："bb"
+ 
+
+提示：
+
+- 1 <= s.length <= 1000
+- s 仅由数字和英文字母组成
+
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        String res= "";
+        for(int i =0;i<s.length();i++){
+            String s1 = check(s,i,i);
+            String s2= check(s,i,i+1);
+
+            res = res.length() > s1.length() ? res:s1;
+            res = res.length() > s2.length() ? res:s2;
+        }
+        return res;
+    }
+
+    public String check(String s,int left,int right){
+        while(left>=0 && right<s.length()){
+            if(s.charAt(left) == s.charAt(right)){
+                 left--;
+                right++; 
+            }else{
+                break;
+            }
+            
+        }
+        return s.substring(left+1,right);
+    }
+}
+```
+
+## 97. 交错字符串
+https://leetcode.cn/problems/interleaving-string/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定三个字符串 s1、s2、s3，请你帮忙验证 s3 是否是由 s1 和 s2 交错 组成的。
+
+两个字符串 s 和 t 交错 的定义与过程如下，其中每个字符串都会被分割成若干 非空 子字符串：
+
+- s = s1 + s2 + ... + sn
+- t = t1 + t2 + ... + tm
+- |n - m| <= 1
+- 交错 是 s1 + t1 + s2 + t2 + s3 + t3 + ... 或者 t1 + s1 + t2 + s2 + t3 + s3 + ...
+
+注意：a + b 意味着字符串 a 和 b 连接。
+
+ 
+
+示例 1：
+
+
+输入：s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+
+输出：true
+
+示例 2：
+
+输入：s1 = "aabcc", s2 = "dbbca", s3 = "aadbbbaccc"
+
+输出：false
+
+示例 3：
+
+输入：s1 = "", s2 = "", s3 = ""
+
+输出：true
+ 
+
+提示：
+
+- 0 <= s1.length, s2.length <= 100
+- 0 <= s3.length <= 200
+- s1、s2、和 s3 都由小写英文字母组成
+
+```java
+/**
+ * 解决方案类，用于检查两个字符串是否可以通过交错组合成另一个字符串。
+ */
+class Solution {
+    /**
+     * 检查两个字符串s1和s2是否可以通过交错组合成字符串s3。
+     * 
+     * @param s1 第一个字符串
+     * @param s2 第二个字符串
+     * @param s3 目标字符串，需要验证是否由s1和s2交错组成
+     * @return 如果s1和s2可以交错组成s3，则返回true；否则返回false。
+     */
+    public boolean isInterleave(String s1, String s2, String s3) {
+        // 获取输入字符串的长度
+        int n = s1.length(), m = s2.length(), t = s3.length();
+        // 如果s1和s2的长度之和不等于s3的长度，则不可能通过交错组合成s3
+        if (n + m != t) {
+            return false;
+        }
+        // 初始化动态规划数组，f[i][j]表示s1的前i个字符和s2的前j个字符是否可以交错组成s3的前p个字符（p=i+j-1）
+        boolean[][] f = new boolean[n + 1][m + 1];
+        // 空字符串和空字符串可以交错组成空字符串
+        f[0][0] = true;
+        // 遍历所有可能的交错组合情况
+        for (int i = 0; i <= n; ++i) {
+            for (int j = 0; j <= m; ++j) {
+                int p = i + j - 1;
+                // 如果不是空字符串，检查s1的字符是否可以和当前交错位置的字符匹配
+                if (i > 0) {
+                    f[i][j] = f[i][j] || (f[i - 1][j] && s1.charAt(i - 1) == s3.charAt(p));
+                }
+                // 如果不是空字符串，检查s2的字符是否可以和当前交错位置的字符匹配
+                if (j > 0) {
+                    f[i][j] = f[i][j] || (f[i][j - 1] && s2.charAt(j - 1) == s3.charAt(p));
+                }
+            }
+        }
+        // 返回最终结果，即s1和s2的整个字符串是否可以交错组成s3
+        return f[n][m];
+    }
+}
+```
+
+## 72. 编辑距离
+https://leetcode.cn/problems/edit-distance/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你两个单词 word1 和 word2， 请返回将 word1 转换成 word2 所使用的最少操作数  。
+
+你可以对一个单词进行如下三种操作：
+
+- 插入一个字符
+- 删除一个字符
+- 替换一个字符
+ 
+
+示例 1：
+
+输入：word1 = "horse", word2 = "ros"
+
+输出：3
+
+解释：
+
+horse -> rorse (将 'h' 替换为 'r')
+
+rorse -> rose (删除 'r')
+
+rose -> ros (删除 'e')
+
+示例 2：
+
+输入：word1 = "intention", word2 = "execution"
+
+输出：5
+
+解释：
+- intention -> inention (删除 't')
+- inention -> enention (将 'i' 替换为 'e')
+- enention -> exention (将 'n' 替换为 'x')
+- exention -> exection (将 'n' 替换为 'c')
+- exection -> execution (插入 'u')
+ 
+
+提示：
+
+- 0 <= word1.length, word2.length <= 500
+- word1 和 word2 由小写英文字母组成
+
+```java
+/**
+ * Solution类提供了一个方法来计算两个字符串之间的最小编辑距离。
+ * 编辑距离指的是将一个字符串转换成另一个字符串所需的最少操作次数，操作包括插入、删除和替换字符。
+ */
+class Solution {
+    /**
+     * 计算两个字符串之间的最小编辑距离。
+     * 
+     * @param word1 第一个字符串
+     * @param word2 第二个字符串
+     * @return 两个字符串之间的最小编辑距离
+     */
+    public int minDistance(String word1, String word2) {
+        // 获取两个字符串的长度
+        int m = word1.length();
+        int n = word2.length();
+
+        // 如果其中一个字符串为空，则最小编辑距离为另一个字符串的长度
+        if(m*n==0){
+            return m+n;
+        }
+
+        // 初始化动态规划表格，dp[i][j]表示word1的前i个字符和word2的前j个字符之间的最小编辑距离
+        int[][] dp = new int[m+1][n+1];
+
+        // 初始化表格的第一列和第一行，分别表示将word1的前i个字符转换为空字符串和将空字符串转换为word2的前j个字符的最小编辑距离
+        for(int i=0;i<=m;i++){
+            dp[i][0] = i;
+        }
+        for(int i=0;i<=n;i++){
+            dp[0][i] = i;
+        }
+
+        // 填充动态规划表格，计算所有dp[i][j]的值
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                // 计算三种操作（插入、删除、替换）对应的编辑距离
+                int left = dp[i-1][j]+1;
+                int down = dp[i][j-1]+1;
+                int left_down = dp[i-1][j-1];
+                // 如果当前字符不相同，则需要进行替换操作，因此编辑距离加1
+                if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
+                    left_down += 1;
+                }
+                // 取三种操作中的最小值作为dp[i][j]的值
+                dp[i][j] = Math.min(left,Math.min(down,left_down));   
+            }
+        }
+
+        // 返回整个表格的最后一个值，即为两个字符串之间的最小编辑距离
+        return dp[m][n];
+    }
+}
+```
+
+## 123. 买卖股票的最佳时机 III
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+
+设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
+
+注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+ 
+
+示例 1:
+
+输入：prices = [3,3,5,0,0,3,1,4]
+
+输出：6
+
+解释：在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。
+     随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。
+
+示例 2：
+
+输入：prices = [1,2,3,4,5]
+
+输出：4
+
+解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。   
+     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。   
+     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+
+示例 3：
+
+输入：prices = [7,6,4,3,1] 
+
+输出：0 
+
+解释：在这个情况下, 没有交易完成, 所以最大利润为 0。
+
+示例 4：
+
+输入：prices = [1]
+
+输出：0
+ 
+
+提示：
+
+- 1 <= prices.length <= 10^5
+- 0 <= prices[i] <= 10^5
+
+```java
+/**
+ * 计算股票中最大利润的类
+ */
+class Solution {
+    /**
+     * 计算给定价格数组中能获得的最大利润
+     *
+     * @param prices 一个整数数组，表示每天的股票价格
+     * @return 返回一个整数，表示在允许进行两次交易的情况下，能获得的最大利润
+     */
+    public int maxProfit(int[] prices) {
+        int n = prices.length; // 获取价格数组的长度
+        int buy1 = -prices[0], sell1 = 0; // 初始化第一次交易的买入和卖出价格
+        int buy2 = -prices[0], sell2 = 0; // 初始化第二次交易的买入和卖出价格
+
+        // 遍历价格数组，更新买入和卖出价格
+        for (int i = 1; i < n; ++i) {
+            buy1 = Math.max(buy1, -prices[i]); // 更新第一次交易的买入价格
+            sell1 = Math.max(sell1, buy1 + prices[i]); // 更新第一次交易的卖出价格
+            buy2 = Math.max(buy2, sell1 - prices[i]); // 更新第二次交易的买入价格
+            sell2 = Math.max(sell2, buy2 + prices[i]); // 更新第二次交易的卖出价格
+        }
+
+        // 返回第二次交易后的最大利润
+        return sell2;
+    }
+}
+```
+
+## 188. 买卖股票的最佳时机 IV
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 prices 和一个整数 k ，其中 prices[i] 是某支给定的股票在第 i 天的价格。
+
+设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。也就是说，你最多可以买 k 次，卖 k 次。
+
+注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+ 
+
+示例 1：
+
+输入：k = 2, prices = [2,4,1]
+
+输出：2
+
+解释：在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。
+
+示例 2：
+
+输入：k = 2, prices = [3,2,6,5,0,3]
+
+输出：7
+
+解释：在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。
+     随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。
+ 
+
+提示：
+
+- 1 <= k <= 100
+- 1 <= prices.length <= 1000
+- 0 <= prices[i] <= 1000
+
+```java
+/**
+ * Solution类用于解决给定股票价格数组中，最多进行k次交易的情况下，获得最大利润的问题。
+ */
+class Solution {
+    /**
+     * 计算最大利润。
+     * 
+     * @param k 最多可以进行的交易次数。
+     * @param prices 股票价格数组。
+     * @return 可以获得的最大利润。
+     */
+    public int maxProfit(int k, int[] prices) {
+        // 如果价格数组为空，直接返回0。
+        if (prices.length == 0) {
+            return 0;
+        }
+
+        // n为股票价格数组的长度。
+        int n = prices.length;
+        // k的取值不能大于n/2，因为至少需要一天来买入和卖出。
+        k = Math.min(k, n / 2);
+        // buy数组用于记录第i天进行第j次交易时的买入状态下的最大利润。
+        int[][] buy = new int[n][k + 1];
+        // sell数组用于记录第i天进行第j次交易时的卖出状态下的最大利润。
+        int[][] sell = new int[n][k + 1];
+
+        // 初始化第一天的买入情况，即买入一股的成本为第一天的股票价格。
+        buy[0][0] = -prices[0];
+        // 初始化第一天的卖出情况，即尚未进行交易，利润为0。
+        sell[0][0] = 0;
+        // 初始化其他天数和交易次数的买入和卖出情况为一个较小值。
+        for (int i = 1; i <= k; ++i) {
+            buy[0][i] = sell[0][i] = Integer.MIN_VALUE / 2;
+        }
+
+        // 遍历每一天和每一次交易，更新买入和卖出的最大利润。
+        for (int i = 1; i < n; ++i) {
+            // 更新不进行交易的情况下，持有股票和不持有股票的最大利润。
+            buy[i][0] = Math.max(buy[i - 1][0], sell[i - 1][0] - prices[i]);
+            for (int j = 1; j <= k; ++j) {
+                // 更新进行交易的情况下，买入和卖出的最大利润。
+                buy[i][j] = Math.max(buy[i - 1][j], sell[i - 1][j] - prices[i]);
+                sell[i][j] = Math.max(sell[i - 1][j], buy[i - 1][j - 1] + prices[i]);
+            }
+        }
+
+        // 返回最后一天卖出时的最大利润。
+        return Arrays.stream(sell[n - 1]).max().getAsInt();
+    }
+}
+```
+
+## 221. 最大正方形
+https://leetcode.cn/problems/maximal-square/description/?envType=study-plan-v2&envId=top-interview-150
+
+在一个由 '0' 和 '1' 组成的二维矩阵内，找到只包含 '1' 的最大正方形，并返回其面积。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/最大正方形1.png)
+
+输入：matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+
+输出：4
+
+示例 2：
+
+![alt text](../img/数据结构和算法/最大正方形2.png)
+
+输入：matrix = [["0","1"],["1","0"]]
+
+输出：1
+
+示例 3：
+
+输入：matrix = [["0"]]
+
+输出：0
+ 
+
+提示：
+
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= m, n <= 300
+- matrix[i][j] 为 '0' 或 '1'
+
+```java
+/**
+ * 此类提供了一个解决方案，用于计算给定矩阵中最大正方形的边长，该正方形由'1'字符组成。
+ */
+class Solution {
+    /**
+     * 计算给定二进制字符矩阵中最大正方形的边长。
+     * 
+     * @param matrix 一个二维字符数组，其中'1'表示白色单元格，'0'表示黑色单元格。
+     * @return 返回矩阵中最大全为'1'的正方形的边长，如果不存在这样的正方形，则返回0。
+     */
+    public int maximalSquare(char[][] matrix) {
+        int m = matrix.length; // 获取矩阵的行数
+        int n = matrix[0].length; // 获取矩阵的列数
+
+        // 初始化一个动态规划数组，用于存储以(i, j)为右下角的最大正方形边长
+        int[][] dp = new int[m+1][n+1];
+        int max = 0; // 用于记录最大正方形的边长
+
+        // 遍历矩阵，计算最大正方形的边长
+        for(int i=1; i<=m; i++){
+            for(int j=1; j<=n; j++){
+                // 当当前位置为'1'时，更新dp值并计算最大边长
+                if(matrix[i-1][j-1]=='1'){
+                    dp[i][j] = Math.min(dp[i-1][j-1], Math.min(dp[i-1][j], dp[i][j-1])) + 1;
+                    max = Math.max(max, dp[i][j]);
+                }
+            }
+        }
+
+        // 返回最大正方形的面积（边长的平方）
+        return max*max;
+    }
+}
+```
+
