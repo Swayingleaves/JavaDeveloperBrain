@@ -123,13 +123,20 @@ https://leetcode.cn/problems/reverse-linked-list/description/
 迭代法
 ```java
 public ListNode reverseList(ListNode head) {
-    ListNode prev = null; // 前一个节点
-    ListNode curr = head; // 当前节点
-    while (curr != null) { // 当当前节点不为空时继续遍历
-        ListNode nextTemp = curr.next; // 暂存当前节点的下一个节点
-        curr.next = prev; // 当前节点指向前一个节点，实现反转
-        prev = curr; // 将当前节点变成前一个节点，为下一轮循环做准备
-        curr = nextTemp; // 移动到下一个节点
+    // 前一个节点
+    ListNode prev = null;
+    // 当前节点 
+    ListNode curr = head;
+    // 当当前节点不为空时继续遍历
+    while (curr != null) { 
+        // 暂存当前节点的下一个节点
+        ListNode nextTemp = curr.next; 
+        // 当前节点指向前一个节点，实现反转
+        curr.next = prev; 
+        // 将当前节点变成前一个节点，为下一轮循环做准备
+        prev = curr; 
+        // 移动到下一个节点
+        curr = nextTemp; 
     }
     return prev; // 返回反转后的头节点
 }
@@ -138,13 +145,18 @@ public ListNode reverseList(ListNode head) {
 递归法
 ```java
 public ListNode reverseList(ListNode head) {
-    if (head == null || head.next == null) { // 递归终止条件：链表为空或只有一个节点，直接返回原链表或头节点自身
+    // 递归终止条件：链表为空或只有一个节点，直接返回原链表或头节点自身
+    if (head == null || head.next == null) { 
         return head;
     }
-    ListNode p = reverseList(head.next); // 递归调用反转下一个子链表
-    head.next.next = head; // 将当前节点的下一个节点的next指向当前节点，实现指针反转
-    head.next = null; // 将当前节点的next置空，避免与原链表相连
-    return p; // 返回反转后的头节点（原本是尾节点）
+    // 递归调用反转下一个子链表
+    ListNode p = reverseList(head.next); 
+    // 将当前节点的下一个节点的next指向当前节点，实现指针反转
+    head.next.next = head; 
+    // 将当前节点的next置空，避免与原链表相连
+    head.next = null; 
+    // 返回反转后的头节点（原本是尾节点）
+    return p; 
 }
 ```
 
