@@ -4607,5 +4607,3822 @@ public class Solution {
 }
 ```
 
+## 76. 最小覆盖子串
+https://leetcode.cn/problems/minimum-window-substring/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
+
+
+
+注意：
+
+- 对于 t 中重复字符，我们寻找的子字符串中该字符数量必须不少于 t 中该字符数量。
+- 如果 s 中存在这样的子串，我们保证它是唯一的答案。
+
+
+示例 1：
+
+输入：s = "ADOBECODEBANC", t = "ABC"
+
+输出："BANC"
+
+解释：最小覆盖子串 "BANC" 包含来自字符串 t 的 'A'、'B' 和 'C'。
+
+示例 2：
+
+输入：s = "a", t = "a"
+
+输出："a"
+
+解释：整个字符串 s 是最小覆盖子串。
+
+示例 3:
+
+输入: s = "a", t = "aa"
+
+输出: ""
+
+解释: t 中两个字符 'a' 均应包含在 s 的子串中，
+因此没有符合条件的子字符串，返回空字符串。
+
+
+提示：
+
+- m == s.length
+- n == t.length
+- 1 <= m, n <= 10^5
+- s 和 t 由英文字母组成
+
+```java
+class Solution {
+    public String minWindow(String s, String t) {
+        char[] cs = s.toCharArray();
+        char[] ct = t.toCharArray();
+
+        int[] count = new int[128];
+        // 将字符串t中每个字母出现的次数统计出来，这里--可以理解为有这么多的坑要填
+        for(char c: ct){
+            count[c]--;
+        }
+        String res = "";
+        //left=窗口左控制 right=窗口右控制
+        for(int left=0,right=0,cnt=0;right<cs.length;right++){
+            // 利用字符cs[right]去填count数组的坑
+            count[cs[right]]++;
+            // 如果填完坑之后发现，坑没有满或者刚好满，那么这个填坑是有效的，否则如果坑本来就是满的，这次填坑是无效的
+            // 注意其他非t中出现的字符，count数组的值是0，原来坑就是满的，那么填入count数组中，count[cs[right]]肯定大于0
+            if(count[cs[right]] <= 0){
+                cnt++;
+            }
+            // 如果cnt等于ct.length，那么说明窗口内已经包含t了，这时就要考虑移动左指针了，只有当左指针指向的字符是冗余的情况下，即count[cs[right]]>0，才能保证去掉该字符后，窗口中仍然包含t
+            // 注意cnt达到字符串t的长度后，它的值就不会再变化了，因为窗口内包含t之后，就会一直包含
+            while(cnt == ct.length && count[cs[left]] >0 ){
+                count[cs[left]]--;
+                left++;
+            }
+            // 当窗口内包含t后，计算此时窗口内字符串的长度，更新res
+            if(cnt == ct.length){
+                if(res.equals("") || res.length() > (right-left+1)){
+                    res = s.substring(left,right+1);
+                }
+            }
+        }
+        return res;
+    }
+}
+```
+
+## 78. 子集
+https://leetcode.cn/problems/subsets/description/
+
+给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
+
+解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。
+
+ 
+
+示例 1：
+
+输入：nums = [1,2,3]
+
+输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+
+示例 2：
+
+输入：nums = [0]
+
+输出：[[],[0]]
+ 
+
+提示：
+
+- 1 <= nums.length <= 10
+- -10 <= nums[i] <= 10
+- nums 中的所有元素 互不相同
+
+```java
+class Solution {
+    /**
+     * 提供一个整数数组 nums，返回所有可能的子集（幂集）。
+     *
+     * @param nums 整数数组，表示给定的集合
+     * @return res 返回一个列表，其中每个元素也是一个列表，表示所有可能的子集（幂集）
+     */
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> list = new ArrayList<>();
+
+    public List<List<Integer>> subsets(int[] nums) {
+        // 调用帮助方法，从数组的第一个元素开始生成子集
+        help(nums, 0);
+        // 返回结果列表
+        return res;
+    }
+
+    /**
+     * 递归帮助方法，用于生成子集
+     *
+     * @param nums 整数数组，表示给定的集合
+     * @param start 当前处理的元素在数组中的起始位置
+     */
+    public void help(int[] nums, int start) {
+        // 将当前子集添加到结果列表中
+        res.add(new ArrayList<>(list));
+        
+        // 如果当前子集等于原数组长度，结束递归
+        if (list.size() == nums.length) {
+            return;
+        }
+        
+        // 遍历数组，从当前起始位置开始
+        for (int i = start; i < nums.length; i++) {
+            // 如果当前元素不在子集中，将其添加并继续生成子集
+            if (!list.contains(nums[i])) {
+                list.add(nums[i]);
+                // 递归调用，从下一个元素开始
+                help(nums, i + 1);
+                // 回溯，移除添加的元素
+                list.remove(list.size() - 1);
+            }
+        }
+    }
+}
+```
+
+## 105. 从前序与中序遍历序列构造二叉树
+https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。
+
+
+
+示例 1:
+
+
+输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+
+输出: [3,9,20,null,null,15,7]
+
+示例 2:
+
+输入: preorder = [-1], inorder = [-1]
+
+输出: [-1]
+
+
+提示:
+
+- 1 <= preorder.length <= 3000
+- inorder.length == preorder.length
+- -3000 <= preorder[i], inorder[i] <= 3000
+- preorder 和 inorder 均 无重复 元素
+- inorder 均出现在 preorder
+- preorder 保证 为二叉树的前序遍历序列
+- inorder 保证 为二叉树的中序遍历序列
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    /**
+     * 此代码实现了一种方法，根据给定的前序遍历和中序遍历数组构建二叉树。
+     *
+     * @param preorder 前序遍历数组，其中根节点是数组的第一个元素
+     * @param inorder 中序遍历数组，数组中的元素顺序反映了从左到右的顺序
+     * @return 由给定遍历构建的二叉树的根节点
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        // 初始化根节点索引为0，并创建一个哈希映射存储中序遍历中的元素及其索引
+        int rootIndex = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        
+        // 遍历中序遍历数组，将元素及其索引存入哈希映射
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        
+        // 从根节点开始递归构建二叉树
+        return build(0, preorder.length - 1, preorder);
+    }
+
+    /**
+     * 递归函数，根据前序遍历和中序遍历的子序列构建二叉树的子树。
+     *
+     * @param left 子序列的左边界
+     * @param right 子序列的右边界
+     * @param preorder 前序遍历数组的子序列
+     * @return 构建完成的子树的根节点
+     */
+    private TreeNode build(int left, int right, int[] preorder) {
+        // 当左边界大于右边界时，表示子序列为空，返回null
+        if (left > right) {
+            return null;
+        }
+        
+        // 获取当前子树的根节点值，并更新根节点索引
+        int rootVal = preorder[rootIndex++];
+        TreeNode root = new TreeNode(rootVal);
+        
+        // 递归构建左子树和右子树
+        root.left = build(left, map.get(rootVal) - 1, preorder);
+        root.right = build(map.get(rootVal) + 1, right, preorder);
+        
+        // 返回根节点
+        return root;
+    }
+}
+```
+
+## 43. 字符串相乘
+https://leetcode.cn/problems/multiply-strings/description/
+
+给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
+
+注意：不能使用任何内置的 BigInteger 库或直接将输入转换为整数。
+
+ 
+
+示例 1:
+
+输入: num1 = "2", num2 = "3"
+
+输出: "6"
+
+示例 2:
+
+输入: num1 = "123", num2 = "456"
+
+输出: "56088"
+ 
+
+提示：
+
+- 1 <= num1.length, num2.length <= 200
+- num1 和 num2 只能由数字组成。
+- num1 和 num2 都不包含任何前导零，除了数字0本身。
+
+```java
+class Solution {
+        /**
+     * 字符串表示的两个数相乘。
+     * 该方法通过模拟手动乘法的过程，首先将两个数的每一位相乘，然后将结果累加到正确的位置。
+     * 最后，对累加结果进行进位调整和格式化，得到最终的乘积字符串。
+     *
+     * @param num1 第一个乘数的字符串表示。
+     * @param num2 第二个乘数的字符串表示。
+     * @return 两个字符串表示的数相乘的结果。
+     */
+    public String multiply(String num1, String num2) {
+        // 如果任一乘数的首位为0，则结果直接为0。
+        if(num1.charAt(0)=='0' || num2.charAt(0)=='0'){
+            return "0";
+        }
+        int len1 = num1.length();
+        int len2 = num2.length();
+
+        // 初始化一个数组来存储中间计算结果，长度为两个乘数字符串长度之和。
+        int[] sum = new int[len1+len2];
+
+        // 从个位开始，逐位相乘并将结果累加到sum数组的正确位置。
+        for(int i=len1-1;i>=0;i--){
+            int x = num1.charAt(i) -'0';
+            for(int j=len2-1;j>=0;j--){
+                int y = num2.charAt(j)-'0';
+                sum[i+j+1] += x*y;
+            }
+        }
+
+        // 对sum数组进行进位处理，从低位向高位依次检查，如果有进位则向高位进位。
+        int sumLen = sum.length;
+        for(int i=sumLen-1;i>0;i--){
+            sum[i-1] += sum[i] /10;
+            sum[i] %= 10;
+        }
+
+        // 使用StringBuilder构建最终的结果字符串。
+        StringBuilder sb = new StringBuilder();
+        // 如果最高位为0，则从下一位开始构建字符串。
+        int index = sum[0] ==0 ? 1:0;
+        while(index <sumLen){
+            sb.append(sum[index++]);
+        }
+        return sb.toString();
+    }
+}
+```
+
+## 155. 最小栈
+https://leetcode.cn/problems/min-stack/description/?envType=study-plan-v2&envId=top-interview-150
+
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+
+实现 MinStack 类:
+
+- MinStack() 初始化堆栈对象。
+- void push(int val) 将元素val推入堆栈。
+- void pop() 删除堆栈顶部的元素。
+- int top() 获取堆栈顶部的元素。
+- int getMin() 获取堆栈中的最小元素。
+
+
+示例 1:
+
+输入：
+
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+
+[[],[-2],[0],[-3],[],[],[],[]]
+
+输出：
+
+[null,null,null,null,-3,null,0,-2]
+
+解释：
+- MinStack minStack = new MinStack();
+- minStack.push(-2);
+- minStack.push(0);
+- minStack.push(-3);
+- minStack.getMin();   --> 返回 -3.
+- minStack.pop();
+- minStack.top();      --> 返回 0.
+- minStack.getMin();   --> 返回 -2.
+
+
+提示：
+
+- -2^31 <= val <= 2^31 - 1
+- pop、top 和 getMin 操作总是在 非空栈 上调用
+- push, pop, top, and getMin最多被调用 3 * 10^4 次
+
+```java
+class MinStack {
+    public static class Node{
+        int val;
+        int min;
+        Node next;
+
+        public Node(int val,int min,Node next){
+            this.val = val;
+            this.min = min;
+            this.next = next;
+        }
+
+    }
+
+    Node head;
+    public MinStack() {
+
+    }
+    
+    public void push(int val) {
+        if(head == null){
+            head = new Node(val,val,null);
+        }else{
+            head = new Node(val,Math.min(head.min,val),head);
+        }
+    }
+    
+    public void pop() {
+        head = head.next;
+    }
+    
+    public int top() {
+        return head.val;
+    }
+    
+    public int getMin() {
+        return head.min;
+    }
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
+```
+
+## 32. 最长有效括号
+https://leetcode.cn/problems/longest-valid-parentheses/description/
+
+给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号
+子串
+的长度。
+
+ 
+
+示例 1：
+
+输入：s = "(()"
+
+输出：2
+
+解释：最长有效括号子串是 "()"
+
+示例 2：
+
+输入：s = ")()())"
+
+输出：4
+
+解释：最长有效括号子串是 "()()"
+
+示例 3：
+
+输入：s = ""
+
+输出：0
+ 
+
+提示：
+
+- 0 <= s.length <= 3 * 104
+- s[i] 为 '(' 或 ')'
+
+```java
+class Solution {
+    /**
+     * 计算给定字符串中最长有效括号的长度。
+     * 有效括号是指以正确顺序匹配的括号对。
+     * 
+     * @param s 输入的字符串，可能包含括号字符和其他字符
+     * @return 返回最长有效括号的长度
+     */
+    public int longestValidParentheses(String s) {
+        // 初始化左右括号计数器和最长有效长度
+        int left = 0, right = 0, max = 0;
+        
+        // 从字符串开始遍历，计算正向遍历中的最长有效括号长度
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                left++;
+            } else {
+                right++;
+            }
+            // 当左右括号平衡时，当前长度为2*right，因为每个右括号匹配一个左括号
+            if (left == right) {
+                max = Math.max(max, 2 * right);
+            } else if (right > left) {
+                // 如果右括号多于左括号，重置计数器
+                left = right = 0;
+            }
+        }
+        
+        // 重置左右括号计数器
+        left = right = 0;
+        
+        // 从字符串末尾开始遍历，计算反向遍历中的最长有效括号长度
+        for (int i = s.length() - 1; i > 0; i--) {
+            if (s.charAt(i) == '(') {
+                left++;
+            } else {
+                right++;
+            }
+            // 当左右括号平衡时，当前长度为2*left，因为每个左括号匹配一个右括号
+            if (left == right) {
+                max = Math.max(max, 2 * left);
+            } else if (left > right) {
+                // 如果左括号多于右括号，重置计数器
+                left = right = 0;
+            }
+        }
+        
+        // 返回最长有效括号的长度
+        return max;
+    }
+}
+```
+
+## 151. 翻转字符串里的单词
+https://leetcode.cn/problems/reverse-words-in-a-string/description/
+
+给你一个字符串 s ，请你反转字符串中 单词 的顺序。
+
+单词 是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的 单词 分隔开。
+
+返回 单词 顺序颠倒且 单词 之间用单个空格连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+ 
+
+示例 1：
+
+输入：s = "the sky is blue"
+
+输出："blue is sky the"
+
+示例 2：
+
+输入：s = "  hello world  "
+
+输出："world hello"
+
+解释：反转后的字符串中不能存在前导空格和尾随空格。
+
+示例 3：
+
+输入：s = "a good   example"
+
+输出："example good a"
+
+解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
+ 
+
+提示：
+
+- 1 <= s.length <= 10^4
+- s 包含英文大小写字母、数字和空格 ' '
+- s 中 至少存在一个 单词
+ 
+
+进阶：如果字符串在你使用的编程语言中是一种可变数据类型，请尝试使用 O(1) 额外空间复杂度的 原地 解法。
+
+```java
+class Solution {
+    /**
+     * 反转字符串s中的单词顺序。
+     * 
+     * @param s 输入的字符串，包含单词和单词之间的空格。
+     * @return 返回反转后的单词顺序的字符串。
+     */
+    public String reverseWords(String s) {
+        // 用于存储反转后的单词列表
+        List<String> res = new ArrayList<>();
+        // StringBuilder用于拼接单词
+        StringBuilder sb = new StringBuilder();
+
+        // 将字符串转换为字符数组，便于遍历
+        char[] arr = s.toCharArray();
+        // 遍历字符数组，包括最后一个位置，以便处理边界情况
+        for(int i=0;i<=arr.length;i++){
+            // 到达数组末尾或遇到空格，表示一个单词结束
+            if(i == arr.length || arr[i]==' '){
+                // 如果StringBuilder中存在字符，说明已经完成一个单词的拼接
+                if(sb.length()!=0){
+                    // 将拼接完成的单词添加到列表的头部，实现反转顺序
+                    res.add(0,sb.toString());
+                    // 清空StringBuilder，为下一个单词的拼接做准备
+                    sb = new StringBuilder();
+                }
+            }else{
+                // 拼接当前字符到StringBuilder中
+                sb.append(arr[i]);
+            }
+        }
+        // 使用空格连接列表中的所有单词，得到最终结果
+        return String.join(" ",res);
+    }
+}
+```
+
+## 129. 求根节点到叶节点数字之和
+https://leetcode.cn/problems/sum-root-to-leaf-numbers/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个二叉树的根节点 root ，树中每个节点都存放有一个 0 到 9 之间的数字。
+
+每条从根节点到叶节点的路径都代表一个数字：
+
+- 例如，从根节点到叶节点的路径 1 -> 2 -> 3 表示数字 123 。
+
+计算从根节点到叶节点生成的 所有数字之和 。
+
+叶节点 是指没有子节点的节点。
+
+
+
+示例 1：
+
+
+输入：root = [1,2,3]
+
+输出：25
+
+解释：
+- 从根到叶子节点路径 1->2 代表数字 12
+- 从根到叶子节点路径 1->3 代表数字 13
+- 因此，数字总和 = 12 + 13 = 25
+
+示例 2：
+
+
+输入：root = [4,9,0,5,1]
+
+输出：1026
+
+解释：
+- 从根到叶子节点路径 4->9->5 代表数字 495
+- 从根到叶子节点路径 4->9->1 代表数字 491
+- 从根到叶子节点路径 4->0 代表数字 40
+
+因此，数字总和 = 495 + 491 + 40 = 1026
+
+
+提示：
+
+- 树中节点的数目在范围 [1, 1000] 内
+- 0 <= Node.val <= 9
+- 树的深度不超过 10
+
+```java
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 定义 Solution 类，用于计算二叉树中从根到叶子节点路径所代表的数字之和。
+ */
+class Solution {
+    int res = 0; // 初始化用于存储总和的变量
+
+    /**
+     * 计算二叉树中从根到叶子节点路径的数字总和。
+     *
+     * @param root 二叉树的根节点
+     * @return 从根到叶子节点路径所代表的数字之和
+     */
+    public int sumNumbers(TreeNode root) {
+        help(root, 0); // 调用辅助函数，初始累加值为0
+        return res; // 返回最终结果
+    }
+
+    /**
+     * 递归方法，用于计算从根到当前节点路径上的数字总和。
+     *
+     * @param root 当前二叉树节点
+     * @param k 从根节点到当前节点的累加值
+     */
+    public void help(TreeNode root, int k) {
+        if (root == null) {
+            return; // 基本情况：如果当前节点为空，直接返回
+        }
+        
+        int sum = k * 10 + root.val; // 计算从根到当前节点的累加值
+        
+        // 如果是叶子节点，将路径上的值累积到总和中
+        if (root.left == null && root.right == null) {
+            res += sum;
+        }
+        
+        // 递归调用左右子节点，并传递更新后的累加值
+        help(root.left, sum);
+        help(root.right, sum);
+    }
+}
+```
+
+## 104. 二叉树的最大深度
+https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个二叉树 root ，返回其最大深度。
+
+二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。
+
+
+
+示例 1：
+
+
+![二叉树的最大深度.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.png)
+
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：3
+
+示例 2：
+
+输入：root = [1,null,2]
+
+输出：2
+
+
+提示：
+
+- 树中节点的数量在 [0, 10^4] 区间内。
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    /**
+     * 计算二叉树的最大深度。
+     * 二叉树的最大深度定义为从根节点到最远叶子节点的最长路径上的节点数。
+     *
+     * @param root 二叉树的根节点，如果树为空，则返回0。
+     * @return 返回二叉树的最大深度。
+     */
+    public int maxDepth(TreeNode root) {
+        // 如果根节点为空，表示树为空，深度为0。
+        if(root==null){
+            return 0;
+        }
+        // 递归计算左子树的最大深度。
+        int left = maxDepth(root.left);
+        // 递归计算右子树的最大深度。
+        int right = maxDepth(root.right);
+        // 返回左子树和右子树中较大的深度，并加1表示当前根节点的深度。
+        return Math.max(left,right)+1;
+    }
+}
+```
+
+## 101. 对称二叉树
+https://leetcode.cn/problems/symmetric-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+
+给你一个二叉树的根节点 root ， 检查它是否轴对称。
+
+
+
+示例 1：
+
+![对称二叉树1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%911.png)
+
+输入：root = [1,2,2,3,4,4,3]
+
+输出：true
+
+示例 2：
+
+![对称二叉树2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%912.png)
+
+输入：root = [1,2,2,null,3,null,3]
+
+输出：false
+
+
+提示：
+
+- 树中节点数目在范围 [1, 1000] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 判断一个树是否为对称二叉树。
+ * 对称二叉树的定义是：如果一个树的左子树和右子树在结构上对称（镜像），并且对应节点的值相等，则这棵树是对称的。
+ */
+public class Solution {
+    /**
+     * 主要的判断函数，检查给定的根节点是否构成对称二叉树。
+     * 
+     * @param root 根节点，用于开始检查对称性的递归过程。
+     * @return 如果树是对称的，则返回true；否则返回false。
+     */
+    public boolean isSymmetric(TreeNode root) {
+        // 如果根节点为空，空树自然是对称的
+        if(root==null){
+            return true;
+        }
+        // 调用辅助函数，检查左子树和右子树是否对称
+        return help(root.left,root.right);
+    }
+
+    /**
+     * 辅助递归函数，用于真正检查左右子树的对称性。
+     * 
+     * @param left  左子树的当前节点。
+     * @param right 右子树的当前节点。
+     * @return 如果左右子树在当前节点及其子节点上对称，则返回true；否则返回false。
+     */
+    public boolean help(TreeNode left,TreeNode right){
+        // 如果左右子节点都为空，说明对称性成立
+        if(left == null && right == null){
+            return true;
+        }
+        // 如果只有一个子节点为空，或者节点值不相等，对称性不成立
+        if(left == null || right==null || left.val != right.val){
+            return false;
+        }
+        // 递归检查左右子节点的子节点是否对称
+        return help(left.left,right.right) && help(left.right,right.left);
+    }
+}
+```
+
+## 144. 二叉树的前序遍历
+https://leetcode.cn/problems/binary-tree-preorder-traversal/description/
+
+给你二叉树的根节点 root ，返回它节点值的 前序 遍历。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的前序遍历1.png)
+
+输入：root = [1,null,2,3]
+
+输出：[1,2,3]
+
+示例 2：
+
+输入：root = []
+
+输出：[]
+
+示例 3：
+
+输入：root = [1]
+
+输出：[1]
+
+示例 4：
+
+![alt text](../img/数据结构和算法/二叉树的前序遍历2.png)
+
+输入：root = [1,2]
+
+输出：[1,2]
+
+示例 5：
+
+![alt text](../img/数据结构和算法/二叉树的前序遍历3.png)
+
+输入：root = [1,null,2]
+
+输出：[1,2]
+ 
+
+提示：
+
+- 树中节点数目在范围 [0, 100] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if(root==null){
+            return res;
+        }
+        Deque<TreeNode> dq = new LinkedList<>();
+        dq.push(root);
+        while(!dq.isEmpty()){
+            TreeNode n = dq.pop();
+            res.add(n.val);
+             if(n.right!=null){
+                dq.push(n.right);
+            }
+            if(n.left!=null){
+                dq.push(n.left);
+            }
+           
+        }
+        return res;
+    }
+}
+```
+
+## 110. 平衡二叉树
+https://leetcode.cn/problems/balanced-binary-tree/description/
+
+给定一个二叉树，判断它是否是 
+平衡二叉树
+  
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/平衡二叉树1.png)
+
+输入：root = [3,9,20,null,null,15,7]
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/平衡二叉树2.png)
+
+输入：root = [1,2,2,3,3,null,null,4,4]
+
+输出：false
+
+示例 3：
+
+输入：root = []
+
+输出：true
+ 
+
+提示：
+
+- 树中的节点数在范围 [0, 5000] 内
+- -10^4 <= Node.val <= 10^4
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 判断二叉树是否为平衡二叉树。
+ * 平衡二叉树的定义是：对于任意节点，其左子树和右子树的高度差的绝对值不超过1，并且左右子树都是平衡二叉树。
+ */
+public class Solution {
+
+    /**
+     * 主要函数，判断给定的根节点是否属于一个平衡二叉树。
+     * @param root 二叉树的根节点
+     * @return 如果树是平衡的，返回true；否则返回false。
+     */
+    public boolean isBalanced(TreeNode root) {
+        // 调用辅助函数判断根节点及其子树是否平衡
+        return help(root) >= 0;
+    }
+
+    /**
+     * 辅助函数，递归地判断以当前节点为根的子树是否平衡，并返回子树的高度。
+     * @param root 当前子树的根节点
+     * @return 如果子树是平衡的，返回子树的高度；否则返回-1。
+     */
+    public int help(TreeNode root){
+        // 如果当前节点为空，子树高度为0
+        if(root == null){
+            return 0;
+        }
+        // 递归计算左子树的高度
+        int left = help(root.left);
+        // 递归计算右子树的高度
+        int right = help(root.right);
+        // 如果左右子树都是平衡的，并且高度差的绝对值不超过1，则当前子树也是平衡的
+        if(left>=0 && right >=0 && Math.abs(left-right) <= 1){
+            // 返回当前子树的高度，即左右子树中较高的高度加1
+            return Math.max(left,right)+1;
+        }
+        // 如果当前子树不平衡，返回-1
+        return -1;
+    }
+}
+```
+
+## 39. 组合总和
+https://leetcode.cn/problems/combination-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个 无重复元素 的整数数组 candidates 和一个目标整数 target ，找出 candidates 中可以使数字和为目标数 target 的 所有 不同组合 ，并以列表形式返回。你可以按 任意顺序 返回这些组合。
+
+candidates 中的 同一个 数字可以 无限制重复被选取 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 target 的不同组合数少于 150 个。
+
+ 
+
+示例 1：
+
+输入：candidates = [2,3,6,7], target = 7
+
+输出：[[2,2,3],[7]]
+
+解释：
+
+2 和 3 可以形成一组候选，2 + 2 + 3 = 7 。注意 2 可以使用多次。
+
+7 也是一个候选， 7 = 7 。
+
+仅有这两种组合。
+
+示例 2：
+
+输入: candidates = [2,3,5], target = 8
+
+输出: [[2,2,2,2],[2,3,3],[3,5]]
+
+示例 3：
+
+输入: candidates = [2], target = 1
+
+输出: []
+ 
+
+提示：
+
+- 1 <= candidates.length <= 30
+- 2 <= candidates[i] <= 40
+- candidates 的所有元素 互不相同
+- 1 <= target <= 40
+
+```java
+class Solution {
+    // 结果集合，用于存储所有满足条件的组合
+    List<List<Integer>> res = new ArrayList<>();
+    // 辅助栈，用于记录当前搜索路径上的元素
+    Deque<Integer> list = new LinkedList<>();
+
+    /**
+     * 计算组合总和
+     * @param candidates 无重复元素的整数数组候选人
+     * @param target 目标整数和
+     * @return 所有可能的组合列表
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        // 获取候选人数组的长度
+        int len = candidates.length;
+        // 如果数组长度小于0，直接返回空结果（实际上此条件不会触发，仅为逻辑完整性考虑）
+        if (len < 0) {
+            return res;
+        }
+        // 对候选人数组进行排序，便于剪枝操作
+        Arrays.sort(candidates);
+        // 从第一个元素开始深度优先搜索
+        dfs(candidates, target, 0);
+        // 返回所有满足条件的组合
+        return res;
+    }
+
+    /**
+     * 深度优先搜索实现函数
+     * @param candidates 候选人数组
+     * @param target 剩余需要达到的目标和
+     * @param index 当前搜索的起始下标，避免重复使用同一层级的元素
+     */
+    public void dfs(int[] candidates, int target, int index) {
+        // 如果目标和为0，说明找到了一个合法组合
+        if (target == 0) {
+            // 将当前组合复制并添加到结果列表中
+            res.add(new ArrayList<>(list));
+            return;
+        }
+        // 遍历数组，从index开始搜索，允许重复使用元素但同一层级不重复选择
+        for (int i = index; i < candidates.length; i++) {
+            // 如果目标减去当前元素值小于0，说明此路不通，直接结束本次循环
+            if (target - candidates[i] < 0) {
+                break;
+            }
+            // 选择当前元素，将其添加到路径中
+            list.addLast(candidates[i]);
+            // 递归搜索剩余部分，由于可以重复使用元素，下一轮搜索仍然从i开始
+            dfs(candidates, target - candidates[i], i);
+            // 回溯，移除刚加入的元素，尝试下一个选择
+            list.removeLast();
+        }
+    }
+}
+```
+
+## 543. 二叉树的直径
+https://leetcode.cn/problems/diameter-of-binary-tree/description/
+
+给你一棵二叉树的根节点，返回该树的 直径 。
+
+二叉树的 直径 是指树中任意两个节点之间最长路径的 长度 。这条路径可能经过也可能不经过根节点 root 。
+
+两节点之间路径的 长度 由它们之间边数表示。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树的直径.png)
+
+
+输入：root = [1,2,3,4,5]
+
+输出：3
+
+解释：3 ，取路径 [4,2,1,3] 或 [5,2,1,3] 的长度。
+
+示例 2：
+
+输入：root = [1,2]
+
+输出：1
+ 
+
+提示：
+
+树中节点数目在范围 [1, 10^4] 内
+-100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int max= 0;
+    public int diameterOfBinaryTree(TreeNode root) {
+        help(root);
+        return max;
+    }
+
+    public int help(TreeNode root){
+        if(root == null){
+            return 0;
+        }
+        int left = help(root.left);
+        int right = help(root.right);
+        max= Math.max(max,left+right);
+        return Math.max(left,right)+1;
+    }
+}
+```
+
+## 470. 用 Rand7() 实现 Rand10()
+https://leetcode.cn/problems/implement-rand10-using-rand7/description/
+
+给定方法 rand7 可生成 [1,7] 范围内的均匀随机整数，试写一个方法 rand10 生成 [1,10] 范围内的均匀随机整数。
+
+你只能调用 rand7() 且不能调用其他方法。请不要使用系统的 Math.random() 方法。
+
+每个测试用例将有一个内部参数 n，即你实现的函数 rand10() 在测试时将被调用的次数。请注意，这不是传递给 rand10() 的参数。
+
+ 
+
+示例 1:
+
+输入: 1
+
+输出: [2]
+
+示例 2:
+
+输入: 2
+
+输出: [2,8]
+
+示例 3:
+
+输入: 3
+
+输出: [3,8,10]
+ 
+
+提示:
+
+- 1 <= n <= 10^5
+ 
+
+进阶:
+
+rand7()调用次数的 期望值 是多少 ?
+你能否尽量少调用 rand7() ?
+
+```java
+/**
+ * The rand7() API is already defined in the parent class SolBase.
+ * public int rand7();
+ * @return a random integer in the range 1 to 7
+ */
+/**
+ * 使用 rand7() 函数生成 rand10() 函数的解决方案。
+ * 继承自SolBase类，提供了一种通过 rand7() 函数来实现 rand10() 函数的方法。
+ */
+class Solution extends SolBase {
+    /**
+     * 生成一个1到10之间的随机整数。
+     * 通过精心设计的算法，使用两次调用rand7()函数的结果来模拟rand10()函数的行为。
+     * 
+     * @return 1到10之间的随机整数。
+     */
+    public int rand10() {
+        // 生成第一个rand7()结果，用于后续计算。
+        int a = rand7();
+        // 生成第二个rand7()结果，同样用于后续计算。
+        int b = rand7();
+
+        // 确保a不为7，因为7会导致某些情况无法正确生成所需的随机数。
+        while(a==7){
+            a=rand7();
+        }
+        // 确保b不大于5，这样可以通过(a%2)的结果将可能的值范围缩小到0到9之间。
+        while(b>5){
+            b = rand7();
+        }
+        // 根据a和b的值，通过运算得到1到10之间的随机整数。
+        return ((a%2) == 0 ?0:5)+b;
+    }
+}
+```
+
+## 48. 旋转图像
+https://leetcode.cn/problems/rotate-image/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
+
+你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。
+
+示例 1：
+
+![旋转图像1.png](..%2Fimg%2F%CB%E3%B7%A8%2F%D0%FD%D7%AA%CD%BC%CF%F11.png)
+
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+
+输出：[[7,4,1],[8,5,2],[9,6,3]]
+
+示例 2：
+
+![旋转图像2.png](..%2Fimg%2F%CB%E3%B7%A8%2F%D0%FD%D7%AA%CD%BC%CF%F12.png)
+
+输入：matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+
+输出：[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+
+提示：
+
+- n == matrix.length == matrix[i].length
+- 1 <= n <= 20
+- -1000 <= matrix[i][j] <= 1000
+
+```java
+/**
+ * 该类提供了一个方法来旋转二维矩阵。
+ * 矩阵旋转是将矩阵的行与列互换，并翻转矩阵的左右两侧，以实现顺时针旋转90度的效果。
+ */
+class Solution {
+    /**
+     * 旋转二维矩阵。
+     * 
+     * @param matrix 一个二维整数数组，表示待旋转的矩阵。
+     *               矩阵的旋转是在原地进行，即不使用额外的存储空间。
+     */
+    public void rotate(int[][] matrix) {
+        // 获取矩阵的长度，矩阵为正方形，因此只需获取一次长度
+        int len = matrix.length;
+
+        // 第一步：通过交换每行的元素与对应列的元素，实现行与列的互换
+        // 这一步是为了解决矩阵旋转中的对角线元素交换问题
+        for(int i=0;i<len;i++){
+            for(int j=0;j<i;j++){
+                // 临时变量用于存储待交换的元素
+                int temp = matrix[j][i];
+                // 交换行i和列j的元素
+                matrix[j][i] = matrix[i][j];
+                matrix[i][j] = temp;
+            }
+        }
+
+        // 第二步：通过翻转每行的元素，实现矩阵的左右翻转
+        // 这一步是为了解决矩阵旋转中的水平翻转问题
+        for(int i=0;i<len;i++){
+            for(int j=0;j<len/2;j++){
+                // 临时变量用于存储待交换的元素
+                int temp = matrix[i][len-j-1];
+                // 翻转行i中的元素
+                matrix[i][len-j-1] = matrix[i][j];
+                matrix[i][j] = temp;
+            }
+        }
+    }
+}
+```
+
+## 98. 验证二叉搜索树
+https://leetcode.cn/problems/validate-binary-search-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+
+有效 二叉搜索树定义如下：
+
+- 节点的左子树只包含 小于 当前节点的数。
+- 节点的右子树只包含 大于 当前节点的数。
+- 所有左子树和右子树自身必须也是二叉搜索树。
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/验证二叉搜索树1.png)
+
+输入：root = [2,1,3]
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/验证二叉搜索树2.png)
+
+输入：root = [5,1,4,null,null,3,6]
+
+输出：false
+
+解释：根节点的值是 5 ，但是右子节点的值是 4 。
+ 
+
+提示：
+
+- 树中节点数目范围在[1, 10^4] 内
+- -2^31 <= Node.val <= 2^31 - 1
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    private long pre = Long.MIN_VALUE; // 用于记录前一个遍历节点的值
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+
+        // 首先检查左子树是否为二叉搜索树
+        if (!isValidBST(root.left)) {
+            return false;
+        }
+
+        // 检查当前节点的值是否大于前一个节点的值
+        if (root.val <= pre) {
+            return false;
+        }
+        pre = root.val; // 更新pre为当前节点的值，供后续节点比较使用
+
+        // 最后检查右子树是否为二叉搜索树
+        return isValidBST(root.right);
+    }
+}
+```
+
+## 34. 在排序数组中查找元素的第一个和最后一个位置
+https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个按照非递减顺序排列的整数数组 nums，和一个目标值 target。请你找出给定目标值在数组中的开始位置和结束位置。
+
+如果数组中不存在目标值 target，返回 [-1, -1]。
+
+你必须设计并实现时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [5,7,7,8,8,10], target = 8
+
+输出：[3,4]
+
+示例 2：
+
+输入：nums = [5,7,7,8,8,10], target = 6
+
+输出：[-1,-1]
+
+示例 3：
+
+输入：nums = [], target = 0
+
+输出：[-1,-1]
+ 
+
+提示：
+
+- 0 <= nums.length <= 10^5
+- -109 <= nums[i] <= 109
+- nums 是一个非递减数组
+- -109 <= target <= 109
+
+```java
+/**
+ * 在排序数组中查找给定目标值的起始和结束位置。
+ * 该类提供了一个方法来解决在排序数组中查找元素范围的问题。
+ */
+class Solution {
+    /**
+     * 在排序数组中查找目标值的起始和结束位置。
+     * 
+     * @param nums 排序数组，其中可能包含目标值。
+     * @param target 目标值，我们需要找到它在数组中的起始和结束位置。
+     * @return 包含两个整数的数组，分别表示目标值在数组中的起始和结束位置。
+     *         如果数组中不存在目标值，则返回 [-1, -1]。
+     */
+    public int[] searchRange(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        // 使用二分查找来定位目标值的初始位置
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (target == nums[mid]) {
+                // 一旦找到目标值，向左和向右扫描以确定范围
+                int l = mid, r = mid;
+                // 向左扫描，找到起始位置
+                while (l > 0 && nums[l - 1] == target) {
+                    l--;
+                }
+                // 向右扫描，找到结束位置
+                while (r < nums.length - 1 && nums[r + 1] == target) {
+                    r++;
+                }
+                // 返回目标值的起始和结束位置
+                return new int[]{l, r};
+            } else if (nums[mid] > target) {
+                // 如果中间值大于目标值，缩小右边界
+                right = mid - 1;
+            } else {
+                // 如果中间值小于目标值，增大左边界
+                left = mid + 1;
+            }
+        }
+        // 如果未找到目标值，返回 [-1, -1]
+        return new int[]{-1, -1};
+    }
+}
+```
+
+## 394. 字符串解码
+https://leetcode.cn/problems/decode-string/description/
+
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+
+ 
+
+示例 1：
+
+输入：s = "3[a]2[bc]"
+
+输出："aaabcbc"
+
+示例 2：
+
+输入：s = "3[a2[c]]"
+
+输出："accaccacc"
+
+示例 3：
+
+输入：s = "2[abc]3[cd]ef"
+
+输出："abcabccdcdcdef"
+
+示例 4：
+
+输入：s = "abc3[cd]xyz"
+
+输出："abccdcdcdxyz"
+ 
+
+提示：
+
+- 1 <= s.length <= 30
+- s 由小写英文字母、数字和方括号 '[]' 组成
+- s 保证是一个 有效 的输入。
+- s 中所有整数的取值范围为 [1, 300] 
+
+```java
+class Solution {
+    public String decodeString(String s) {
+        Deque<Character> dq = new LinkedList<>();
+
+        for(char c:s.toCharArray()){
+            if(c != ']'){
+                // 把所有的字母push进去，除了]
+                dq.push(c);
+            }else{
+                 //step 1: 取出[] 内的字符串
+                StringBuilder sb = new StringBuilder();
+                while(!dq.isEmpty() && Character.isLetter(dq.peek())){
+                    sb.insert(0,dq.pop());
+                }
+                //[ ]内的字符串
+                String sub = sb.toString();
+                 // 去除[
+                dq.pop();
+                 //step 2: 获取倍数数字
+                sb = new StringBuilder();
+                while(!dq.isEmpty() && Character.isDigit(dq.peek())){
+                    sb.insert(0,dq.pop());
+                }
+                 //倍数
+                int cnt = Integer.valueOf(sb.toString());
+                 //step 3: 根据倍数把字母再push回去
+                while(cnt-->0){
+                    for(char ch:sub.toCharArray()){
+                        dq.push(ch);
+                    }
+                }
+            }
+        }
+        //把栈里面所有的字母取出来
+        StringBuilder retv = new StringBuilder();
+        while(!dq.isEmpty()){
+            retv.insert(0,dq.pop());
+        }
+        return retv.toString();
+    }
+}
+```
+
+## 113. 路径总和 II
+https://leetcode.cn/problems/path-sum-ii/description/
+
+给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
+
+叶子节点 是指没有子节点的节点。
+
+ 
+
+示例 1：
+
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+
+输出：[[5,4,11,2],[5,8,4,5]]
+
+示例 2：
+
+
+输入：root = [1,2,3], targetSum = 5
+
+输出：[]
+
+示例 3：
+
+输入：root = [1,2], targetSum = 0
+
+输出：[]
+ 
+
+提示：
+
+- 树中节点总数在范围 [0, 5000] 内
+- -1000 <= Node.val <= 1000
+- -1000 <= targetSum <= 1000
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<List<Integer>> res= new ArrayList<>();
+    List<Integer> list = new ArrayList<>();
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        if(root == null){
+            return res;
+        }
+        help(root,targetSum,0);
+        return res;
+    }
+
+        /**
+     * 寻找从根节点到叶子节点路径和等于指定目标和的所有路径。
+     * 
+     * @param root 二叉树的根节点
+     * @param targetSum 目标和
+     * @param sum 当前路径的和
+     */
+    public void help(TreeNode root, int targetSum, int sum) {
+        // 如果当前节点为空，则返回
+        if (root == null) {
+            return;
+        }
+        // 获取当前节点的值
+        int rootVal = root.val;
+        // 将当前节点的值加入到路径列表中
+        list.add(rootVal);
+        // 更新当前路径的和
+        sum += rootVal;
+        // 如果当前节点是叶子节点且当前路径和等于目标和，则将当前路径加入到结果列表中
+        if (root.left == null && root.right == null && sum == targetSum) {
+            res.add(new ArrayList<>(list));
+        }
+        // 递归处理左子树
+        help(root.left, targetSum, sum);
+        // 递归处理右子树
+        help(root.right, targetSum, sum);
+        // 回溯，移除当前节点的值 from 路径列表
+        list.remove(list.size() - 1);
+    }
+}
+```
+
+## 240. 搜索二维矩阵 II
+https://leetcode.cn/problems/search-a-2d-matrix-ii/description/
+
+编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target 。该矩阵具有以下特性：
+
+- 每行的元素从左到右升序排列。
+- 每列的元素从上到下升序排列。
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/搜索二维矩阵2-1.png)
+
+输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/搜索二维矩阵2-2.png)
+
+输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20
+
+输出：false
+ 
+
+提示：
+
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= n, m <= 300
+- -10^9 <= matrix[i][j] <= 10^9
+- 每行的所有元素从左到右升序排列
+- 每列的所有元素从上到下升序排列
+- -10^9 <= target <= 10^9
+
+```java
+/**
+ * 解决在二维矩阵中查找特定目标值的问题。
+ * 矩阵每一行都是升序排列，每一列也都是升序排列。
+ */
+class Solution {
+    /**
+     * 在二维矩阵中搜索目标值。
+     * 
+     * @param matrix 二维整数矩阵，每一行和每一列都是升序排列。
+     * @param target 要搜索的目标值。
+     * @return 如果目标值存在于矩阵中，返回true；否则返回false。
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        // 矩阵的行数
+        int m = matrix.length;
+        // 遍历每一行
+        for(int[] row:matrix){
+            // 在当前行中搜索目标值
+            int index = search(row,target);
+            // 如果找到目标值，返回true
+            if(index >=0){
+                return true;
+            }
+        }
+        // 如果所有行都搜索完毕仍未找到目标值，返回false
+        return false;
+    }
+
+    /**
+     * 在有序数组中搜索目标值。
+     * 
+     * @param array 有序整数数组。
+     * @param target 要搜索的目标值。
+     * @return 如果目标值存在于数组中，返回其索引；否则返回-1。
+     */
+    public int search(int[] array,int target){
+        // 定义数组的左右边界
+        int left = 0, right = array.length -1;
+        // 使用二分查找法搜索目标值
+        while(left<=right){
+            // 计算中间位置的索引
+            int mid = left+ (right-left)/2;
+            // 如果中间位置的值等于目标值，返回中间位置的索引
+            if(array[mid] == target){
+                return mid;
+            // 如果中间位置的值小于目标值，忽略左半部分，更新左边界
+            }else if(array[mid] < target){
+                left = mid+1;
+            // 如果中间位置的值大于目标值，忽略右半部分，更新右边界
+            }else{
+                right = mid-1;
+            }
+        }
+        // 如果未找到目标值，返回-1
+        return -1;
+    }
+}
+```
+
+## 64. 最小路径和
+给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+ 
+
+示例 1：
+
+
+输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+
+输出：7
+
+解释：因为路径 1→3→1→1→1 的总和最小。
+
+示例 2：
+
+输入：grid = [[1,2,3],[4,5,6]]
+
+输出：12
+ 
+
+提示：
+
+- m == grid.length
+- n == grid[i].length
+- 1 <= m, n <= 200
+- 0 <= grid[i][j] <= 200
+
+```java
+/**
+ * 解决最小路径和问题的类。
+ * 该类提供了一个方法来计算在一个给定的二维网格中，从左上角到右下角的最小路径和。
+ * 网格中的每个单元格包含一个非负整数，路径和是沿途经过的单元格值的总和。
+ */
+class Solution {
+    /**
+     * 计算最小路径和。
+     * 使用动态规划方法，从左上角开始，逐步向右下角计算到达每个单元格的最小路径和。
+     * 
+     * @param grid 二维网格，包含非负整数。
+     * @return 返回从左上角到右下角的最小路径和。
+     */
+    public int minPathSum(int[][] grid) {
+        // 获取网格的行数和列数
+        int m = grid.length;
+        int n = grid[0].length;
+
+        // 初始化一个数组用于存储到达每个列的最小路径和
+        int[] dp = new int[n];
+
+        // 遍历网格的每一行
+        for(int i=0;i<m;i++){
+            // 遍历每一行的每一列
+            for(int j=0;j<n;j++){
+                // 如果当前列是第一列，只能从上方到达，所以当前的最小路径和就是上方的最小路径和
+                if(j==0){
+                    dp[j] = dp[j];
+                }else if(i==0){ // 如果当前行是第一行，只能从左方到达，所以当前的最小路径和是左边的最小路径和
+                    dp[j] = dp[j-1];
+                }else{ // 如果既不在第一行也不在第一列，当前的最小路径和是从左边或上方到达的最小路径和中的较小值
+                    dp[j] = Math.min(dp[j],dp[j-1]);
+                }
+                // 将当前单元格的值加到到达当前单元格的最小路径和上
+                dp[j]+=grid[i][j];
+            }
+        }
+        // 返回到达右下角的最小路径和
+        return dp[n-1];
+    }
+}
+```
+
+## 221. 最大正方形
+https://leetcode.cn/problems/maximal-square/description/?envType=study-plan-v2&envId=top-interview-150
+
+在一个由 '0' 和 '1' 组成的二维矩阵内，找到只包含 '1' 的最大正方形，并返回其面积。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/最大正方形1.png)
+
+输入：matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+
+输出：4
+
+示例 2：
+
+![alt text](../img/数据结构和算法/最大正方形2.png)
+
+输入：matrix = [["0","1"],["1","0"]]
+
+输出：1
+
+示例 3：
+
+输入：matrix = [["0"]]
+
+输出：0
+ 
+
+提示：
+
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= m, n <= 300
+- matrix[i][j] 为 '0' 或 '1'
+
+```java
+/**
+ * 此类提供了一个解决方案，用于计算给定矩阵中最大正方形的边长，该正方形由'1'字符组成。
+ */
+class Solution {
+    /**
+     * 计算给定二进制字符矩阵中最大正方形的边长。
+     * 
+     * @param matrix 一个二维字符数组，其中'1'表示白色单元格，'0'表示黑色单元格。
+     * @return 返回矩阵中最大全为'1'的正方形的边长，如果不存在这样的正方形，则返回0。
+     */
+    public int maximalSquare(char[][] matrix) {
+        int m = matrix.length; // 获取矩阵的行数
+        int n = matrix[0].length; // 获取矩阵的列数
+
+        // 初始化一个动态规划数组，用于存储以(i, j)为右下角的最大正方形边长
+        int[][] dp = new int[m+1][n+1];
+        int max = 0; // 用于记录最大正方形的边长
+
+        // 遍历矩阵，计算最大正方形的边长
+        for(int i=1; i<=m; i++){
+            for(int j=1; j<=n; j++){
+                // 当当前位置为'1'时，更新dp值并计算最大边长
+                if(matrix[i-1][j-1]=='1'){
+                    dp[i][j] = Math.min(dp[i-1][j-1], Math.min(dp[i-1][j], dp[i][j-1])) + 1;
+                    max = Math.max(max, dp[i][j]);
+                }
+            }
+        }
+
+        // 返回最大正方形的面积（边长的平方）
+        return max*max;
+    }
+}
+```
+
+## 162. 寻找峰值
+https://leetcode.cn/problems/find-peak-element/description/?envType=study-plan-v2&envId=top-interview-150
+
+峰值元素是指其值严格大于左右相邻值的元素。
+
+给你一个整数数组 nums，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回 任何一个峰值 所在位置即可。
+
+你可以假设 nums[-1] = nums[n] = -∞ 。
+
+你必须实现时间复杂度为 O(log n) 的算法来解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [1,2,3,1]
+
+输出：2
+
+解释：3 是峰值元素，你的函数应该返回其索引 2。
+
+示例 2：
+
+输入：nums = [1,2,1,3,5,6,4]
+
+输出：1 或 5 
+
+解释：你的函数可以返回索引 1，其峰值元素为 2；
+     或者返回索引 5， 其峰值元素为 6。
+ 
+
+提示：
+
+- 1 <= nums.length <= 1000
+- -2^31 <= nums[i] <= 2^31 - 1
+- 对于所有有效的 i 都有 nums[i] != nums[i + 1]
+
+```java
+/**
+ * 寻找峰值元素的函数。
+ * 峰值元素是大于其相邻元素的元素，数组两端视为负无穷大。
+ * 实现时间复杂度为O(log n)的二分查找算法。
+ *
+ * @param nums 整型数组，其中包含至少一个峰值元素。
+ * @return 峰值元素的索引位置。
+ */
+public int findPeakElement(int[] nums) {
+    if (nums == null || nums.length == 0) {
+        return -1; // 或根据题目要求抛出异常
+    }
+    
+    int left = 0, right = nums.length - 1;
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] > nums[mid + 1]) {
+            // 下降趋势，峰值可能在左边，包括当前mid
+            right = mid;
+        } else {
+            // 上升趋势，峰值一定在右边，不包括当前mid
+            left = mid + 1;
+        }
+    }
+    
+    // 当left == right时，根据题设nums[-1] = nums[n] = -∞，则left位置为峰值
+    return left;
+}
+```
+
+## 14. 最长公共前缀
+https://leetcode.cn/problems/longest-common-prefix/description/?envType=study-plan-v2&envId=top-interview-150
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例 1：
+
+输入：strs = ["flower","flow","flight"]
+
+输出："fl"
+
+示例 2：
+
+输入：strs = ["dog","racecar","car"]
+
+输出：""
+
+解释：输入不存在公共前缀。
+
+
+提示：
+
+- 1 <= strs.length <= 200
+- 0 <= strs[i].length <= 200
+- strs[i] 仅由小写英文字母组成
+
+
+```java
+/**
+ * Solution类用于解决找出一组字符串中的最长公共前缀的问题。
+ */
+class Solution {
+    /**
+     * 寻找字符串数组中所有字符串的最长公共前缀。
+     * 
+     * @param strs 字符串数组，包含了需要比较的字符串。
+     * @return 返回最长公共前缀字符串。如果输入为null，则返回空字符串。
+     */
+    public String longestCommonPrefix(String[] strs) {
+        // 如果输入字符串数组为null，直接返回空字符串
+        if(strs == null){
+            return "";
+        }
+        
+        // 以数组第一个字符串作为初始的最长公共前缀
+        String tmp = strs[0];
+        
+        // 遍历数组中的每个字符串，与当前的最长公共前缀进行比较
+        for(String str:strs){
+            // 如果当前字符串不以最长公共前缀开头，则缩短最长公共前缀
+            while(!str.startsWith(tmp)){
+                // 如果最长公共前缀已经为空，则没有公共前缀，直接返回空字符串
+                if(tmp.length() == 0){
+                    return "";
+                }
+                // 缩短最长公共前缀，去掉最后一个字符
+                tmp = tmp.substring(0,tmp.length()-1);
+            }
+        }
+        // 循环结束后，返回最终确定的最长公共前缀
+        return tmp;
+    }
+}
+```
+
+## 128. 最长连续序列
+https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+
+
+示例 1：
+
+输入：nums = [100,4,200,1,3,2]
+
+输出：4
+
+解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。
+
+示例 2：
+
+输入：nums = [0,3,7,2,5,8,4,6,0,1]
+
+输出：9
+
+
+提示：
+
+- 0 <= nums.length <= 10^5
+- -10^9 <= nums[i] <= 10^9
+
+```java
+/**
+ * 解决方案类，用于找出给定数组中最长的连续子序列的长度。
+ */
+class Solution {
+    /**
+     * 计算最长连续子序列的长度。
+     * 
+     * @param nums 输入的整数数组。
+     * @return 返回最长连续子序列的长度。
+     */
+    public int longestConsecutive(int[] nums) {
+        // 使用HashSet存储数组元素，以便快速检查某个数是否存在。
+        Set<Integer> set = new HashSet<>();
+        for (int n : nums) {
+            set.add(n);
+        }
+        // 初始化最长连续子序列的长度为0。
+        int max = 0;
+        for (int n : nums) {
+            // 检查当前数的前一个数是否存在于HashSet中，如果不存在，则当前数可能是连续子序列的起点。
+            if (!set.contains(n - 1)) {
+                // 初始化当前连续子序列的长度为1。
+                int cnt = 1;
+                // 从当前数开始，向后连续检查直到找不到下一个连续的数。
+                int cur = n;
+                while (set.contains(cur + 1)) {
+                    cur += 1;
+                    cnt += 1;
+                }
+                // 更新最长连续子序列的长度。
+                max = Math.max(max, cnt);
+            }
+        }
+        // 返回最长连续子序列的长度。
+        return max;
+    }
+} 
+```
+
+## 234. 回文链表
+https://leetcode.cn/problems/palindrome-linked-list/description/
+
+给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/回文链表1.png)
+
+输入：head = [1,2,2,1]
+
+输出：true
+
+示例 2：
+
+![alt text](../img/数据结构和算法/回文链表2.png)
+
+输入：head = [1,2]
+
+输出：false
+ 
+
+提示：
+
+- 链表中节点数目在范围[1, 10^5] 内
+- 0 <= Node.val <= 9
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+/**
+ * 判断一个链表是否为回文结构。
+ */
+class Solution {
+    /**
+     * 判断给定链表是否为回文结构。
+     * 
+     * @param head 链表的头节点
+     * @return 如果链表是回文结构，则返回true；否则返回false。
+     */
+    public boolean isPalindrome(ListNode head) {
+        // 找到链表中点
+        ListNode mid = findMid(head);
+        // 将中点之后的链表反转
+        ListNode re = reverse(mid);
+        // 比较前半部分和反转后的后半部分是否相同
+        while(head != null && re != null) {
+            if(head.val != re.val) {
+                return false;
+            }
+            head = head.next;
+            re = re.next;
+        }
+        return true;
+    }
+
+    /**
+     * 找到链表的中点节点。
+     * 
+     * @param head 链表的头节点
+     * @return 链表的中点节点
+     */
+    public ListNode findMid(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        // 使用快慢指针找到链表中点
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    /**
+     * 反转链表。
+     * 
+     * @param head 需要反转的链表的头节点
+     * @return 反转后的链表的头节点
+     */
+    public ListNode reverse(ListNode head) {
+        ListNode pre = null;
+        ListNode cur = head;
+        ListNode next = null;
+        // 反转链表
+        while(cur != null) {
+            next = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = next;
+        }
+        return pre;
+    }
+}
+```
+
+## 112. 路径总和
+https://leetcode.cn/problems/path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
+
+叶子节点 是指没有子节点的节点。
+
+
+
+示例 1：
+
+![路径总和1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C1.png)
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+
+输出：true
+
+解释：等于目标和的根节点到叶节点路径如上图所示。
+
+示例 2：
+
+![路径总和2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C2.png)
+
+输入：root = [1,2,3], targetSum = 5
+
+输出：false
+
+解释：树中存在两条根节点到叶子节点的路径：
+- (1 --> 2): 和为 3
+- (1 --> 3): 和为 4
+- 不存在 sum = 5 的根节点到叶子节点的路径。
+
+示例 3：
+
+输入：root = [], targetSum = 0
+
+输出：false
+
+解释：由于树是空的，所以不存在根节点到叶子节点的路径。
+
+
+提示：
+
+- 树中节点的数目在范围 [0, 5000] 内
+- -1000 <= Node.val <= 1000
+- -1000 <= targetSum <= 1000
+
+```java
+class Solution {
+    // 递归函数，判断是否存在从当前节点到叶子节点的路径，使得节点值之和等于目标和
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        // 如果当前节点为空，则返回 false
+        if(root == null){
+            return false;
+        }
+        // 如果当前节点是叶子节点，判断当前节点值是否等于目标和
+        if(root.left == null && root.right == null){
+            return root.val == targetSum;
+        }
+        // 递归判断左子树和右子树，更新目标和为减去当前节点值后的值
+        return hasPathSum(root.left,targetSum-root.val) || hasPathSum(root.right,targetSum-root.val);
+    }
+}
+```
+
+## 169. 多数元素
+
+https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个大小为 n 的数组 nums ，返回其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+示例 1：
+
+输入：nums = [3,2,3]
+
+输出：3
+
+示例 2：
+
+输入：nums = [2,2,1,1,1,2,2]
+
+输出：2
+
+提示：
+
+- n == nums.length
+- 1 <= n <= 5 * 10^4
+- -10^9 <= nums[i] <= 10^9
+
+进阶：尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题。
+
+
+
+```java
+/**
+ * 解决方案类，用于寻找数组中的多数元素。
+ * 多数元素定义为在数组中出现次数超过数组长度一半的元素。
+ */
+class Solution {
+    /**
+     * 寻找数组中的多数元素。
+     * 使用摩尔投票算法来找到出现次数超过数组长度一半的元素。
+     * 
+     * @param nums 输入的整数数组，假设该数组一定存在多数元素。
+     * @return 返回多数元素。
+     */
+    public int majorityElement(int[] nums) {
+        // 初始化一个变量来存储当前的候选多数元素。
+        Integer last = null;
+        // 初始化计数器，用于跟踪当前候选多数元素的票数。
+        int cnt = 0;
+        // 遍历数组中的每个元素。
+        for (int num : nums) {
+            // 当计数器为0时，选择新的候选多数元素。
+            if (cnt == 0) {
+                last = num;
+            }
+            // 如果当前元素等于候选多数元素，计数器加1；否则计数器减1。
+            cnt += last == num ? 1 : -1;
+        }
+        // 返回最后的候选多数元素，根据摩尔投票算法的特性，最后的候选者即为多数元素。
+        return last;
+    }
+}
+```
+
+## 662. 二叉树最大宽度
+https://leetcode.cn/problems/maximum-width-of-binary-tree/description/
+
+给你一棵二叉树的根节点 root ，返回树的 最大宽度 。
+
+树的 最大宽度 是所有层中最大的 宽度 。
+
+每一层的 宽度 被定义为该层最左和最右的非空节点（即，两个端点）之间的长度。将这个二叉树视作与满二叉树结构相同，两端点间会出现一些延伸到这一层的 null 节点，这些 null 节点也计入长度。
+
+题目数据保证答案将会在  32 位 带符号整数范围内。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/二叉树最大宽度1.png)
+
+
+输入：root = [1,3,2,5,3,null,9]
+
+输出：4
+
+解释：最大宽度出现在树的第 3 层，宽度为 4 (5,3,null,9) 。
+
+示例 2：
+
+![alt text](../img/数据结构和算法/二叉树最大宽度2.png)
+
+
+输入：root = [1,3,2,5,null,null,9,6,null,7]
+
+输出：7
+
+解释：最大宽度出现在树的第 4 层，宽度为 7 (6,null,null,null,null,null,7) 。
+
+示例 3：
+
+![alt text](../img/数据结构和算法/二叉树最大宽度3.png)
+
+输入：root = [1,3,2,5]
+
+输出：2
+
+解释：最大宽度出现在树的第 2 层，宽度为 2 (3,2) 。
+ 
+
+提示：
+
+- 树中节点的数目范围是 [1, 3000]
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * Solution类用于解决计算二叉树宽度的问题。
+ */
+class Solution {
+    /**
+     * 计算二叉树的宽度。
+     * 宽度定义为最左边节点和最右边节点的索引之差加一。
+     * 
+     * @param root 二叉树的根节点
+     * @return 二叉树的宽度
+     */
+    public int widthOfBinaryTree(TreeNode root) {
+        // 使用双端队列存储节点和它们对应的索引
+        Deque<TreeNode> nodeQueue = new LinkedList<>();
+        Deque<Integer> indexQueue = new LinkedList<>();
+
+        // 初始化队列，将根节点和索引0入队
+        nodeQueue.offer(root);
+        indexQueue.offer(0);
+
+        // 用于记录最大的宽度
+        int max = 0;
+
+        // 当队列不为空时，循环处理队列中的节点
+        while(!nodeQueue.isEmpty()){
+            // 获取当前层的节点数量
+            int size = nodeQueue.size();
+
+            // 记录当前层的最左边节点的索引
+            int leftIndex = indexQueue.peek();
+            // 初始化当前层的最右边节点的索引
+            int rightIndex = 0;
+
+            // 遍历当前层的节点
+            for(int i=0;i<size;i++){
+                // 出队一个节点及其索引
+                TreeNode n = nodeQueue.poll();
+                int idx = indexQueue.poll();
+                // 更新当前层的最右边节点的索引
+                rightIndex = idx;
+
+                // 如果节点有左子节点，将左子节点及其索引入队
+                if(n.left!= null){
+                    nodeQueue.offer(n.left);
+                    indexQueue.offer(2*idx);
+                }
+                // 如果节点有右子节点，将右子节点及其索引入队
+                if(n.right != null){
+                    nodeQueue.offer(n.right);
+                    indexQueue.offer(2*idx+1);
+                }
+            }
+            // 更新最大宽度
+            max = Math.max(max,rightIndex-leftIndex+1);
+        }
+        // 返回最大宽度
+        return max;
+    }
+}
+```
+
+## 718. 最长重复子数组
+https://leetcode.cn/problems/maximum-length-of-repeated-subarray/description/
+
+给两个整数数组 nums1 和 nums2 ，返回 两个数组中 公共的 、长度最长的子数组的长度 。
+
+ 
+
+示例 1：
+
+输入：nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+
+输出：3
+
+解释：长度最长的公共子数组是 [3,2,1] 。
+
+示例 2：
+
+输入：nums1 = [0,0,0,0,0], nums2 = [0,0,0,0,0]
+
+输出：5
+
+提示：
+
+- 1 <= nums1.length, nums2.length <= 1000
+- 0 <= nums1[i], nums2[i] <= 100
+
+```java
+/**
+ * Solution类用于解决两个数组中最长公共子序列的长度问题。
+ */
+class Solution {
+    /**
+     * 计算两个数组nums1和nums2的最长公共子序列的长度。
+     * 
+     * @param nums1 第一个整数数组。
+     * @param nums2 第二个整数数组。
+     * @return 返回最长公共子序列的长度。
+     */
+    public int findLength(int[] nums1, int[] nums2) {
+        // nums1和nums2的长度
+        int m = nums1.length;
+        int n = nums2.length;
+        // dp数组用于动态规划存储子问题的解
+        int[][] dp = new int[m+1][n+1];
+        // ans用于记录最长公共子序列的长度
+        int ans = 0;
+        // 遍历数组nums1和nums2的所有元素
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                // 如果nums1和nums2当前对应的元素相等，则dp[i][j]等于dp[i-1][j-1]加1
+                if(nums1[i-1] == nums2[j-1]){
+                    dp[i][j] = dp[i-1][j-1]+1;
+                }
+                // 更新ans为当前找到的最长公共子序列的长度
+                ans = Math.max(ans,dp[i][j]);
+            }
+        }
+        // 返回最长公共子序列的长度
+        return ans;
+    }
+}
+```
+
+## 179. 最大数
+https://leetcode.cn/problems/largest-number/description/
+
+给定一组非负整数 nums，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。
+
+注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+
+ 
+
+示例 1：
+
+输入：nums = [10,2]
+
+输出："210"
+
+示例 2：
+
+输入：nums = [3,30,34,5,9]
+
+输出："9534330"
+ 
+
+提示：
+
+- 1 <= nums.length <= 100
+- 0 <= nums[i] <= 10^9
+
+```java
+/**
+ * 解决方案类，提供数组转换为最大数的功能。
+ */
+class Solution {
+    /**
+     * 将给定的非负整数数组转换为它们能组成的最大数的字符串表示。
+     * 
+     * @param nums 非负整数数组
+     * @return 组成的最大数的字符串表示，如果输入为空则返回空
+     */
+    public String largestNumber(int[] nums) {
+        // 检查输入数组是否为空或空数组
+        if(nums == null || nums.length == 0){
+            return null;
+        }
+        
+        // 将整数数组转换为字符串数组
+        String[] arr = new String[nums.length];
+        for(int i = 0; i< arr.length;i++){
+            arr[i] = String.valueOf(nums[i]);
+        }
+        
+        // 自定义排序规则，将字符串数组按照组合后的数值大小降序排列
+        Arrays.sort(arr,(a,b)-> (b+a).compareTo(a+b));
+        
+        // 使用StringBuilder拼接排序后的字符串数组
+        StringBuilder sb = new StringBuilder();
+        for(String str:arr){
+            sb.append(str);
+        }
+        
+        // 将StringBuilder转换为字符串
+        String res = sb.toString();
+        
+        // 如果结果的首位字符是'0'，则将结果设置为"0"
+        if(res.charAt(0) == '0'){
+            res = "0";
+        }
+        
+        return res;
+    }
+}
+```
+
+## 62. 不同路径
+https://leetcode.cn/problems/unique-paths/description/
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+
+问总共有多少条不同的路径？
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/不同路径.png)
+
+输入：m = 3, n = 7
+
+输出：28
+
+示例 2：
+
+输入：m = 3, n = 2
+
+输出：3
+
+解释：
+
+从左上角开始，总共有 3 条路径可以到达右下角。
+1. 向右 -> 向下 -> 向下
+2. 向下 -> 向下 -> 向右
+3. 向下 -> 向右 -> 向下
+
+示例 3：
+
+输入：m = 7, n = 3
+
+输出：28
+
+示例 4：
+
+输入：m = 3, n = 3
+
+输出：6
+ 
+
+提示：
+
+- 1 <= m, n <= 100
+- 题目数据保证答案小于等于 2 * 10^9
+
+```java
+/**
+ * 解决从左上角到右下角的路径数量问题。
+ * 使用动态规划方法，dp[i][j]表示到达第i行第j列的位置有几种路径。
+ */
+class Solution {
+    /**
+     * 计算从左上角到右下角的路径数量。
+     * 
+     * @param m 表示网格的行数。
+     * @param n 表示网格的列数。
+     * @return 返回从左上角到右下角的路径数量。
+     */
+    public int uniquePaths(int m, int n) {
+        // 初始化动态规划数组，大小为(m+1)x(n+1)，初始值为0
+        int[][] dp = new int[m+1][n+1];
+        
+        // 初始化第一行和第一列的路径数量为1，因为只能向右或向下移动
+        for(int i=0;i<m;i++){
+            dp[i][0] = 1;
+        }
+        for(int j=0;j<n;j++){
+            dp[0][j] = 1;
+        }
+        
+        // 从第二行第二列开始，计算每个位置的路径数量
+        // dp[i][j]的值由其上方和左方的两个位置的路径数量之和得到
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        
+        // 返回右下角位置的路径数量
+        return dp[m-1][n-1];
+    }
+}
+```
+
+## 227. 基本计算器 II
+https://leetcode.cn/problems/basic-calculator-ii/description/
+
+给你一个字符串表达式 s ，请你实现一个基本计算器来计算并返回它的值。
+
+整数除法仅保留整数部分。
+
+你可以假设给定的表达式总是有效的。所有中间结果将在 [-231, 231 - 1] 的范围内。
+
+注意：不允许使用任何将字符串作为数学表达式计算的内置函数，比如 eval() 。
+
+ 
+
+示例 1：
+
+输入：s = "3+2*2"
+
+输出：7
+
+示例 2：
+
+输入：s = " 3/2 "
+
+输出：1
+
+示例 3：
+
+输入：s = " 3+5 / 2 "
+
+输出：5
+ 
+
+提示：
+
+- 1 <= s.length <= 3 * 10^5
+- s 由整数和算符 ('+', '-', '*', '/') 组成，中间由一些空格隔开
+- s 表示一个 有效表达式
+- 表达式中的所有整数都是非负整数，且在范围 [0, 2^31 - 1] 内
+- 题目数据保证答案是一个 32-bit 整数
+
+```java
+/**
+ * 解决方案类，提供一个方法来计算给定字符串表示的数学表达式的值。
+ */
+class Solution {
+    /**
+     * 计算给定字符串表示的数学表达式的值。
+     * 表达式包含整数、运算符（+、-、*、/）和空格。
+     * 
+     * @param s 表达式字符串
+     * @return 表达式的计算结果
+     */
+    public int calculate(String s) {
+        int len = s.length();
+        int num = 0; // 用于累计当前数字
+        char sign = '+'; // 记录当前运算符
+        Deque<Integer> dq = new LinkedList<>(); // 使用双端队列存储中间结果
+
+        // 遍历字符串中的每个字符
+        for(int i=0;i<len;i++){
+            char c = s.charAt(i);
+
+            // 如果字符是数字，则更新当前数字的值
+            if(c >= '0'){
+                num = num*10-'0' + c;
+            }
+
+            // 当遇到非数字字符或字符串末尾时，根据当前运算符进行计算并更新队列
+            if((c < '0' && c!=' ') || i == len-1){
+                switch(sign){
+                    case '+': dq.push(num); break;
+                    case '-': dq.push(-num); break;
+                    case '*': dq.push(dq.pop()*num); break;
+                    case '/': dq.push(dq.pop()/num); break;
+                }
+                sign = c; // 更新当前运算符
+                num = 0; // 重置当前数字
+            }
+        }
+
+        int res = 0; // 最终结果
+        // 遍历队列，累加队列中的所有数
+        while(!dq.isEmpty()){
+            res += dq.pop();
+        }
+        return res;
+    }
+}
+```
+
+## 122. 买卖股票的最佳时机 II
+
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。
+
+在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。
+
+返回 你能获得的 最大 利润 。
+
+示例 1：
+
+输入：prices = [7,1,5,3,6,4]
+
+输出：7
+
+解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
+随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。
+最大总利润为 4 + 3 = 7 。
+
+示例 2：
+
+输入：prices = [1,2,3,4,5]
+
+输出：4
+
+解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
+最大总利润为 4 。
+
+示例 3：
+
+输入：prices = [7,6,4,3,1]
+
+输出：0
+
+解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0。
+
+提示：
+
+- 1 <= prices.length <= 3 * 10^4
+- 0 <= prices[i] <= 10^4
+
+
+
+```java
+/**
+ * Solution类用于解决股票最大利润的问题。
+ * 它提供了一个方法来计算给定价格数组中，最多进行一次买卖操作所能获得的最大利润。
+ */
+class Solution {
+    /**
+     * 计算股票最大利润。
+     * 
+     * @param prices 表示股票每日价格的整数数组。
+     * @return 返回最大利润。如果数组长度小于等于1，则返回0，因为无法进行交易。
+     */
+    public int maxProfit(int[] prices) {
+        // 如果价格数组长度小于等于1，无法进行交易，直接返回0
+        if (prices.length <= 1) {
+            return 0;
+        }
+        // 初始化最大利润为0
+        int max = 0;
+        // 遍历价格数组，从第二天开始计算每一天的利润
+        for (int i = 1; i < prices.length; i++) {
+            // 如果当前价格大于前一天的价格，说明有利润
+            if (prices[i] > prices[i - 1]) {
+                // 累加利润到max
+                max += prices[i] - prices[i - 1];
+            }
+        }
+        // 返回累计的最大利润
+        return max;
+    }
+}
+```
+
+## 226. 翻转二叉树
+https://leetcode.cn/problems/invert-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一棵二叉树的根节点 root ，翻转这棵二叉树，并返回其根节点。
+
+
+
+示例 1：
+
+![翻转二叉树1.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%911.png)
+
+输入：root = [4,2,7,1,3,6,9]
+
+输出：[4,7,2,9,6,3,1]
+
+示例 2：
+
+![翻转二叉树2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%912.png)
+
+输入：root = [2,1,3]
+
+输出：[2,3,1]
+
+示例 3：
+
+输入：root = []
+
+输出：[]
+
+
+提示：
+
+- 树中节点数目范围在 [0, 100] 内
+- -100 <= Node.val <= 100
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+/**
+ * 该类提供了一个解决方案，用于翻转二叉树。
+ * 二叉树的翻转是指将二叉树中每个节点的左子节点和右子节点互换。
+ */
+class Solution {
+    /**
+     * 翻转二叉树。
+     * 
+     * @param root 二叉树的根节点。
+     * @return 翻转后的二叉树的根节点。
+     */
+    public TreeNode invertTree(TreeNode root) {
+        // 如果当前节点为空或者为叶子节点（没有左右子节点），则无需翻转，直接返回当前节点。
+        if(root == null || (root.left==null && root.right==null)){
+            return root;
+        }
+        // 交换当前节点的左子节点和右子节点。
+        TreeNode temp  = root.left;
+        root.left = root.right;
+        root.right = temp;
+        // 递归翻转当前节点的左子树和右子树。
+        invertTree(root.left);
+        invertTree(root.right);
+        // 返回翻转后的当前节点。
+        return root;
+    }
+}
+```
+
+## 695. 岛屿的最大面积
+https://leetcode.cn/problems/max-area-of-island/description/
+
+给你一个大小为 m x n 的二进制矩阵 grid 。
+
+岛屿 是由一些相邻的 1 (代表土地) 构成的组合，这里的「相邻」要求两个 1 必须在 水平或者竖直的四个方向上 相邻。你可以假设 grid 的四个边缘都被 0（代表水）包围着。
+
+岛屿的面积是岛上值为 1 的单元格的数目。
+
+计算并返回 grid 中最大的岛屿面积。如果没有岛屿，则返回面积为 0 。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/岛屿的最大面积.png)
+
+
+输入：grid = [[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]
+
+输出：6
+
+解释：答案不应该是 11 ，因为岛屿只能包含水平或垂直这四个方向上的 1 。
+
+示例 2：
+
+输入：grid = [[0,0,0,0,0,0,0,0]]
+
+输出：0
+ 
+
+提示：
+
+- m == grid.length
+- n == grid[i].length
+- 1 <= m, n <= 50
+- grid[i][j] 为 0 或 1
+
+```java
+/**
+ * 此类提供了一个解决方案，用于计算给定二维网格中最大岛屿的面积。
+ */
+class Solution {
+    /**
+     * 网格的行数
+     */
+    int m = 0;
+    /**
+     * 网格的列数
+     */
+    int n = 0;
+
+    /**
+     * 计算给定二维网格中最大岛屿的面积。
+     *
+     * @param grid 一个二维整数数组，其中0表示水域，1表示陆地。
+     * @return 返回网格中的最大岛屿面积。
+     */
+    public int maxAreaOfIsland(int[][] grid) {
+        m = grid.length;
+        n = grid[0].length;
+        int max = 0;
+        
+        // 遍历网格，寻找并计算岛屿面积
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    int area = dfs(grid, i, j);
+                    max = Math.max(max, area);
+                }
+            }
+        }
+        
+        return max;
+    }
+
+    /**
+     * 深度优先搜索（DFS）遍历相邻陆地，计算岛屿面积。
+     *
+     * @param grid 一个二维整数数组，其中0表示水域，1表示陆地。
+     * @param i 当前访问的单元格的行索引。
+     * @param j 当前访问的单元格的列索引。
+     * @return 返回以(i, j)为起点的岛屿的面积。
+     */
+    private int dfs(int[][] grid, int i, int j) {
+        // 检查是否越界或已访问过的位置
+        if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) {
+            return 0;
+        }
+        
+        // 标记当前位置为已访问
+        grid[i][j] = 0;
+        int cnt = dfs(grid, i + 1, j);   // 右边
+        cnt += dfs(grid, i - 1, j);   // 左边
+        cnt += dfs(grid, i, j + 1);   // 下面
+        cnt += dfs(grid, i, j - 1);   // 上面
+        return cnt + 1;  // 包含当前访问的陆地
+    }
+}
+```
+
+## 删除排序链表中的重复元素
+https://leetcode.cn/problems/remove-duplicates-from-sorted-list/description/
+
+给定一个已排序的链表的头 head ， 删除所有重复的元素，使每个元素只出现一次 。返回 已排序的链表 。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/删除排序链表中的重复元素1.png)
+
+
+输入：head = [1,1,2]
+
+输出：[1,2]
+
+示例 2：
+
+![alt text](../img/数据结构和算法/删除排序链表中的重复元素2.png)
+
+输入：head = [1,1,2,3,3]
+
+输出：[1,2,3]
+ 
+
+提示：
+
+- 链表中节点数目在范围 [0, 300] 内
+- -100 <= Node.val <= 100
+- 题目数据保证链表已经按升序 排列
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode cur = head;
+        while(cur!= null && cur.next != null){
+            if(cur.val == cur.next.val){
+                cur.next = cur.next.next;
+            }else{
+                cur = cur.next;
+            }
+        }
+        return head;
+    }
+}
+```
+
+## 152. 乘积最大子数组
+https://leetcode.cn/problems/maximum-product-subarray/description/
+
+给你一个整数数组 nums ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 32-位 整数。
+
+ 
+示例 1:
+
+输入: nums = [2,3,-2,4]
+
+输出: 6
+
+解释: 子数组 [2,3] 有最大乘积 6。
+
+示例 2:
+
+输入: nums = [-2,0,-1]
+
+输出: 0
+
+解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+ 
+
+提示:
+
+- 1 <= nums.length <= 2 * 104
+- -10 <= nums[i] <= 10
+- nums 的任何前缀或后缀的乘积都 保证 是一个 32-位 整数
+
+```java
+public class MaximumProductSubarray {
+
+        /**
+     * 计算数组中任意非空子数组的最大乘积。
+     * 该方法通过动态规划的方式，避免了计算所有子数组乘积的高复杂度。
+     * 利用最大值和最小值的相互转换，以及乘法的性质，高效地求解最大乘积。
+     * 特别处理了全负数的情况，确保结果的正确性。
+     *
+     * @param nums 输入的整数数组，可以包含负数和0。
+     * @return 返回任意非空子数组的最大乘积。
+     */
+    public int maxProduct(int[] nums) {
+        // 初始化最大乘积和最小乘积为数组的第一个元素。
+        // 最大乘积和最小乘积的初始值相同，因为乘以一个负数会交换最大和最小的角色。
+        int maxProd = nums[0];
+        int minProd = nums[0];
+        // 初始化结果为数组的第一个元素，作为后续比较的最大乘积。
+        int result = nums[0];
+
+        // 从数组的第二个元素开始遍历。
+        for (int i = 1; i < nums.length; i++) {
+            // 如果当前元素是负数，交换最大和最小乘积的值。
+            // 这是因为乘以一个负数会改变最大和最小乘积的相对关系。
+            if (nums[i] < 0) {
+                int temp = maxProd;
+                maxProd = minProd;
+                minProd = temp;
+            }
+            // 更新最大乘积，考虑两种情况：当前元素单独作为子数组的乘积，或者当前元素与之前的最大乘积相乘。
+            maxProd = Math.max(nums[i], maxProd * nums[i]);
+            // 更新最小乘积，考虑两种情况：当前元素单独作为子数组的乘积，或者当前元素与之前的最大乘积相乘。
+            minProd = Math.min(nums[i], minProd * nums[i]);
+            // 更新结果，保留最大的乘积。
+            result = Math.max(result, maxProd);
+        }
+
+        // 返回计算出的最大乘积。
+        return result;
+    }
+
+    public static void main(String[] args) {
+        MaximumProductSubarray solution = new MaximumProductSubarray();
+        int[] nums1 = {2, 3, -2, 4};
+        System.out.println(solution.maxProduct(nums1)); // 输出 6
+
+        int[] nums2 = {-2, 0, -1};
+        System.out.println(solution.maxProduct(nums2)); // 输出 0
+    }
+}
+```
+
+## 198. 打家劫舍
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+
+ 
+
+示例 1：
+
+输入：[1,2,3,1]
+
+输出：4
+
+解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+
+示例 2：
+
+输入：[2,7,9,3,1]
+
+输出：12
+
+解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+ 
+
+提示：
+
+- 1 <= nums.length <= 100
+- 0 <= nums[i] <= 400
+
+```java
+class Solution {
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0; // 处理边界情况，如果数组为空则直接返回0
+        }
+
+        if (nums.length == 1) {
+            return nums[0]; // 只有一间房屋时直接返回该房屋金额
+        }
+
+        int[] dp = new int[nums.length]; // 创建一个数组用来存储偷盗到每个房屋的最大金额
+
+        dp[0] = nums[0]; // 初始化第一间房屋的偷盗金额
+        dp[1] = Math.max(nums[0], nums[1]); // 初始化第二间房屋的偷盗金额
+
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]); // 当前房屋可以选择偷窃或者不偷窃
+        }
+
+        return dp[nums.length - 1]; // 返回最后一间房屋的最大偷盗金额
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Test Cases
+        int[] nums1 = {1, 2, 3, 1};
+        System.out.println(solution.rob(nums1)); // Output: 4
+
+        int[] nums2 = {2, 7, 9, 3, 1};
+        System.out.println(solution.rob(nums2)); // Output: 12
+    }
+}
+```
+
+## 补充题6. 手撕堆排序
+给你一个整数数组 nums，请你将该数组升序排列。
+
+ 
+
+示例 1：
+
+输入：nums = [5,2,3,1]
+
+输出：[1,2,3,5]
+
+示例 2：
+
+输入：nums = [5,1,1,2,0,0]
+
+输出：[0,0,1,1,2,5]
+ 
+
+提示：
+
+- 1 <= nums.length <= 5 * 10^4
+- -5 * 10^4 <= nums[i] <= 5 * 10^4
+
+```java
+import java.util.*;
+
+public class HeapSort {
+
+        /**
+     * 堆排序实现对数组的升序排序。
+     * 堆排序是一种基于比较的排序算法，使用了分治策略和数据结构中的堆（一种近似完全二叉树）。
+     * 算法分为两个主要步骤：构建最大堆和调整堆结构进行排序。
+     *
+     * @param nums 待排序的整型数组。
+     */
+    public int[] heapSort(int[] nums) {
+        int n = nums.length;
+
+        // 构建最大堆，从最后一个非叶子节点开始，自下而上、自右至左调整结构。
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(nums, n, i);
+
+        // 一个个将堆顶元素（当前最大值）移至数组末尾，并调整剩余元素为最大堆。
+        for (int i = n - 1; i > 0; i--) {
+            // 将当前根节点与最后一个元素交换。
+            int temp = nums[0];
+            nums[0] = nums[i];
+            nums[i] = temp;
+
+            // 调整减小后的堆（不包括已排序的最后一个元素）。
+            heapify(nums, i, 0);
+        }
+        return nums;
+    }
+
+    /**
+     * 调整索引i处的元素，使其所在的子树成为最大堆。
+     * 这个过程递归进行，确保整个数组满足最大堆的性质。
+     *
+     * @param nums 待调整的整型数组。
+     * @param n    数组的长度。
+     * @param i    当前需要堆化的节点索引。
+     */
+    void heapify(int[] nums, int n, int i) {
+        int largest = i; // 初始化最大元素为当前根节点
+        int left = 2 * i + 1; // 左孩子索引
+        int right = 2 * i + 2; // 右孩子索引
+
+        // 如果左孩子存在且大于当前最大元素，则更新最大元素索引
+        if (left < n && nums[left] > nums[largest])
+            largest = left;
+
+        // 如果右孩子存在且大于当前最大元素，则再次更新最大元素索引
+        if (right < n && nums[right] > nums[largest])
+            largest = right;
+
+        // 如果最大元素不是当前根节点，则交换它们的位置，并继续堆化受影响的子树
+        if (largest != i) {
+            int swap = nums[i];
+            nums[i] = nums[largest];
+            nums[largest] = swap;
+
+            heapify(nums, n, largest);
+        }
+    }
+
+    public static void main(String[] args) {
+        HeapSort sorter = new HeapSort();
+        int[] nums1 = {5, 2, 3, 1};
+        sorter.heapSort(nums1);
+        System.out.println(Arrays.toString(nums1)); // Output: [1, 2, 3, 5]
+
+        int[] nums2 = {5, 1, 1, 2, 0, 0};
+        sorter.heapSort(nums2);
+        System.out.println(Arrays.toString(nums2)); // Output: [0, 0, 1, 1, 2, 5]
+    }
+}
+```
+
+## 24. 两两交换链表中的节点
+https://leetcode.cn/problems/swap-nodes-in-pairs/description/
+
+给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+
+ 
+
+示例 1：
+
+![alt text](../img/数据结构和算法/两两交换链表中的节点.png)
+
+输入：head = [1,2,3,4]
+
+输出：[2,1,4,3]
+
+示例 2：
+
+输入：head = []
+
+输出：[]
+
+示例 3：
+
+输入：head = [1]
+
+输出：[1]
+ 
+
+提示：
+
+- 链表中节点的数目在范围 [0, 100] 内
+- 0 <= Node.val <= 100
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    /**
+     * 交换链表中的每对节点。
+     * 
+     * 本函数接收一个链表的头节点，旨在交换链表中每对相邻节点。
+     * 例如，如果输入链表为 1->2->3->4，那么输出链表应为 2->1->4->3。
+     * 使用哑节点(dummy)来简化链表操作，避免处理空链表的特殊情况。
+     * 
+     * @param head 链表的头节点
+     * @return 返回交换后的链表头节点
+     */
+    public ListNode swapPairs(ListNode head) {
+        // 创建一个哑节点，用于简化链表操作
+        ListNode dummy = new ListNode(-1);
+        // 将哑节点指向原链表的头节点
+        dummy.next = head;
+        // 使用cur指针追踪当前操作的节点
+        ListNode cur = dummy;
+        // 当当前节点的下一个节点及其下下个节点都不为空时，执行交换操作
+        while (cur.next != null && cur.next.next != null) {
+            // 分别获取当前节点的下两个节点
+            ListNode n1 = cur.next;
+            ListNode n2 = cur.next.next;
+            // 将当前节点指向下下个节点，实现第一步交换
+            cur.next = n2;
+            // 将第一个节点指向原第二个节点的下一个节点，完成第一对节点的交换
+            n1.next = n2.next;
+            // 将第二个节点指向第一个节点，完成交换
+            n2.next = n1;
+            // 将当前节点移动到刚交换的对的第一个节点
+            cur = n1;
+        }
+        // 返回交换后的链表头节点，即哑节点的下一个节点
+        return dummy.next;
+    }
+}
+```
+
+## 139. 单词拆分
+https://leetcode.cn/problems/word-break/description/?envType=study-plan-v2&envId=top-interview-150
+
+给你一个字符串 s 和一个字符串列表 wordDict 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+
+注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+ 
+
+示例 1：
+
+输入: s = "leetcode", wordDict = ["leet", "code"]
+
+输出: true
+
+解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
+
+示例 2：
+
+输入: s = "applepenapple", wordDict = ["apple", "pen"]
+
+输出: true
+
+解释: 返回 true 因为 "applepenapple" 可以由 "apple" "pen" "apple" 拼接成。
+     注意，你可以重复使用字典中的单词。
+
+示例 3：
+
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+
+输出: false
+ 
+
+提示：
+
+- 1 <= s.length <= 300
+- 1 <= wordDict.length <= 1000
+- 1 <= wordDict[i].length <= 20
+- s 和 wordDict[i] 仅由小写英文字母组成
+- wordDict 中的所有字符串 互不相同
+
+```java
+import java.util.List;
+import java.util.Set;
+
+public class Solution {
+        /**
+     * 检查字符串s是否可以被wordDict中的单词列表拆分。
+     * 
+     * @param s 待检查的字符串
+     * @param wordDict 单词列表，用于拆分字符串s
+     * @return 如果字符串s可以被拆分，则返回true；否则返回false。
+     */
+    public boolean wordBreak(String s, List<String> wordDict) {
+        // 将单词列表转换为集合，以便快速查找
+        Set<String> wordSet = new HashSet<>(wordDict);
+        // 获取字符串s的长度
+        int n = s.length();
+        
+        // dp数组，dp[i]表示字符串s的前i个字符是否可以被wordDict中的单词拆分
+        // dp[i] 表示前i个字符能否被拆分
+        boolean[] dp = new boolean[n + 1];
+        // 空字符串可以被看作是被有效拆分的
+        dp[0] = true;  // 空字符串可以被拆分
+        
+        // 遍历字符串s的每个字符，检查是否可以被拆分
+        for (int i = 1; i <= n; i++) {
+            // 尝试从0到i-1的每个位置作为拆分点
+            for (int j = 0; j < i; j++) {
+                // 如果前j个字符可以被拆分，并且第j个字符到第i个字符的子串也在wordDict中
+                if (dp[j] && wordSet.contains(s.substring(j, i))) {
+                    // 则字符串s的前i个字符可以被拆分
+                    dp[i] = true;
+                    // 找到一个有效的拆分点后，无需继续查找
+                    break;
+                }
+            }
+        }
+        // 返回整个字符串s是否可以被拆分
+        return dp[n];
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Test Cases
+        String s1 = "leetcode";
+        List<String> wordDict1 = List.of("leet", "code");
+        System.out.println(solution.wordBreak(s1, wordDict1));  // Output: true
+
+        String s2 = "applepenapple";
+        List<String> wordDict2 = List.of("apple", "pen");
+        System.out.println(solution.wordBreak(s2, wordDict2));  // Output: true
+
+        String s3 = "catsandog";
+        List<String> wordDict3 = List.of("cats", "dog", "sand", "and", "cat");
+        System.out.println(solution.wordBreak(s3, wordDict3));  // Output: false
+    }
+}
+```
+
+## 560. 和为K的子数组
+https://leetcode.cn/problems/subarray-sum-equals-k/description/
+
+给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
+
+子数组是数组中元素的连续非空序列。
+
+ 
+
+示例 1：
+
+输入：nums = [1,1,1], k = 2
+
+输出：2
+
+示例 2：
+
+输入：nums = [1,2,3], k = 3
+
+输出：2
+ 
+
+提示：
+
+- 1 <= nums.length <= 2 * 10^4
+- -1000 <= nums[i] <= 1000
+- -10^7 <= k <= 10^7
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class SubarraySumEqualsK {
+
+    /**
+     * 计算数组中和为k的连续子数组的数量。
+     * 通过维护一个前缀和的map，来记录每个前缀和出现的次数。
+     * 当遇到当前前缀和与k的差在map中存在时，说明存在一个或多个子数组的和为k。
+     * 
+     * @param nums 输入的整数数组
+     * @param k 目标子数组的和
+     * @return 和为k的连续子数组的数量
+     */
+    public int subarraySum(int[] nums, int k) {
+        // 初始化计数器，用于记录和为k的子数组数量
+        int count = 0;
+        // 初始化前缀和，用于计算当前位置的前缀和
+        int sum = 0;
+        // 初始化map，用于存储前缀和出现的次数，初始时包含前缀和为0的情况，出现次数为1
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+
+        // 遍历数组，计算每个位置的前缀和，并更新map
+        for (int i = 0; i < nums.length; i++) {
+            // 累加当前元素到前缀和
+            sum += nums[i];
+            // 如果当前前缀和减去k在map中存在，说明存在一个或多个子数组的和为k
+            if (map.containsKey(sum - k)) {
+                // 累加找到的和为k的子数组数量到计数器
+                count += map.get(sum - k);
+            }
+            // 更新map，记录当前前缀和出现的次数
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        
+        // 返回和为k的子数组数量
+        return count;
+    }
+
+    public static void main(String[] args) {
+        SubarraySumEqualsK solution = new SubarraySumEqualsK();
+        
+        int[] nums1 = {1, 1, 1};
+        int k1 = 2;
+        System.out.println(solution.subarraySum(nums1, k1)); // Output: 2
+        
+        int[] nums2 = {1, 2, 3};
+        int k2 = 3;
+        System.out.println(solution.subarraySum(nums2, k2)); // Output: 2
+    }
+}
+```
+
+## 209. 长度最小的子数组
+https://leetcode.cn/problems/minimum-size-subarray-sum/description/?envType=study-plan-v2&envId=top-interview-150
+
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其总和大于等于 target 的长度最小的 子数组
+[numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+
+
+示例 1：
+
+输入：target = 7, nums = [2,3,1,2,4,3]
+
+输出：2
+
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+
+示例 2：
+
+输入：target = 4, nums = [1,4,4]
+
+输出：1
+
+示例 3：
+
+输入：target = 11, nums = [1,1,1,1,1,1,1,1]
+
+输出：0
+
+
+提示：
+
+- 1 <= target <= 10^9
+- 1 <= nums.length <= 10^5
+- 1 <= nums[i] <= 10^5
+
+```java
+class Solution {
+    /**
+     * 计算最小连续子数组长度，使得子数组之和大于等于目标值target。
+     *
+     * @param target 目标值，需要找到的子数组最小和必须大于等于此值
+     * @param nums   整型数组，用于查找满足条件的子数组
+     * @return 返回最小连续子数组长度，如果找不到满足条件的子数组则返回0
+     */
+    public int minSubArrayLen(int target, int[] nums) {
+        // 初始化滑动窗口的左边界
+        int left = 0;
+        // 初始化窗口内元素之和
+        int sum = 0;
+        // 初始化结果变量，设置为最大整数，用于存储最小子数组长度
+        int result = Integer.MAX_VALUE;
+
+        // 遍历数组，更新滑动窗口
+        for (int right = 0; right < nums.length; right++) {
+            // 将当前元素加入窗口内和
+            sum += nums[right];
+
+            // 当窗口内和大于等于目标值时，更新最小子数组长度
+            while (sum >= target) {
+                result = Math.min(result, right - left + 1);
+                // 移除窗口左边界元素，缩小窗口
+                sum -= nums[left++];
+            }
+        }
+        // 如果结果仍为最大整数，表示未找到满足条件的子数组，返回0
+        return result == Integer.MAX_VALUE ? 0 : result;
+    }
+}
+```
+
+## 153. 寻找旋转排序数组中的最小值
+https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+
+已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
+- 若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]
+- 若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]
+
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+
+给你一个元素值 互不相同 的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
+
+你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [3,4,5,1,2]
+
+输出：1
+
+解释：原数组为 [1,2,3,4,5] ，旋转 3 次得到输入数组。
+
+示例 2：
+
+输入：nums = [4,5,6,7,0,1,2]
+
+输出：0
+
+解释：原数组为 [0,1,2,4,5,6,7] ，旋转 3 次得到输入数组。
+
+示例 3：
+
+输入：nums = [11,13,15,17]
+
+输出：11
+
+解释：原数组为 [11,13,15,17] ，旋转 4 次得到输入数组。
+ 
+
+提示：
+
+- n == nums.length
+- 1 <= n <= 5000
+- -5000 <= nums[i] <= 5000
+- nums 中的所有整数 互不相同
+- nums 原来是一个升序排序的数组，并进行了 1 至 n 次旋转
+
+```java
+/**
+ * 解决寻找旋转排序数组中的最小值的问题。
+ * 旋转排序数组是指原数组为非递减数组，将数组从某个位置分割成两部分，然后将两部分的顺序调换后形成的数组。
+ * 例如，原数组[0,1,2,4,5,6,7]在数字4处旋转后变为[4,5,6,7,0,1,2]。
+ */
+class Solution {
+    /**
+     * 寻找旋转排序数组中的最小值。
+     * 
+     * @param nums 一个旋转后的非递减排序数组
+     * @return 数组中的最小值
+     */
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        // 使用二分查找法定位最小值的位置
+        while (left < right) {
+            // 计算中间位置，避免整数溢出
+            int mid = left + (right - left) / 2;
+            // 如果中间位置的值大于最右边的值，说明最小值在mid右侧
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else {
+                // 否则，最小值在mid或其左侧
+                right = mid;
+            }
+        }
+        // 当left等于right时，找到最小值的位置
+        return nums[left];
+    }
+}
+```
+
 # 来源统计
 - https://codetop.cc/home

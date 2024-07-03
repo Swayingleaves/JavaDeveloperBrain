@@ -322,7 +322,7 @@ https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2
 
 - n == nums.length
 - 1 <= n <= 5 * 10^4
-- -109 <= nums[i] <= 109
+- -10^9 <= nums[i] <= 10^9
 
 进阶：尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题。
 
@@ -2048,7 +2048,7 @@ https://leetcode.cn/problems/minimum-size-subarray-sum/description/?envType=stud
 
 提示：
 
-- 1 <= target <= 109
+- 1 <= target <= 10^9
 - 1 <= nums.length <= 10^5
 - 1 <= nums[i] <= 10^5
 
@@ -3108,7 +3108,7 @@ https://leetcode.cn/problems/contains-duplicate-ii/description/?envType=study-pl
 提示：
 
 - 1 <= nums.length <= 10^5
-- -109 <= nums[i] <= 109
+- -10^9 <= nums[i] <= 10^9
 - 0 <= k <= 10^5
 
 ```java
@@ -3157,7 +3157,7 @@ https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=s
 提示：
 
 - 0 <= nums.length <= 10^5
-- -109 <= nums[i] <= 109
+- -10^9 <= nums[i] <= 10^9
 
 ```java
 class Solution {
@@ -4517,7 +4517,7 @@ https://leetcode.cn/problems/rotate-list/description/?envType=study-plan-v2&envI
 
 - 链表中节点的数目在范围 [0, 500] 内
 - -100 <= Node.val <= 100
-- 0 <= k <= 2 * 109
+- 0 <= k <= 2 * 10^9
 
 ```java
 class Solution {
@@ -5810,7 +5810,7 @@ https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description
 提示：
 
 - 树中节点数目在范围 [2, 10^5] 内。
-- -109 <= Node.val <= 109
+- -10^9 <= Node.val <= 10^9
 - 所有 Node.val 互不相同 。
 - p != q
 - p 和 q 均存在于给定的二叉树中。
@@ -9116,9 +9116,9 @@ https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-a
 提示：
 
 - 0 <= nums.length <= 10^5
-- -109 <= nums[i] <= 109
+- -10^9 <= nums[i] <= 10^9
 - nums 是一个非递减数组
-- -109 <= target <= 109
+- -10^9 <= target <= 10^9
 
 ```java
 /**
@@ -9592,7 +9592,7 @@ https://leetcode.cn/problems/find-k-pairs-with-smallest-sums/description/?envTyp
 提示:
 
 - 1 <= nums1.length, nums2.length <= 10^5
-- -109 <= nums1[i], nums2[i] <= 10^9
+- -10^9 <= nums1[i], nums2[i] <= 10^9
 - nums1 和 nums2 均为 升序排列
 - 1 <= k <= 10^4
 - k <= nums1.length * nums2.length
