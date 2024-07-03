@@ -1021,7 +1021,7 @@
 - #### <a href="数据结构和算法">动态规划</a> --todo
 - #### <a href="数据结构和算法">分治思想</a> --todo
 - #### <a href="数据结构和算法/leetcodetop150.md">leetcode_top_150</a>
-- #### <a href="数据结构和算法/top-code.md">热门算法</a>
+- #### <a href="数据结构和算法/hotcode.md">热门算法</a>
 - [LRU](数据结构和算法/LRU.md)
 - [LFU](数据结构和算法/LFU.md)
 - [加减乘除](数据结构和算法/加减乘除.md)
