@@ -23,10 +23,11 @@
 </thead>
 <tbody>
   <tr>
-    <th ><b>Java</b><a href="#java-基础部分">↓↓</a></th>
+    <th rowspan="1"><b>Java</b><a href="#java-基础部分">↓↓</a></th>
     <td ><a href="#java-基础部分">基础部分</a></td>
     <td ><a href="#java-jvm">JVM</a></td>
     <td ><a href="#java-多线程">多线程</a></td>
+    <td ></td>
     <td ></td>
   </tr>
   <tr>
@@ -96,6 +97,7 @@
     <td ><a href="#IO模型">IO模型</a></td>
     <td ><a href="#selectpollepoll">select-poll-epoll</a></td>
     <td ></td>
+    <td ></td>
   </tr>
   <tr>
     <th ><b>分布式相关</b><a href="#分布式相关">↓↓</a></th>
@@ -106,50 +108,61 @@
     <td ><a href="#一致性算法">一致性算法</a></td>
   </tr>
   <tr>
-    <th ><b>架构</b><a href="#架构">↓↓</a></th>
+    <th rowspan="1"><b>架构</b><a href="#架构">↓↓</a></th>
     <td ><a href="#系统设计">系统设计</a></td>
     <td ><a href="#计算和储存分离">计算和储存分离</a></td>
     <td ><a href="#DDD领域驱动设计">DDD领域驱动设计</a></td>
     <td ></td>
+    <td ></td>
   </tr>
   <tr>
-    <th ><b>容器技术</b><a href="#容器技术">↓↓</a></th>
+    <th rowspan="1"><b>容器技术</b><a href="#容器技术">↓↓</a></th>
     <td ><a href="#docker">Docker</a></td>
     <td ><a href="#kubernetes">Kubernetes</a></td>
     <td ></td>
     <td ></td>
+    <td ></td>
   </tr>
   <tr>
-    <th rowspan="2"><b>数据结构和算法</b><a href="#数据结构和算法">↓↓</a></th>
+    <th rowspan="3"><b>数据结构和算法</b><a href="#数据结构和算法">↓↓</a></th>
     <td ><a href="#排序算法">排序算法</a></td>
     <td ><a href="#树相关">树相关</a></td>
     <td ><a href="#BFS">BFS</a></td>
     <td ><a href="#DFS">DFS</a></td>
     <td ><a href="#回溯算法">回溯算法</a></td>
   </tr>
- <tr>
-    <td ><a href="#二分法">二分法</a></td>
-    <td ><a href="#贪心算法">贪心算法</a></td>
-    <td ><a href="#动态规划">动态规划</a></td>
-    <td ><a href="#分治思想">分治思想</a></td>
-    <td ><a href="#数据结构和算法">leetcode_top_150</a></td>
+    <tr>
+        <td ><a href="#二分法">二分法</a></td>
+        <td ><a href="#贪心算法">贪心算法</a></td>
+        <td ><a href="#动态规划">动态规划</a></td>
+        <td ><a href="#分治思想">分治思想</a></td>
+        <td ><a href="#数据结构和算法">leetcode_top_150</a></td>
+    </tr>
+    <tr>
+        <td ><a href="#数据结构和算法">热门常考算法</a></td>
+        <td ></td>
+        <td ></td>
+        <td ></td>
+        <td ></td>
+    </tr>
+  <tr>
+    <th rowspan="1"><b>设计模式</b><a href="#设计模式">↓↓</a></th>
+    <td ></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
+    <td ></td>
   </tr>
   <tr>
-    <th ><b>设计模式</b><a href="#设计模式">↓↓</a></th>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-  </tr>
-  <tr>
-    <th ><b>大数据</b><a href="#大数据">↓↓</a></th>
+    <th rowspan="1"><b>大数据</b><a href="#大数据">↓↓</a></th>
     <td ><a href="#hadoop">Hadoop</a></td>
     <td ><a href="#hive">Hive</a></td>
     <td ><a href="#spark">Spark</a></td>
     <td ><a href="#flink">Flink</a></td>
+    <td ></td>
   </tr>
   <tr>
-    <th ><b>面试</b><a href="#面试解答">↓↓</a></th>
+    <th rowspan="1"><b>面试</b><a href="#面试解答">↓↓</a></th>
     <td ><a href="#职业规划和学习习惯">职业规划和学习习惯</a></td>
     <td ><a href="#场景设计">场景设计</a></td>
     <td ><a href="#智力题">智力题</a></td>
