@@ -155,7 +155,6 @@ public ListNode reverseList(ListNode head) {
     head.next.next = head; 
     // 将当前节点的next置空，避免与原链表相连
     head.next = null; 
-    // 返回反转后的头节点（原本是尾节点）
     return p; 
 }
 ```
