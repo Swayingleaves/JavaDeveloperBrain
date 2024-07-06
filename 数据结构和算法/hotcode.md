@@ -707,57 +707,81 @@ https://leetcode.cn/problems/sort-an-array/description/
 
 ```java
 /**
- * 此类提供了一个用于对整数数组进行排序的解决方案。
+ * 使用随机化快速排序算法对数组进行排序。
+ * 该类的主要功能是提供一个排序方法sortArray，它使用随机化选择的枢轴元素来提高排序效率。
  */
 class Solution {
     /**
-     * 对给定的整数数组进行快速排序并返回排序后的数组。
-     *
-     * @param nums 输入的整数数组，可以为空或长度为0
-     * @return 排序后的整数数组，如果输入数组为空则返回null
+     * 对给定数组进行随机化快速排序。
+     * 
+     * @param nums 输入的整数数组。
+     * @return 排序后的整数数组。
      */
     public int[] sortArray(int[] nums) {
-        if(nums == null || nums.length ==0){
-            return null;
-        }
-        quickSort(0, nums.length-1, nums);
+        // 通过递归调用help函数对数组进行随机化快速排序
+        help(nums, 0, nums.length - 1);
         return nums;
     }
 
     /**
-     * 私有辅助方法，实现快速排序算法。
-     *
-     * @param start 起始索引，包含
-     * @param end 结束索引，不包含
-     * @param nums 待排序的整数数组
+     * 辅助函数，用于执行随机化快速排序。
+     * 
+     * @param nums 输入的整数数组。
+     * @param l    当前子数组的左边界。
+     * @param r    当前子数组的右边界。
      */
-    private void quickSort(int start, int end, int[] nums){
-        if(start >= end){
-            return;
+    void help(int[] nums, int l, int r) {
+        // 当左边界小于右边界时，执行排序
+        if (l < r) {
+            // 通过调用part函数选择枢轴元素，并重新组织数组
+            int p = part(nums, l, r);
+            // 对枢轴元素左侧的子数组进行递归调用
+            help(nums, l, p - 1);
+            // 对枢轴元素右侧的子数组进行递归调用
+            help(nums, p + 1, r);
         }
-        int left = start, right = end;
-        int pivot = nums[(start+end)/2]; // 选择中间元素作为基准值
+    }
 
-        // 分区操作，将小于基准值的元素移到左边，大于基准值的元素移到右边
-        while(left <= right){
-            while(left <= right && nums[left] < pivot){
-                left++;
-            }
-            while(left <= right && nums[right] > pivot){
-                right--;
-            }
-            if(left <= right){
-                int temp = nums[left];
-                nums[left] = nums[right];
-                nums[right] = temp;
-                left++;
-                right--;
+    /**
+     * 选择一个随机的枢轴元素，并根据枢轴元素的值重新组织数组。
+     * 
+     * @param nums 输入的整数数组。
+     * @param l    当前子数组的左边界。
+     * @param r    当前子数组的右边界。
+     * @return 枢轴元素的最终位置。
+     */
+    int part(int[] nums, int l, int r) {
+        // 随机选择一个位置作为枢轴元素
+        int random = new Random().nextInt(r - l + 1) + l;
+        swap(nums, l, random);
+        // 用枢轴元素的值初始化索引位置
+        int index = nums[l];
+        int lt = l;
+        // 遍历数组，将小于枢轴元素的值移到左侧
+        for (int i = l + 1; i <= r; i++) {
+            if (nums[i] < index) {
+                swap(nums, i, ++lt);
             }
         }
+        // 将枢轴元素放到正确的位置上
+        swap(nums, l, lt);
+        return lt;
+    }
 
-        // 递归地对左右两个子区间进行快速排序
-        quickSort(start, right, nums);
-        quickSort(left, end, nums);
+    /**
+     * 交换数组中两个位置的元素。
+     * 
+     * @param nums 输入的整数数组。
+     * @param a    需要交换的第一个位置。
+     * @param b    需要交换的第二个位置。
+     */
+    void swap(int[] nums, int a, int b) {
+        // 临时存储nums[a]的值
+        int temp = nums[a];
+        // 将nums[a]的值替换为nums[b]的值
+        nums[a] = nums[b];
+        // 将nums[b]的值替换为temp的值，即原来nums[a]的值
+        nums[b] = temp;
     }
 }
 ```
