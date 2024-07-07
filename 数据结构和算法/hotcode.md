@@ -1861,18 +1861,14 @@ class Solution {
         // next节点用于临时存储cur的下一个节点，以备反转使用
         ListNode next = null;
         // 依次反转从left到right的节点
-        //1-2-3-4
         for(int i = left;i<right;i++){
             // 保存cur的下一个节点
             next = cur.next;
             // 将cur的next指向下一个的下一个节点，为反转做准备
-            //1-2-4 3-4
             cur.next = next.next;
             // 将next的next指向pre的next，即原本cur的位置，完成一次节点反转
-            //1-2-4 3-2
             next.next = pre.next;
             // 将pre的next指向next，完成反转区间的连接
-            //1-3-2-4
             pre.next = next;
         }
         // 返回反转后的链表头节点
