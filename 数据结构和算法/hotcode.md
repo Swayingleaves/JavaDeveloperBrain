@@ -1909,36 +1909,58 @@ https://leetcode.cn/problems/spiral-matrix/description/?envType=study-plan-v2&en
 - -100 <= matrix[i][j] <= 100
 
 ```java
+/**
+ * 解决方案类，提供矩阵螺旋遍历的功能。
+ */
 class Solution {
+    /**
+     * 对给定的二维矩阵进行螺旋遍历，并返回遍历结果的顺序。
+     * 
+     * @param matrix 二维整数数组，代表待遍历的矩阵。
+     * @return 返回一个整数列表，包含矩阵螺旋遍历的顺序。
+     */
     public List<Integer> spiralOrder(int[][] matrix) {
         List<Integer> res = new ArrayList<>();
-        int m =matrix.length;
-        int n = matrix[0].length;
-        int left = 0,right = n-1,top = 0,boom = m-1;
-        int cnt = m*n;
-        while(cnt>=1){
-            for(int i=left;i<=right && cnt>=1;i++){
+        if (matrix == null || matrix.length == 0) {
+            return res;
+        }
+        
+        int m = matrix.length;  // 矩阵的行数
+        int n = matrix[0].length;  // 矩阵的列数
+        int left = 0, right = n - 1, top = 0, bottom = m - 1;  // 定义矩阵的四个边界
+        int cnt = m * n;  // 计数器，用于记录剩余元素的数量
+        
+        while (cnt >= 1) {
+            // 从左到右遍历上边 这一步骤是遍历top上边界
+            for (int i = left; i <= right && cnt >= 1; i++) {
                 res.add(matrix[top][i]);
                 cnt--;
             }
             top++;
-            for(int i=top;i<=boom&& cnt>=1;i++){
+            
+            // 从上到下遍历右边 这一步骤是遍历right右边界
+            for (int i = top; i <= bottom && cnt >= 1; i++) {
                 res.add(matrix[i][right]);
                 cnt--;
             }
             right--;
-            for(int i=right;i>=left&& cnt>=1;i--){
-                res.add(matrix[boom][i]);
+            
+            // 从右到左遍历下边 这步骤是遍历bottom下边界
+            for (int i = right; i >= left && cnt >= 1; i--) {
+                res.add(matrix[bottom][i]);
                 cnt--;
             }
-            boom--;
-            for(int i=boom;i>=top&& cnt>=1;i--){
+            bottom--;
+            
+            // 从下到上遍历左边 这步骤是遍历left左边界
+            for (int i = bottom; i >= top && cnt >= 1; i--) {
                 res.add(matrix[i][left]);
                 cnt--;
             }
             left++;
         }
-        return res; 
+        
+        return res;
     }
 }
 ```
