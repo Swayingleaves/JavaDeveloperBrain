@@ -1250,31 +1250,52 @@ https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v
 
 ```java
 class Solution {
-  public boolean isValid(String s) {
-    if(s == null || s.length()%2!=0){
-      return false;
-    }
-    Map<Character,Character> map = new HashMap<>(){
-      {
-        put(')','(');
-        put('}','{');
-        put(']','[');
-      }
-    };
-    Deque<Character> dq = new LinkedList<>();
-    for(int i=0;i<s.length();i++){
-      char c = s.charAt(i);
-      if(map.containsKey(c)){
-        if(dq.isEmpty() || map.get(c) != dq.peek()){
-          return false;
+    /**
+     * 检查字符串s是否为有效的括号字符串。
+     * 有效的括号字符串是指括号完全匹配的字符串，即每个左括号都有对应的右括号，且左右括号的顺序正确。
+     *
+     * @param s 输入的字符串，包含括号字符
+     * @return 如果字符串是有效的括号字符串，返回true；否则返回false
+     */
+    public boolean isValid(String s) {
+        // 如果字符串为空或长度为奇数，则不可能是有效的括号字符串
+        if (s == null || s.length() % 2 != 0) {
+            return false;
         }
-        dq.pop();
-      }else{
-        dq.push(c);
-      }
+        
+        // 使用哈希表存储括号的对应关系
+        Map<Character, Character> map = new HashMap<>(){
+            {
+                put(')', '(');
+                put('}', '{');
+                put(']', '[');
+            }
+        };
+        
+        // 使用双端队列来处理括号匹配
+        Deque<Character> dq = new LinkedList<>();
+        
+        // 遍历字符串中的每个字符
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            
+            // 如果当前字符是右括号，则检查队列顶部的左括号是否匹配
+            if (map.containsKey(c)) {
+                // 如果队列为空或队列顶部的左括号与当前右括号不匹配，则字符串无效
+                if (dq.isEmpty() || map.get(c) != dq.peek()) {
+                    return false;
+                }
+                // 匹配成功，弹出队列顶部的左括号
+                dq.pop();
+            } else {
+                // 如果当前字符是左括号，则将其压入队列
+                dq.push(c);
+            }
+        }
+        
+        // 如果队列为空，则说明所有括号都正确匹配，字符串有效
+        return dq.isEmpty();
     }
-    return dq.isEmpty();
-  }
 }
 ```
 
