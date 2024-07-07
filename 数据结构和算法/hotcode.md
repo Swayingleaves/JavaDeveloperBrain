@@ -2257,15 +2257,33 @@ https://leetcode.cn/problems/intersection-of-two-linked-lists/description/
  * }
  */
 public class Solution {
+    /**
+     * 获取两个链表的交点节点。
+     * 本方法通过让两个指针分别从两个链表的头部开始遍历，当一个指针到达链表尾部时，
+     * 它会切换到另一个链表继续遍历。由于两个链表在某个点可能相交，因此，
+     * 当两个指针都遍历到链表的交点时，它们将指向同一个节点。
+     * 如果两个链表没有交点，那么两个指针最终都会到达另一个链表的尾部，此时返回null。
+     *
+     * @param headA 第一个链表的头部节点。
+     * @param headB 第二个链表的头部节点。
+     * @return 返回两个链表的交点节点，如果没有交点，则返回null。
+     */
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        // 检查输入的链表头是否为空，如果有一个为空，则直接返回null，表示没有交点
         if(headA == null || headB == null){
             return null;
         }
+        // 初始化两个指针pa和pb，分别指向两个链表的头部
         ListNode pa = headA,pb = headB;
+        // 当两个指针指向不同的节点时，循环继续
         while(pa != pb){
+            // 如果pa到达了链表A的尾部，将它重置为链表B的头部，继续遍历
             pa = pa == null? headB:pa.next;
+            // 如果pb到达了链表B的尾部，将它重置为链表A的头部，继续遍历
             pb = pb == null? headA:pb.next;
         }
+        // 当循环结束时，pa和pb要么同时为null，要么指向相同的节点，即为链表的交点
+        // 如果没有交点，pa和pb都会遍历到另一个链表的尾部变为null
         return pa;
     }
 }
