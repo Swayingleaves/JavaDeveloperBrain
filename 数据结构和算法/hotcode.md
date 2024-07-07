@@ -1801,7 +1801,7 @@ https://leetcode.cn/problems/reverse-linked-list-ii/description/?envType=study-p
 
 >示例 1：
 >
->![翻转链表2.png](..>%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A82.>png)
+>![翻转链表2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A82.png)
 >
 >输入：head = [1,2,3,4,5], left = 2, right = 4
 >
