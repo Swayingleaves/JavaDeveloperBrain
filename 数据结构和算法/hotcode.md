@@ -1832,26 +1832,50 @@ https://leetcode.cn/problems/reverse-linked-list-ii/description/?envType=study-p
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+/**
+ * 反转链表中指定范围的节点。
+ * 通过创建一个虚拟节点dummy来简化链表操作，避免处理空链表的特殊情况。
+ * 使用pre指针来追踪需要反转的区间之前的节点，cur指针用于反转操作，next指针用于临时存储cur的下一个节点。
+ */
 class Solution {
+    /**
+     * 反转链表中从left到right的节点。
+     * 
+     * @param head 链表的头节点
+     * @param left 需要反转的起始位置
+     * @param right 需要反转的结束位置
+     * @return 反转后的链表头节点
+     */
     public ListNode reverseBetween(ListNode head, int left, int right) {
+        // 创建一个虚拟节点作为反转操作的起点
         ListNode dummy = new ListNode();
         dummy.next = head;
+        // pre节点用于指向反转区间的前一个节点
         ListNode pre = dummy;
+        // 将pre移动到需要反转区间的前一个位置
         for(int i=1;i<left;i++){
             pre = pre.next;
         }
+        // cur节点指向需要反转区间的起始节点
         ListNode cur = pre.next;
+        // next节点用于临时存储cur的下一个节点，以备反转使用
         ListNode next = null;
+        // 依次反转从left到right的节点
         //1-2-3-4
         for(int i = left;i<right;i++){
+            // 保存cur的下一个节点
             next = cur.next;
+            // 将cur的next指向下一个的下一个节点，为反转做准备
             //1-2-4 3-4
             cur.next = next.next;
+            // 将next的next指向pre的next，即原本cur的位置，完成一次节点反转
             //1-2-4 3-2
             next.next = pre.next;
+            // 将pre的next指向next，完成反转区间的连接
             //1-3-2-4
             pre.next = next;
         }
+        // 返回反转后的链表头节点
         return dummy.next;
     }
 }
