@@ -2415,32 +2415,63 @@ L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+/**
+ * 解决列表重排问题的类。
+ * 通过找到中点，将列表分为两部分，反转后半部分，然后合并两部分来实现列表的重排。
+ */
 class Solution {
+    /**
+     * 重新排列给定的单链表。
+     * 
+     * @param head 单链表的头节点。
+     */
     public void reorderList(ListNode head) {
+        // 如果链表为空，则无需操作
         if(head==null){
             return;
         }
+        // 找到链表的中点
         ListNode mid = findMid(head);
+        // 初始化两个指针，分别指向前半部分和后半部分的起始位置
         ListNode head1 = head;
         ListNode head2 = mid.next;
+        // 反转后半部分链表
         head2 = reverse(head2);
+        // 断开中点连接，为合并做准备
         mid.next = null;
-        mergeTwo(head1,head2);
+        // 合并两个链表
+        mergeTwo(head1, head2);
     }
 
+    /**
+     * 找到单链表的中点节点。
+     * 使用快慢指针法，快指针每次走两步，慢指针每次走一步，当快指针到达末尾时，慢指针位于中点。
+     * 
+     * @param head 单链表的头节点。
+     * @return 单链表的中点节点。
+     */
     public ListNode findMid(ListNode head){
         ListNode fast = head.next;
         ListNode slow = head;
-        while(fast != null && fast.next !=null){
+        while(fast != null && fast.next != null){
             fast = fast.next.next;
             slow = slow.next;
         }
         return slow;
     }
 
+    /**
+     * 反转单链表。
+     * 通过迭代方式反转链表，每次将当前节点的next指向前一个节点，然后移动到下一个节点，直到链表结束。
+     * 
+     * @param head 需要反转的链表的头节点。
+     * @return 反转后的链表的头节点。
+     */
     public ListNode reverse(ListNode head){
-        ListNode pre = null,next = null,cur = head;
-        while(cur!=null){
+        ListNode pre = null;
+        ListNode next = null;
+        ListNode cur = head;
+        while(cur != null){
             next = cur.next;
             cur.next = pre;
             pre = cur;
@@ -2449,9 +2480,17 @@ class Solution {
         return pre;
     }
 
-    public void mergeTwo(ListNode head1,ListNode head2){
-        ListNode l1 = null,l2=null;
-        while(head1!=null && head2!=null){
+    /**
+     * 合并两个链表。
+     * 将第二个链表的节点依次插入到第一个链表的间隔节点中，形成重排后的链表。
+     * 
+     * @param head1 第一个链表的头节点。
+     * @param head2 第二个链表的头节点。
+     */
+    public void mergeTwo(ListNode head1, ListNode head2){
+        ListNode l1 = null;
+        ListNode l2 = null;
+        while(head1 != null && head2 != null){
             l1 = head1.next;
             l2 = head2.next;
             head1.next = head2;
