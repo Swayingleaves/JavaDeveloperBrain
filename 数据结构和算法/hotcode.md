@@ -2575,6 +2575,31 @@ class Solution {
     }
 }
 ```
+单调栈解法，横向求解
+```java
+class Solution {
+    public int trap(int[] height) {
+        //4,2,0,3,2,5
+        int ans = 0;
+        Deque<Integer> stack = new LinkedList<Integer>();
+        int n = height.length;
+        for (int i = 0; i < n; ++i) {
+            while (!stack.isEmpty() && height[i] > height[stack.peek()]) {
+                int top = stack.pop();
+                if (stack.isEmpty()) {
+                    break;
+                }
+                int left = stack.peek();
+                int currWidth = i - left - 1;
+                int currHeight = Math.min(height[left], height[i]) - height[top];
+                ans += currWidth * currHeight;
+            }
+            stack.push(i);
+        }
+        return ans;
+    }
+}
+```
 
 ## 142. 环形链表 II
 https://leetcode.cn/problems/linked-list-cycle-ii/description/
