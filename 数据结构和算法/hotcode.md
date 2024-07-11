@@ -2674,6 +2674,7 @@ public class Solution {
             fast = fast.next.next;
             slow = slow.next;
             if(slow==fast){
+                //从链表的头部到环的入口的距离，等于从快慢指针相遇点到环的入口的距离
                 while(root!=slow){
                     slow = slow.next;
                     root = root.next;
