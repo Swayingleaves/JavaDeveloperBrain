@@ -2932,15 +2932,17 @@ class Solution {
         for(int i=1;i<=m;i++){
             for(int j=1;j<=n;j++){
                 // 计算三种操作（插入、删除、替换）对应的编辑距离
-                int left = dp[i-1][j]+1;
-                int down = dp[i][j-1]+1;
-                int left_down = dp[i-1][j-1];
+                //从 w1[i] -> w2[j] 增加或删除需要的步骤为 w1[i-1]+1 同理反向 w2[j] -> w1[i] 增加或删除需要的步骤为 w2[j-1]+1
+                int add = dp[i-1][j]+1;
+                int del = dp[i][j-1]+1;
+                // w1[i] -> w2[j] 如果当前字符相同，则不需要替换操作 如果不同则需要上一个最小步骤 +1
+                int mod = dp[i-1][j-1];
                 // 如果当前字符不相同，则需要进行替换操作，因此编辑距离加1
                 if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
-                    left_down += 1;
+                    mod += 1;
                 }
                 // 取三种操作中的最小值作为dp[i][j]的值
-                dp[i][j] = Math.min(left,Math.min(down,left_down));   
+                dp[i][j] = Math.min(add,Math.min(del,mod));   
             }
         }
 
