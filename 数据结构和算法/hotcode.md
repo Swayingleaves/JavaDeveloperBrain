@@ -2999,39 +2999,25 @@ https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/?envTy
  * }
  */
 class Solution {
-    /**
-     * 删除链表中倒数第n个节点
-     * @param head 链表的头节点
-     * @param n 要删除的节点距离末尾的索引，n为1时删除最后一个节点
-     * @return 处理后的链表头节点
-     */
     public ListNode removeNthFromEnd(ListNode head, int n) {
-        // 创建一个虚拟头节点，方便处理边界情况
-        ListNode dummy = new ListNode();
-        dummy.next = head;
-
-        // 使用快慢指针，快指针先走n步，然后同时移动，直到快指针到达末尾
+        ListNode dummy = new ListNode(0, head);
         ListNode fast = head;
-        ListNode slow = head;
-        while(fast != null && n-- > 0) {
+        ListNode slow = dummy;
+        //先让fast 先走n步
+        for (int i = 0; i < n; ++i) {
             fast = fast.next;
         }
-        
-        // 此时慢指针指向要删除节点的前一个节点
-        ListNode pre = dummy;
-        while(fast != null) {
-            pre = slow;
+        // fast 为空时 slow的next就是倒数第n个节点
+        while (fast != null) {
             fast = fast.next;
             slow = slow.next;
         }
-
-        // 删除节点，将前一个节点的next指向要删除节点的下一个节点
-        pre.next = slow.next;
-
-        // 返回处理后的链表头节点
-        return dummy.next;
+        slow.next = slow.next.next;
+        ListNode ans = dummy.next;
+        return ans;
     }
 }
+
 ```
 
 ## 93. 复原IP地址
