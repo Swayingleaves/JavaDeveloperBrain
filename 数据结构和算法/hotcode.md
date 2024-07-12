@@ -2999,22 +2999,34 @@ https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/?envTy
  * }
  */
 class Solution {
+    /**
+     * 从单链表的末尾开始数第n个节点，并移除该节点。
+     * 
+     * @param head 链表的头节点
+     * @param n    需要移除的节点位置，从末尾开始计数
+     * @return 返回修改后的链表的头节点
+     */
     public ListNode removeNthFromEnd(ListNode head, int n) {
+        // 使用哑节点dummy来简化链表操作，避免处理头节点移除的特殊情况
         ListNode dummy = new ListNode(0, head);
         ListNode fast = head;
         ListNode slow = dummy;
-        //先让fast 先走n步
+        
+        // 将fast指针向前移动n个位置，为后续同步移动做准备
         for (int i = 0; i < n; ++i) {
             fast = fast.next;
         }
-        // fast 为空时 slow的next就是倒数第n个节点
+
+        // 使用快慢指针法，fast每次移动一步，slow每次移动一步，直到fast到达末尾
         while (fast != null) {
             fast = fast.next;
             slow = slow.next;
         }
+        
+        // 此时slow指向需要移除的节点的前一个节点，将其next指向下一个节点的下一个节点，实现移除操作
         slow.next = slow.next.next;
-        ListNode ans = dummy.next;
-        return ans;
+        // 返回修改后的链表的头节点，即dummy的下一个节点
+        return dummy.next;
     }
 }
 
