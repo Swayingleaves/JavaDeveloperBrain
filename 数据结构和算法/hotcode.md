@@ -3325,7 +3325,7 @@ https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/description/?
 
 >示例 2：
 >
->[删除排序链表中的重复元素2-2.png](..%2Fimg%2F%E7%AE%97%E6%B3%95%2F%E5%88%A0%E9%99%A4%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A02-2.png)
+> ![alt text](../img/数据结构和算法/删除排序链表中的重复元素2.png)
 >
 >输入：head = [1,1,1,2,3]
 >
