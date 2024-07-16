@@ -3686,55 +3686,64 @@ https://leetcode.cn/problems/median-of-two-sorted-arrays/description/?envType=st
 ```java
 class Solution {
     /**
-     * 寻找两个正序数组的中位数。
-     * 使用二分查找法降低时间复杂度至O(log(min(m, n)))，其中m和n分别是两个数组的长度。
-     *
-     * @param nums1 第一个正序数组
-     * @param nums2 第二个正序数组
-     * @return 两个数组合并后的中位数
+     * 寻找两个有序数组的中位数。
+     * 通过二分查找的方式寻找中位数，避免了合并数组的需要。
+     * 
+     * @param nums1 第一个有序数组
+     * @param nums2 第二个有序数组
+     * @return 两个数组的中位数
      */
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        // 确保nums1是较短的数组，优化二分查找过程
-        if (nums1.length > nums2.length) {
-            int[] temp = nums1;
-            nums1 = nums2;
-            nums2 = temp;
+        int n = nums1.length;
+        int m = nums2.length;
+        int left = (n + m + 1) / 2;
+        int right = (n + m + 2) / 2;
+        // 由于中位数是两个数组合并后的中位数，因此left和right分别代表合并后的数组的第left和right个元素（半数中位数的情况）
+        // 将偶数和奇数的情况合并，如果是奇数，会求两次同样的 k 。
+        return (getKth(nums1, 0, n - 1, nums2, 0, m - 1, left) + getKth(nums1, 0, n - 1, nums2, 0, m - 1, right)) * 0.5;
+    }
+
+    /**
+     * 获取两个有序数组中的第k小的元素。
+     * 该方法通过二分查找的方式在两个有序数组中找到第k小的元素，用于支持findMedianSortedArrays方法。
+     * 
+     * @param nums1 第一个有序数组
+     * @param start1 nums1的起始索引
+     * @param end1 nums1的结束索引
+     * @param nums2 第二个有序数组
+     * @param start2 nums2的起始索引
+     * @param end2 nums2的结束索引
+     * @param k 需要找到的第k小的元素的索引
+     * @return 第k小的元素
+     */
+    private int getKth(int[] nums1, int start1, int end1, int[] nums2, int start2, int end2, int k) {
+        int len1 = end1 - start1 + 1;
+        int len2 = end2 - start2 + 1;
+        // 为了简化逻辑，让len1始终小于等于len2，如果len1大于len2，则交换两个数组的角色
+        //让 len1 的长度小于 len2，这样就能保证如果有数组空了，一定是 len1 
+        if (len1 > len2) {
+            return getKth(nums2, start2, end2, nums1, start1, end1, k);
+        }
+        if (len1 == 0) {
+            // 如果nums1为空，则nums2中的第k个元素就是答案
+            return nums2[start2 + k - 1];
         }
 
-        int x = nums1.length;
-        int y = nums2.length;
-        int low = 0;
-        int high = x;
-
-        while (low <= high) {
-            int partitionX = (low + high) / 2;
-            int partitionY = (x + y + 1) / 2 - partitionX;
-
-            // 寻找左右两侧边界值，注意处理边界情况
-            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : nums1[partitionX - 1];
-            int minRightX = (partitionX == x) ? Integer.MAX_VALUE : nums1[partitionX];
-
-            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : nums2[partitionY - 1];
-            int minRightY = (partitionY == y) ? Integer.MAX_VALUE : nums2[partitionY];
-
-            // 检查划分是否满足条件
-            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
-                // 找到正确的划分，计算中位数
-                if ((x + y) % 2 == 0) {
-                    return ((double)Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2;
-                } else {
-                    return (double)Math.max(maxLeftX, maxLeftY);
-                }
-            } else if (maxLeftX > minRightY) {
-                // 缩小nums1的查找范围
-                high = partitionX - 1;
-            } else {
-                // 扩大nums1的查找范围
-                low = partitionX + 1;
-            }
+        if (k == 1) {
+            // 如果k为1，直接返回两个数组的起始元素中的较小值
+            return Math.min(nums1[start1], nums2[start2]);
         }
 
-        throw new IllegalArgumentException("Input arrays are not sorted or not valid.");
+        int i = start1 + Math.min(len1, k / 2) - 1;
+        int j = start2 + Math.min(len2, k / 2) - 1;
+
+        if (nums1[i] > nums2[j]) {
+            // 如果nums1中的第i个元素大于nums2中的第j个元素，则在nums1的前i个元素和nums2的第j+1到末尾的元素中寻找第k-(j-start2+1)小的元素
+            return getKth(nums1, start1, end1, nums2, j + 1, end2, k - (j - start2 + 1));
+        } else {
+            // 反之，在nums1的第i+1到末尾的元素和nums2的前j个元素中寻找第k-(i-start1+1)小的元素
+            return getKth(nums1, i + 1, end1, nums2, start2, end2, k - (i - start1 + 1));
+        }
     }
 }
 ```
