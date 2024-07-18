@@ -4292,17 +4292,6 @@ class Solution {
 
         return dp[n]; // 返回到达第n阶台阶的方法数
     }
-
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-
-        // Test Cases
-        int n1 = 2;
-        System.out.println(solution.climbStairs(n1)); // Output: 2
-
-        int n2 = 3;
-        System.out.println(solution.climbStairs(n2)); // Output: 3
-    }
 }
 ```
 
