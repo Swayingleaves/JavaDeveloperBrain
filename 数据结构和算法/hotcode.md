@@ -3733,12 +3733,13 @@ class Solution {
             // 如果k为1，直接返回两个数组的起始元素中的较小值
             return Math.min(nums1[start1], nums2[start2]);
         }
-
+        //求中位数可以转换为求 k大的数 又可以转换为每次排除掉 k/2个元素
         int i = start1 + Math.min(len1, k / 2) - 1;
         int j = start2 + Math.min(len2, k / 2) - 1;
 
         if (nums1[i] > nums2[j]) {
-            // 如果nums1中的第i个元素大于nums2中的第j个元素，则在nums1的前i个元素和nums2的第j+1到末尾的元素中寻找第k-(j-start2+1)小的元素
+            // 如果nums1中的第i个元素大于nums2中的第j个元素，则中位数在nums1的前i个元素中，同时排除掉 num2的前j个元素
+            //下一次寻找就变成了在 (k-j) 个元素中寻找
             return getKth(nums1, start1, end1, nums2, j + 1, end2, k - (j - start2 + 1));
         } else {
             // 反之，在nums1的第i+1到末尾的元素和nums2的前j个元素中寻找第k-(i-start1+1)小的元素
@@ -3877,16 +3878,6 @@ https://leetcode.cn/problems/sort-list/description/?envType=study-plan-v2&envId=
 - -10^5 <= Node.val <= 10^5
 
 ```java
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
 /**
  * Definition for singly-linked list.
  * public class ListNode {
