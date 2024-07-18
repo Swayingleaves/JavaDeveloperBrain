@@ -4308,7 +4308,7 @@ https://leetcode.cn/problems/add-two-numbers/description/?envType=study-plan-v2&
 
 >示例 1：
 >
->![链表-两数相加.png](..>%2Fimg%2F%CB%E3%B7%A8%2F%C1%B4%B1%ED-%C1%BD%CA%FD%CF%E0%BC%D3.png)
+>![链表-两数相加.png](..%2Fimg%2F%CB%E3%B7%A8%2F%C1%B4%B1%ED-%C1%BD%CA%FD%CF%E0%BC%D3.png)
 >
 >输入：l1 = [2,4,3], l2 = [5,6,4]
 >
