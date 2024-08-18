@@ -46,6 +46,7 @@
     <td ><a href="#TCP怎么保障可靠传输">TCP怎么保障可靠传输</a></td>
     <td ><a href="#HTTPS">HTTPS</a></td>
     <td ><a href="#HTTP面试题">HTTP面试题</a></td>
+    <td ><a href="#TLS">TLS</a></td>
     <td ></td>
     <td ></td>
   </tr>
@@ -418,22 +419,6 @@
 - [网络协议分层](计算机网络/网络协议分层.md)
     * [OSI 7层(基本只是拿来作比较)](计算机网络/网络协议分层.md#osi-7层基本只是拿来作比较)
     * [TCP/IP 5(4)层](计算机网络/网络协议分层.md#tcpip-54层)
-        * [应用层](计算机网络/网络协议分层.md#应用层)
-            * [常见的协议](计算机网络/网络协议分层.md#常见的协议)
-                * [域名系统](计算机网络/网络协议分层.md#域名系统)
-                * [文件传送协议](计算机网络/网络协议分层.md#文件传送协议)
-                * [SMTP电子邮件协议](计算机网络/网络协议分层.md#smtp电子邮件协议)
-                * [远程登录协议](计算机网络/网络协议分层.md#远程登录协议)
-        * [传输层](计算机网络/网络协议分层.md#传输层)
-            * [常见的协议](计算机网络/网络协议分层.md#常见的协议-1)
-                * [TCP](计算机网络/网络协议分层.md#tcp)
-                * [UDP](计算机网络/网络协议分层.md#udp)
-        * [网络层](计算机网络/网络协议分层.md#网络层)
-        * [数据链路层](计算机网络/网络协议分层.md#数据链路层)
-            * [封装成帧](计算机网络/网络协议分层.md#封装成帧)
-            * [透明传输](计算机网络/网络协议分层.md#透明传输)
-            * [差错检测](计算机网络/网络协议分层.md#差错检测)
-        * [物理层](计算机网络/网络协议分层.md#物理层)
 - #### <a href="计算机网络/TCP报文.md">TCP报文</a>
 - #### <a href="计算机网络/UDP报文.md">UDP报文</a>
 - [IP报文](计算机网络/IP报文.md)
@@ -457,21 +442,7 @@
 - [HTTP](计算机网络/HTTP.md)
     * [特点](计算机网络/HTTP.md#特点)
     * [方法](计算机网络/HTTP.md#方法)
-        * [get](计算机网络/HTTP.md#get)
-        * [head](计算机网络/HTTP.md#head)
-        * [post](计算机网络/HTTP.md#post)
-        * [put](计算机网络/HTTP.md#put)
-        * [patch](计算机网络/HTTP.md#patch)
-        * [delete](计算机网络/HTTP.md#delete)
-        * [options](计算机网络/HTTP.md#options)
-        * [connect](计算机网络/HTTP.md#connect)
-        * [trace](计算机网络/HTTP.md#trace)
     * [状态码](计算机网络/HTTP.md#状态码)
-        * [1XX](计算机网络/HTTP.md#1xx)
-        * [2XX](计算机网络/HTTP.md#2xx)
-        * [3XX](计算机网络/HTTP.md#3xx)
-        * [4XX](计算机网络/HTTP.md#4xx)
-        * [5XX](计算机网络/HTTP.md#5xx)
     * #### <a href="计算机网络/HTTP.md#https">HTTPS</a>
         * [什么是HTTPS](计算机网络/HTTP.md#什么是https)
         * [端口](计算机网络/HTTP.md#端口)
@@ -479,15 +450,13 @@
         * [HTTPS加密过程](计算机网络/HTTP.md#https加密过程)
     * [HTTPS的CA证书放了什么，公钥放在CA里吗？](计算机网络/HTTP.md#https的ca证书放了什么公钥放在ca里吗)
     * [CA证书是在客户端还是服务器](计算机网络/HTTP.md#ca证书是在客户端还是服务器)
+    * [TLS](计算机网络/TLS.md)
     * [HTTP1.1和HTTP1.0的主要区别](计算机网络/HTTP.md#http11和http10的主要区别)
     * [HTTP2.0和HTTP1.x的区别](计算机网络/HTTP.md#http20和http1x的区别)
     * [HTTP的request和response格式](计算机网络/HTTP.md#http的request和response格式)
 - [cookie](计算机网络/cookie和session.md)
 - [session](计算机网络/cookie和session.md)
 - [JWT](计算机网络/JWT.md)
-    * [<a href="#">json web token</a>](计算机网络/JWT.md#json-web-token)
-    * [<a href="#">格式</a>](计算机网络/JWT.md#格式)
-    * [<a href="#">特点</a>](计算机网络/JWT.md#特点)
 - [跨域](计算机网络/跨域.md)
     * [<a href="#">什么是跨域？</a>](计算机网络/跨域.md#什么是跨域)
     * [<a href="#">同源策略</a>](计算机网络/跨域.md#同源策略)
@@ -501,8 +470,6 @@
     * [DDOS](计算机网络/网络攻击行为.md#ddos)
     * [SYN Flood攻击](计算机网络/网络攻击行为.md#syn-flood攻击)
 - [CDN](计算机网络/CDN.md)
-    * [<a href="#">什么是CDN</a>](计算机网络/CDN.md#什么是cdn)
-    * [<a href="#">好处</a>](计算机网络/CDN.md#好处)
 - #### <a href="计算机网络/HTTP面试题.md">HTTP面试题</a>
     * [在浏览器中输入url地址显示主页的过程](计算机网络/HTTP面试题.md#在浏览器中输入url地址显示主页的过程)
     * [QPS和TPS的区别](计算机网络/HTTP面试题.md#qps和tps的区别)
