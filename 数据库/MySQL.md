@@ -113,7 +113,9 @@
 
 # MySQL
 ## 架构
-![](../img/数据库/MySQL/MySQL架构.png)
+
+<img src="../img/数据库/MySQL/MySQL架构.png" width="50%" />
+
 ### 客户端
 各种语言都提供了连接mysql数据库的方法，比如jdbc、php、go等，可根据选择 的后端开发语言选择相应的方法或框架连接mysql
 ### server层
@@ -142,7 +144,7 @@
 ## 储存引擎
 MySQL 5.7 支持的存储引擎有 InnoDB、MyISAM、Memory、Merge、Archive、CSV、BLACKHOLE 等。可以使用SHOW ENGINES;语句查看系统所支持的引擎类型
 
-![](../img/数据库/MySQL/MySQL储存引擎比较.png)
+<img src="../img/数据库/MySQL/MySQL储存引擎比较.png" width="50%" />
 
 ### InnoDB
 特点
@@ -166,7 +168,9 @@ MySQL 5.7 支持的存储引擎有 InnoDB、MyISAM、Memory、Merge、Archive、
 
 ### InnoDB
 #### 架构图
-![](../img/数据库/MySQL/innodb架构图.png)				
+
+<img src="../img/数据库/MySQL/innodb架构图.png" width="50%" />
+
 #### 架构划分
 ##### 内存结构
 ###### 缓冲池 (Buffer Pool) 
@@ -184,7 +188,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
           2. 让真正被读取的页，才挪到缓冲池LRU的头部；
         - 方法
           - 将LRU分为两个部分
-          ![](../img/数据库/MySQL/缓冲池lru.png)
+          <img src="../img/数据库/MySQL/缓冲池lru.png" width="50%" />
             - 新生代(new sublist)
             - 老生代(old sublist)
           - 新老生代首尾相连，即：新生代的尾(tail)连接着老生代的头(head)
@@ -203,7 +207,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
         2. 插入老生代头部的页，即使立刻被访问，并不会立刻放入新生代头部；
         3. 只有满足“被访问”并且“在老生代停留时间”大于T，才会被放入新生代头部
         - 举例
-            ![](../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png)								
+            <img src="../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png" width="50%" />
 
 参数
 - `innodb_buffer_pool_size` 配置缓冲池的大小，在内存允许的情况下，DBA往往会建议调大这个参数，越多数据和索引放到内存里，数据库的性能会越好
