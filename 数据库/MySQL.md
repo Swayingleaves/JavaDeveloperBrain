@@ -188,7 +188,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
           2. 让真正被读取的页，才挪到缓冲池LRU的头部；
         - 方法
           - 将LRU分为两个部分
-          <img src="../img/数据库/MySQL/缓冲池lru.png" width="50%" />
+          <img src="../img/数据库/MySQL/缓冲池lru.png" width="60%" />
           
             - 新生代(new sublist)
             - 老生代(old sublist)
@@ -208,7 +208,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
         2. 插入老生代头部的页，即使立刻被访问，并不会立刻放入新生代头部；
         3. 只有满足“被访问”并且“在老生代停留时间”大于T，才会被放入新生代头部
         - 举例
-        - <img src="../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png" width="50%" />
+        - <img src="../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png" width="60%" />
 
 参数
 - `innodb_buffer_pool_size` 配置缓冲池的大小，在内存允许的情况下，DBA往往会建议调大这个参数，越多数据和索引放到内存里，数据库的性能会越好
@@ -227,19 +227,20 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
 
 情况一
 
-![](../img/数据库/MySQL/写缓冲1.png)						
+
+<img src="../img/数据库/MySQL/写缓冲1.png" width="60%" />
 
 情况二
 
-![](../img/数据库/MySQL/写缓冲2.png)						
+<img src="../img/数据库/MySQL/写缓冲2.png" width="60%" />
 
 加入写缓冲优化
 
-![](../img/数据库/MySQL/写缓冲3.png)							
+<img src="../img/数据库/MySQL/写缓冲3.png" width="60%" />
 
 此后的读取情况
 
-![](../img/数据库/MySQL/写缓冲4.png)							
+<img src="../img/数据库/MySQL/写缓冲4.png" width="60%" />
 
 为什么写缓冲优化，仅适用于非唯一普通索引页呢？
 - 如果索引设置了唯一(unique)属性，在进行修改操作时，InnoDB必须进行唯一性检查。也就是说，索引页即使不在缓冲池，磁盘上的页读取无法避免(否则怎么校验是否唯一？)，此时就应该直接把相应的页放入缓冲池再进行修改
@@ -261,7 +262,8 @@ InnoDB的哈希索引
 1. InnoDB用户无法手动创建哈希索引，这一层上说，InnoDB确实不支持哈希索引；
 2. InnoDB会自调优(self-tuning)，如果判定建立自适应哈希索引(Adaptive Hash Index, AHI)，能够提升查询效率，InnoDB自己会建立相关哈希索引，这一层上说，InnoDB又是支持哈希索引的；
 - 原理
-![](../img/数据库/MySQL/自适应hash函数.png)						
+<img src="../img/数据库/MySQL/自适应hash函数.png" width="60%" />
+					
   - 为啥叫“自适应(adaptive)”哈希索引？
   - 系统自己判断“应该可以加速查询”而建立的，不需要用户手动建立，故称“自适应”。
   - 系统会不会判断失误，是不是一定能加速？
@@ -351,7 +353,9 @@ redo log，binlog都先写入到日志缓冲区，然后再追加写入到磁盘
 ### B树
 #### b+ tree
 - B+tree 非叶子节点只存储键值信息
-![](../img/数据库/MySQL/b加树.png)
+
+<img src="../img/数据库/MySQL/b加树.png" width="60%" />
+
 - 叶子结点单链表有序
 - 利用磁盘预读特性
   - 为了减少磁盘 I/O 操作，磁盘往往不是严格按需读取，而是每次都会预读。预读过程中，磁盘进行顺序读取，顺序读 取不需要进行磁盘寻道，并且只需要很短的磁盘旋转时间，速度会非常快。 操作系统一般将内存和磁盘分割成固定大小的块，每一块称为一页，内存与磁盘以页为单位交换数据。数据库系统将 索引的一个节点的大小设置为页的大小，使得一次 I/O 就能完全载入一个节点。并且可以利用预读特性，相邻的节点 也能够被预先载入。
@@ -381,10 +385,11 @@ Innodb中一个指针是6字节长度。所以`主键ID+指针`总共就占14字
 所以，在实际中，绝大部分的表的索引树的高度都不会超过4。
 #### b tree
 所有节点都会储存信息
-![](../img/数据库/MySQL/b树.png)
+<img src="../img/数据库/MySQL/b树.png" width="60%" />
 
 #### 联合索引的树存储结构
-![](../img/数据库/MySQL/联合索引结构.png)
+
+<img src="../img/数据库/MySQL/联合索引结构.png" width="60%" />
 
 联合索引的所有索引列都出现在索引树上，并依次比较三列的大小。
 
@@ -458,12 +463,14 @@ Index Condition Pushdown (ICP)是MySQL用索引去表里取数据的一种优化
 用两张图解释下：
 
 关闭ICP：
-![](../img/数据库/MySQL/关闭icp.png)
+
+<img src="../img/数据库/MySQL/关闭icp.png" width="60%" />
 
 此时，索引符合之前推文提过的最左前缀原理，当多列索引的某一列是范围查询后，之后的字段便不会走索引。
 
 开启ICP:
-![](../img/数据库/MySQL/开启ICP.png)
+
+<img src="../img/数据库/MySQL/开启ICP.png" width="60%" />
 
 开启ICP后，查询同样符合最左前缀规则，但是当多列索引的某一列是范围查询后，之后的字段还是会被下推到存储引擎（Storage Engine）层进行条件判断，过滤出符合条件的数据后再返回给Server层。而由于在引擎层就能够过滤掉大量的数据，这样无疑能够减少了对base table和mysql server的访问次数。从而提升了性能。
 
@@ -510,13 +517,18 @@ ICP可以用于MyISAM和InnnoDB存储引擎，不支持分区表（5.7将会解�
 ### MyISAM的索引
 - MyISAM的索引与行记录是分开存储的，叫做非聚集索引（UnClustered Index）
 - 主键索引与普通索引是两棵独立的索引B+树，通过索引列查找时，先定位到B+树的叶子节点，再通过指针定位到行记录
-![](../img/数据库/MySQL/myISAM索引.png)
+
+<img src="../img/数据库/MySQL/myISAM索引.png" width="60%" />
+
 ### InnoDB的索引
 InnoDB的主键索引与行记录是存储在一起的，故叫做聚集索引（Clustered Index）
 - 没有单独区域存储行记录
 - 主键索引的叶子节点，存储主键，与对应行记录（而不是指针）
 - 普通索引的叶子节点，存储主键
-![](../img/数据库/MySQL/innodb的索引.png)
+
+<img src="../img/数据库/MySQL/innodb的索引.png" width="60%" />
+
+
 - 所以主键不宜用很长的列
 
 ### 主键和唯一索引的区别
@@ -527,12 +539,15 @@ InnoDB的主键索引与行记录是存储在一起的，故叫做聚集索引�
 
 ## 联合索引的底层组织方式
 数据：
-![](../img/数据库/MySQL/联合索引1.png)
+
+<img src="../img/数据库/MySQL/联合索引1.png" width="60%" />
 
 现在建立联合索引(b,c,d)
 
 bcd联合索引在B+树上的结构图：
-![](../img/数据库/MySQL/联合索引2.png)
+
+<img src="../img/数据库/MySQL/联合索引2.png" width="60%" />
+
 
 ### 联合索引具体查找步骤
 当我们的SQL语言可以应用到索引的时候，比如 select * from T1 where b = 12 and c = 14 and d = 3 ；也就是T1表中a列为4的这条记录。
@@ -543,7 +558,7 @@ bcd联合索引在B+树上的结构图：
 2. 进行一次磁盘IO，将此节点值加载后内存中，然后根据第一步一样进行判断，发现 数据都是匹配的，然后根据指针将此联合索引值所在的叶子节点也从磁盘中加载后内存，此时又发生了一次磁盘IO，最终根据叶子节点中索引值关联的 主键值  。
 3. 根据主键值  回表 去主键索引树（聚簇索引）中查询具体的行记录。
 
-![](../img/数据库/MySQL/联合索引3.png)
+<img src="../img/数据库/MySQL/联合索引3.png" width="60%" />
 
 ## 锁
 ### 行级锁
@@ -870,8 +885,11 @@ _表: 学号, 姓名, 年龄, 学院名称, 学院电话_
 ### explain
 Explain 可以用来分析select、update、delete、insert等语句，开发人员可以通过分析 Explain 结果来优化查询语句
 ### 属性
-![](../img/数据库/MySQL/explain.png)
-![](../img/数据库/MySQL/explain2.png)
+
+<img src="../img/数据库/MySQL/explain.png" width="60%" />
+
+<img src="../img/数据库/MySQL/explain2.png" width="60%" />
+
 - `id`: SELECT 查询的标识符. 每个 SELECT 都会自动分配一个唯一的标识符.
   - SQL执行的顺序的标识,SQL从大到小的执行
     1. id相同时，执行顺序由上至下
@@ -920,7 +938,9 @@ Explain 可以用来分析select、update、delete、insert等语句，开发人
 具体指运行时间超过long_query_time值的SQL，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是运行10秒以上的语句。
 - 如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。慢查询日志支持将日志记录写入文件
 - 默认关闭：`SHOW VARIABLES LIKE '%slow_query_log%';`
-  ![](../img/数据库/MySQL/慢查询配置.png)
+
+  <img src="../img/数据库/MySQL/慢查询配置.png" width="60%" />
+
   - 临时生效：`set global slow_query_log=1;`
   - 永久生效，修改配置文件my.cnf（其它系统变量也是如此）
 - 查询当前系统中有多少条慢查询记录
@@ -943,7 +963,8 @@ Explain 可以用来分析select、update、delete、insert等语句，开发人
   - 使用举例
     - 统计慢查询文件为/data/mysql/127-slow.log的所有select的慢查询sql，并显示执行时间最长的100条sql，并写到sql_select.log中去
     - `mysqlsla -lt slow  -sf "+select" -top 100  /data/mysql/127-slow.log >/tmp/sql_select.log`
-      ![](../img/数据库/MySQL/mysqlsla.png)
+      <img src="../img/数据库/MySQL/mysqlsla.png" width="60%" />
+    
   - 返回参数
     - `Count`, sql的执行次数及占总的slow log数量的百分比.
     - `Time`, 执行时间, 包括总时间, 平均时间, 最小, 最大时间, 时间占到总慢sql时间的百分比.
