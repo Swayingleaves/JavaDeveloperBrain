@@ -189,6 +189,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
         - 方法
           - 将LRU分为两个部分
           <img src="../img/数据库/MySQL/缓冲池lru.png" width="50%" />
+          
             - 新生代(new sublist)
             - 老生代(old sublist)
           - 新老生代首尾相连，即：新生代的尾(tail)连接着老生代的头(head)
@@ -207,7 +208,7 @@ buffer pool是主存中的一个区域，InnoDB在访问表和索引数据时在
         2. 插入老生代头部的页，即使立刻被访问，并不会立刻放入新生代头部；
         3. 只有满足“被访问”并且“在老生代停留时间”大于T，才会被放入新生代头部
         - 举例
-            <img src="../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png" width="50%" />
+        - <img src="../img/数据库/MySQL/缓冲池污染老生代停留时间窗口.png" width="50%" />
 
 参数
 - `innodb_buffer_pool_size` 配置缓冲池的大小，在内存允许的情况下，DBA往往会建议调大这个参数，越多数据和索引放到内存里，数据库的性能会越好
