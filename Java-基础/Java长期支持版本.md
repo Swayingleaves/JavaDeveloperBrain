@@ -135,3 +135,67 @@ Java 9 引入Http Client API,Java 10对它更新，Java 11 对它进行标准化
 - 方便在此基础上引入新的 GC 特性和利用 colord
 - 针以及 Load barriers 优化奠定基础
 - 当前只支持 Linux/x64 位平台
+
+# Java17
+
+## 封闭类和接口（Sealed Classes and Interfaces, JEP 409）：
+
+引入封闭类和接口，允许开发者限制哪些类可以扩展或实现它们。这有助于设计更可预测的类层次结构。
+
+语法示例：
+```java
+
+public sealed class Shape permits Circle, Square { }
+```
+
+## 模式匹配 for switch (Pattern Matching for switch, Preview, JEP 406)：
+
+扩展 switch 语句，以支持基于模式匹配的分支操作，这使得 switch 更加灵活和强大。
+
+语法示例：
+```java
+switch (obj) {
+  case Integer i -> System.out.println("Integer: " + i);
+  case String s -> System.out.println("String: " + s);
+  default -> System.out.println("Other: " + obj);
+}
+```
+## 强度减少（Strong Encapsulation, JEP 403）：
+
+更严格地限制模块化系统中的反射访问，使默认情况下不能通过反射访问模块的内部 API。
+## 外部函数和内存 API (Foreign Function & Memory API, Incubator, JEP 412)：
+
+引入新的 API，使 Java 程序能够安全、高效地调用非 Java 代码（如 C 函数），并操作非堆内存。
+## 增强的伪随机数生成器（Enhanced Pseudo-Random Number Generators, JEP 356）：
+
+增加了一组新的接口和实现，以提高伪随机数生成的灵活性和可扩展性。
+## 弃用和移除：
+
+永久删除 Applets，并移除 RMI Activation，这些旧的功能已经不再使用。
+
+# Java21
+
+## 结构化并发（Structured Concurrency, JEP 428）：
+
+通过将多个任务作为单个结构化单元来管理，以简化多线程编程，增强可读性和可维护性。
+## 模式匹配 for switch (Pattern Matching for switch, JEP 441)：
+
+这是对 Java 17 中引入的模式匹配 switch 的正式化，在 Java 21 中已经成为标准功能。
+## 记录模式（Record Patterns, JEP 440）：
+
+扩展了模式匹配功能，使其能够匹配 Record 类型，方便解构和处理 Record 类的字段。
+## 虚拟线程（Virtual Threads, JEP 444）：
+
+引入了虚拟线程的概念，极大地简化了并发编程，使得创建和管理大量线程变得更加轻量级。
+## String 模式匹配和增强（String Templates, JEP 430）：
+
+新增了字符串模板功能，简化了字符串插值操作。
+## 外部函数和内存 API (Foreign Function & Memory API, JEP 442)：
+
+这项功能在 Java 17 中作为孵化器引入，而在 Java 21 中则被进一步增强和正式化。
+## 垃圾收集器改进：
+
+在垃圾收集器方面，特别是 ZGC 和 G1 等垃圾收集器，做了大量优化以提升性能和稳定性。
+## 向量 API (Vector API, JEP 438)：
+
+进一步改进和稳定，允许开发者利用向量化硬件加速批量计算任务
