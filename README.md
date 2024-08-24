@@ -214,7 +214,8 @@
     - [网络io](Java-基础/JavaIO.md#网络io)
     - [NIO](Java-基础/JavaIO.md#nio)
 - [Java长期支持版本新特性](Java-基础/Java长期支持版本.md)
-- [Java虚拟线程](Java-基础/虚拟线程.md)
+- [Java虚拟线程-预览](Java-基础/虚拟线程.md)
+- [Java虚拟线程-jdk21正式发布](Java-基础/虚拟线程2.md)
 
 ## <a>Java-JVM</a>[↑↑](#内容概览)
 
