@@ -235,7 +235,7 @@ JVM中集成了两种编译器
 ### 3、标量替换
 过Hotspot虚拟机，并没有进行实际的栈上分配，而是使用了标量替换这一技术。所谓的标量，就是仅能存储一个值的变量，比如Java代码中的基本类型。与之相反，聚合量则可能同时存储多个值，其中一个典型的例子便是Java的对象。编译器会在方法内将未逃逸的聚合量分解成多个标量，以此来减少堆上分配。下面是一个标量替换的例子
   ```java
-      public class Example{
+    public class Example{
       @AllArgsConstructor
       class Cat{
           int age;
