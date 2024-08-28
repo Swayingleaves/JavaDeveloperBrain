@@ -1,12 +1,4 @@
 
-* [CAS(Compare-and-Swap)](#cascompare-and-swap)
-    * [原理](#原理)
-    * [参数](#参数)
-    * [ABA问题](#aba问题)
-        * [什么是ABA](#什么是aba)
-        * [怎么解决](#怎么解决)
-
-
 # CAS(Compare-and-Swap)
 ## 原理
 - 实际上是使用了unsafe的CAS操作

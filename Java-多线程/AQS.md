@@ -1,28 +1,3 @@
-
-* [AQS（AbstractQueuedSynchronizer）](#aqsabstractqueuedsynchronizer)
-    * [工作原理概要](#工作原理概要)
-    * [同步队列模型](#同步队列模型)
-        * [属性](#属性)
-        * [示意图](#示意图)
-        * [Node](#node)
-* [ReentrantLock](#reentrantlock)
-    * [Sync (extends AbstractQueuedSynchronizer)](#sync-extends-abstractqueuedsynchronizer)
-    * [NonfairSync (extends Sync) 非公平锁](#nonfairsync-extends-sync-非公平锁)
-        * [lock](#lock)
-        * [unlock](#unlock)
-    * [FairSync (extends Sync) 公平锁](#fairsync-extends-sync-公平锁)
-        * [lock](#lock-1)
-    * [Condition](#condition)
-        * [主要方法](#主要方法)
-        * [Condition的使用案例-生产者消费者模式](#condition的使用案例-生产者消费者模式)
-        * [Condition的实现原理](#condition的实现原理)
-    * [同步工具类](#同步工具类)
-        * [CountDownLatch](#countdownlatch)
-        * [CyclicBarrier](#cyclicbarrier)
-        * [Semaphore](#semaphore)
-* [参考文章](#参考文章)
-
-
 # AQS（AbstractQueuedSynchronizer）
 ## 工作原理概要
 AbstractQueuedSynchronizer又称为队列同步器(后面简称AQS)，它是用来构建锁或其他同步组件的基础框架，内部通过一个int类型的成员变量state来控制同步状态
@@ -544,7 +519,11 @@ public class ResourceByCondition {
         try
         {
             while(flag){
-                try{producer_con.await();}catch(InterruptedException e){}
+                try{
+                    producer_con.await();
+                }catch(InterruptedException e){
+                    
+                }
             }
             this.name = name + count;
             count++;
@@ -567,7 +546,10 @@ public class ResourceByCondition {
         try
         {
             while(!flag){
-                try{consumer_con.await();}catch(InterruptedException e){}
+                try{
+                    consumer_con.await();
+                }catch(InterruptedException e)
+                {}
             }
             System.out.println(Thread.currentThread().getName()+"...消费者.5.0......."+this.name);//消费烤鸭1
             flag = false;
