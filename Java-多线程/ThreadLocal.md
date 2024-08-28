@@ -1,20 +1,3 @@
-* [ThreadLocal](#threadlocal)
-  * [原理](#原理)
-  * [ThreadLocalMap](#threadlocalmap)
-  * [源码分析](#源码分析)
-    * [get](#get)
-    * [set](#set)
-  * [使用场景](#使用场景)
-    * [每个线程维护了一个“序列号”](#每个线程维护了一个序列号)
-    * [Session的管理](#session的管理)
-    * [SimpleDateFormat](#simpledateformat)
-  * [手动释放ThreadLocal遗留存储?你怎么去设计/实现？](#手动释放threadlocal遗留存储你怎么去设计实现)
-  * [弱引用导致内存泄漏，那为什么key不设置为强引用](#弱引用导致内存泄漏那为什么key不设置为强引用)
-  * [线程执行结束后会不会自动清空Entry的value](#线程执行结束后会不会自动清空entry的value)
-  * [threadlocal如果不remove，出问题了怎么补救？](#threadlocal如果不remove出问题了怎么补救)
-  * [FastThreadLocal](#fastthreadlocal)
-    * [源码分析](#源码分析-1)
-* [参考文章：](#参考文章)
 
 # ThreadLocal
 ## 原理

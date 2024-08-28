@@ -765,16 +765,16 @@ await()方法主要做了3件事
 
 ```java
  private void doSignal(Node first) {
-     do {
-             //移除条件等待队列中的第一个结点，
-             //如果后继结点为null，那么说没有其他结点将尾结点也设置为null
-            if ( (firstWaiter = first.nextWaiter) == null)
-                 lastWaiter = null;
-             first.nextWaiter = null;
-          //如果被通知节点没有进入到同步队列并且条件等待队列还有不为空的节点，则继续循环通知后续结点
-         } while (!transferForSignal(first) &&
-                  (first = firstWaiter) != null);
-        }
+    do {
+        //移除条件等待队列中的第一个结点，
+        //如果后继结点为null，那么说没有其他结点将尾结点也设置为null
+        if ( (firstWaiter = first.nextWaiter) == null)
+            lastWaiter = null;
+        first.nextWaiter = null;
+    //如果被通知节点没有进入到同步队列并且条件等待队列还有不为空的节点，则继续循环通知后续结点
+    } while (!transferForSignal(first) &&
+        (first = firstWaiter) != null);
+}
 
 //transferForSignal方法
 final boolean transferForSignal(Node node) {
