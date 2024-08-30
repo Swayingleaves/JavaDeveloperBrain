@@ -1,116 +1,3 @@
-* [MySQL](#mysql)
-  * [架构](#架构)
-    * [客户端](#客户端)
-    * [server层](#server层)
-    * [储存引擎](#储存引擎)
-    * [物理文件层](#物理文件层)
-  * [储存引擎](#储存引擎-1)
-    * [InnoDB](#innodb)
-    * [MyISAM](#myisam)
-    * [MEMORY](#memory)
-    * [ARCHIVE](#archive)
-    * [InnoDB](#innodb-1)
-      * [架构图](#架构图)
-      * [架构划分](#架构划分)
-        * [内存结构](#内存结构)
-          * [缓冲池 (Buffer Pool)](#缓冲池-buffer-pool)
-          * [写缓冲 (Change Buffer)](#写缓冲-change-buffer)
-          * [自适应哈希索引 (Adaptive Hash Index)](#自适应哈希索引-adaptive-hash-index)
-          * [日志缓冲 (Log Buffer)](#日志缓冲-log-buffer)
-        * [磁盘结构](#磁盘结构)
-      * [特点总结](#特点总结)
-    * [MyISAM](#myisam-1)
-  * [MyISAM和InnoDB的区别总结](#myisam和innodb的区别总结)
-    * [存储结构](#存储结构)
-    * [存储空间](#存储空间)
-    * [可移植性、备份及恢复](#可移植性备份及恢复)
-    * [事务支持](#事务支持)
-    * [AUTO_INCREMENT](#auto_increment)
-    * [表锁差异](#表锁差异)
-    * [全文索引MySql全文索引](#全文索引mysql全文索引)
-    * [表主键](#表主键)
-    * [表的具体行数](#表的具体行数)
-    * [CRUD操作](#crud操作)
-    * [外键](#外键)
-  * [索引](#索引)
-    * [B树](#b树)
-      * [b+ tree](#b-tree)
-      * [为什么数据库索引用B+树，而不用list、map、二叉树或红黑树](#为什么数据库索引用b树而不用listmap二叉树或红黑树)
-      * [MySQL B+树一般几层，怎么算的](#mysql-b树一般几层怎么算的)
-      * [b tree](#b-tree-1)
-      * [联合索引的树存储结构](#联合索引的树存储结构)
-    * [哈希索引](#哈希索引)
-    * [全文索引](#全文索引)
-    * [空间数据索引](#空间数据索引)
-    * [MySQL 索引失效](#mysql-索引失效)
-    * [like索引失效原理](#like索引失效原理)
-    * [ICP(index condition pushdown)](#icpindex-condition-pushdown)
-      * [怎么理解ICP](#怎么理解icp)
-      * [分析试验数据提升原因](#分析试验数据提升原因)
-      * [ICP的使用条件](#icp的使用条件)
-    * [索引优化](#索引优化)
-    * [MyISAM的索引](#myisam的索引)
-    * [InnoDB的索引](#innodb的索引)
-    * [主键和唯一索引的区别](#主键和唯一索引的区别)
-  * [联合索引的底层组织方式](#联合索引的底层组织方式)
-    * [联合索引具体查找步骤](#联合索引具体查找步骤)
-  * [锁](#锁)
-    * [行级锁](#行级锁)
-    * [表级锁](#表级锁)
-    * [页锁](#页锁)
-  * [事务](#事务)
-    * [ACID](#acid)
-      * [原子性（Atomicity，或称不可分割性）](#原子性atomicity或称不可分割性)
-      * [一致性（Consistency）](#一致性consistency)
-      * [隔离性（Isolation）](#隔离性isolation)
-        * [读未提交：read uncommitted](#读未提交read-uncommitted)
-        * [读已提交：read committed](#读已提交read-committed)
-        * [可重复读：repeatable read](#可重复读repeatable-read)
-        * [MVCC](#mvcc)
-        * [幻读问题](#幻读问题)
-          * [串行化：serializable](#串行化serializable)
-      * [持久性（Durability）](#持久性durability)
-  * [事务日志](#事务日志)
-    * [redo log（重做日志）](#redo-log重做日志)
-    * [undo log（回滚日志）](#undo-log回滚日志)
-  * [二进制日志( binlog )](#二进制日志-binlog-)
-  * [redo log和binlog的区别](#redo-log和binlog的区别)
-  * [redo log和binlog一致性问题](#redo-log和binlog一致性问题)
-    * [先写binlog还是先写redo log的呢？](#先写binlog还是先写redo-log的呢)
-      * [假设一：先写redo log再写binlog](#假设一先写redo-log再写binlog)
-      * [假设二：先写binlog再写redo log](#假设二先写binlog再写redo-log)
-    * [MySQL的内部XA（两阶段提交）](#mysql的内部xa两阶段提交)
-    * [总结](#总结)
-  * [切分](#切分)
-    * [水平切分](#水平切分)
-    * [垂直切分](#垂直切分)
-  * [复制](#复制)
-    * [主从复制](#主从复制)
-      * [原理](#原理)
-      * [主从复制的模式](#主从复制的模式)
-      * [问题](#问题)
-    * [读写分离](#读写分离)
-  * [中间件](#中间件)
-    * [mycat](#mycat)
-    * [ShardingSphere](#shardingsphere)
-      * [Sharding-JDBC](#sharding-jdbc)
-      * [Sharding-Proxy](#sharding-proxy)
-  * [数据库三范式](#数据库三范式)
-    * [第一范式](#第一范式)
-    * [第二范式](#第二范式)
-    * [第三范式](#第三范式)
-  * [SQL优化](#sql优化)
-    * [explain](#explain)
-    * [属性](#属性)
-    * [如何做慢查询排查的](#如何做慢查询排查的)
-      * [什么是慢查询日志](#什么是慢查询日志)
-      * [使用工具分析](#使用工具分析)
-    * [select * select col 主要区别](#select--select-col-主要区别)
-    * [select count(*)  count(1)  count(col) 主要区别](#select-count--count1--countcol-主要区别)
-  * [MySQL与PostGreSQL的区别](#mysql与postgresql的区别)
-* [参考文章](#参考文章)
-
-
 # MySQL
 ## 架构
 
@@ -474,21 +361,41 @@ Index Condition Pushdown (ICP)是MySQL用索引去表里取数据的一种优化
 
 开启ICP后，查询同样符合最左前缀规则，但是当多列索引的某一列是范围查询后，之后的字段还是会被下推到存储引擎（Storage Engine）层进行条件判断，过滤出符合条件的数据后再返回给Server层。而由于在引擎层就能够过滤掉大量的数据，这样无疑能够减少了对base table和mysql server的访问次数。从而提升了性能。
 
-#### 分析试验数据提升原因
-关闭ICP是这样的：
-1. 从索引里面取出下一条pid=14的记录，然后利用主键字段读取整个行。
-2. 然后对这个完整的行利用其余的条件这个进行判断看是否符合条件，在Server层进行过滤和处理。
+#### 举例
+假设我们有一个表 employees，包含以下字段：
+```sql
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    department VARCHAR(50),
+    salary DECIMAL(10, 2)
+);
+```
+表上有一个联合索引：
+```sql
+CREATE INDEX idx_age_salary ON employees(age, salary);
+```
+现在我们有以下查询：
 
-开启ICP是这样的：
+```sql
+SELECT * FROM employees WHERE age = 30 AND salary > 50000;
+```
+传统的查询处理方式
 
-1. 从索引里面取出下一条pid=14的记录，然后利用这个索引的其他字段条件进行判断，如果条件成立，执行第2步。在引擎层上进行过滤和处理。
-2. 在上一步中筛选出来符合条件的才会利用主键索引里面找到这个完整行，返回。
+- 索引扫描：数据库使用索引 idx_age_salary 找到所有 age = 30 的行。
+- 回表查询：根据找到的行号去表中读取完整的行数据。
+- 过滤：对读取的行数据应用 salary > 50000 的条件，过滤掉不满足条件的行。
 
-也就是说： 在没有ICP前，由于优化器只能只能使用前缀索引来过滤满足条件的查询，那么mysql只能够利用索引的第一个字段pid，来扫描demo表满足pid=14条件的记录，而后面的nid和country由于使用了模糊查询，而不能在索引中继续过滤满足条件的记录，这样就导致了Server层对demo表的扫描增加了许多；
+在这个过程中，数据库必须读取所有 age = 30 的行，然后再进一步过滤 salary > 50000 的行，这可能会读取很多不必要的行。
 
-有了ICP，mysql在读取demo表前，继续检查满足nid和country条件的记录,这个行为在引擎层完成。直接把过滤好的返回给Server层，就减少了Server层的操作。总之是把之前在SERVER层的下推到引擎层去处理。
+索引下推的查询处理方式
 
-这里也就解释了ICP（索引条件下推）其实就是将索引条件下推到引擎层啦。
+- 索引扫描：数据库使用索引 idx_age_salary，但在扫描索引时就可以应用 salary > 50000 的条件。
+- 回表查询：仅对满足 age = 30 且 salary > 50000 的行进行回表查询。
+
+通过在索引扫描阶段就进行一部分过滤，索引下推减少了回表查询的次数，从而提升了查询效率。
+
 
 #### ICP的使用条件
 只能用于二级索引(secondary index)。

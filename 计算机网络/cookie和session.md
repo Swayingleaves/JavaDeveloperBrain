@@ -1,15 +1,3 @@
-
-* [<a href="#">Cookie</a>](#cookie)
-    * [<a href="#">Cookie是什么？</a>](#cookie是什么)
-    * [<a href="#">创建cookie</a>](#创建cookie)
-    * [<a href="#">cookie过期</a>](#cookie过期)
-* [<a href="#">Session</a>](#session)
-    * [<a href="#">session是什么</a>](#session是什么)
-    * [<a href="#">session如何判断是否是同一会话</a>](#session如何判断是否是同一会话)
-    * [<a href="#">session的缺点</a>](#session的缺点)
-    * [<a href="#">禁用cookie后使用session</a>](#禁用cookie后使用session)
-
-
 # [Cookie](#)
 ## [Cookie是什么？](#)
 http协议里的cookie包含web cookie和浏览器cookie，他是服务器发送到web浏览器的一小块数据，服务器发送到浏览器的cookie，浏览器会进行存储，并与下一个请求一起发送到服务器，通常，他用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态
