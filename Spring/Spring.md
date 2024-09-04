@@ -369,7 +369,7 @@ session作用域中所定义的bean被限定于全局的portlet session的生命
 
 ### 循环依赖问题
 
-#### 三级缓存
+#### [三级缓存]()
 
 Spring 解决循环依赖的核心就是提前暴露对象，而提前暴露的对象就是放置于第二级缓存中。下表是三级缓存的说明：
 
@@ -386,6 +386,14 @@ earlySingletonObjects 存放的是已经被实例化，但是还没有注入属�
 singletonFactories 存放的是生产 Bean 的工厂。
 
 Bean 都已经实例化了，为什么还需要一个生产 Bean 的工厂呢？这里实际上是跟 AOP 有关，如果项目中不需要为 Bean 进行代理，那么这个 Bean 工厂就会直接返回一开始实例化的对象，如果需要使用 AOP 进行代理，那么这个工厂就会发挥重要的作用了，这也是本文需要重点关注的问题之一。
+
+#### 三级缓存的作用
+
+- Spring 会先从一级缓存 singletonObjects 中尝试获取 Bean。
+- 若是获取不到，而且对象正在建立中，就会尝试从二级缓存 earlySingletonObjects 中获取 Bean。
+- 若还是获取不到，且允许从三级缓存 singletonFactories 中经过 singletonFactory 的 getObject() 方法获取 Bean 对象，就会尝试从三级缓存 singletonFactories 中获取 Bean。
+- 若是在三级缓存中获取到了 Bean，会将该 Bean 存放到二级缓存中。
+
 
 #### 解决循环依赖
 Spring 是如何通过上面介绍的三级缓存来解决循环依赖的呢？这里只用 A，B 形成的循环依赖来举例：
