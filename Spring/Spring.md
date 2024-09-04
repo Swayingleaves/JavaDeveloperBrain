@@ -278,7 +278,7 @@ Spring Bean的生命周期分为四个阶段和多个扩展点。扩展点又可
 - 属性赋值 Populate
     - Spring 容器将配置的属性值注入到 bean 中，这个过程可以通过依赖注入来完成，包括简单类型属性和引用其他 bean。
 - 初始化 Initialization
-    - 在 bean 属性设置完成后，Spring 调用初始化方法。可以通过以下方式实现：
+    - 在 bean 属性设置完成后，Spring 调用初始化方法，确保 bean 在使用之前处于有效状态，且具备运行所需的所有配置和资源。可以通过以下方式实现：
         - @PostConstruct 注解的方法。
         - 实现 InitializingBean 接口，重写 afterPropertiesSet() 方法。
         - 在配置文件中指定初始化方法。
@@ -400,6 +400,42 @@ Spring 是如何通过上面介绍的三级缓存来解决循环依赖的呢？�
 8. 对象 B 完成属性填充，执行初始化方法，并放入到一级缓存中，同时删除二级缓存中的对象 B。（此时对象 B 已经是一个成品）
 9. 对象 A 得到对象 B，将对象 B 注入到对象 A 中。（对象 A 得到的是一个完整的对象 B）
 10. 对象 A 完成属性填充，执行初始化方法，并放入到一级缓存中，同时删除二级缓存中的对象 A。
+
+#### 为什么需要三级缓存，二级缓存能解决么
+- 尝试使用两级缓存解决依赖冲突
+
+第三级缓存的目的是为了延迟代理对象的创建，因为如果没有依赖循环的话，那么就不需要为其提前创建代理，可以将它延迟到初始化完成之后再创建。
+
+既然目的只是延迟的话，那么我们是不是可以不延迟创建，而是在实例化完成之后，就为其创建代理对象，这样我们就不需要第三级缓存了。因此，我们可以将 addSingletonFactory() 方法进行改造。
+
+```java
+protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+    Assert.notNull(singletonFactory, "Singleton factory must not be null");
+
+    synchronized (this.singletonObjects) {
+        // 判断一级缓存中不存在此对象
+        if (!this.singletonObjects.containsKey(beanName)) { 
+            // 直接从工厂中获取 Bean
+            Object o = singletonFactory.getObject();
+
+            // 添加至二级缓存中
+            this.earlySingletonObjects.put(beanName, o);
+            this.registeredSingletons.add(beanName);
+        }
+    }
+}
+```
+这样的话，每次实例化完 Bean 之后就直接去创建代理对象，并添加到二级缓存中。
+
+测试结果是完全正常的，Spring 的初始化时间应该也是不会有太大的影响，因为如果 Bean 本身不需要代理的话，是直接返回原始 Bean 的，并不需要走复杂的创建代理 Bean 的流程。
+
+- 三级缓存的意义
+
+测试证明，二级缓存也是可以解决循环依赖的。为什么 Spring 不选择二级缓存，而要额外多添加一层缓存，使用三级缓存呢？
+
+如果 Spring 选择二级缓存来解决循环依赖的话，那么就意味着所有 Bean 都需要在实例化完成之后就立马为其创建代理，而 Spring 的设计原则是在 Bean 初始化完成之后才为其创建代理。
+
+使用三级缓存而非二级缓存并不是因为只有三级缓存才能解决循环引用问题，其实二级缓存同样也能很好解决循环引用问题。使用三级而非二级缓存并非出于 IOC 的考虑，而是出于 AOP 的考虑，即若使用二级缓存，在 AOP 情形注入到其他 Bean的，不是最终的代理对象，而是原始对象。
 
 
 ## Spring框架中的单例bean是否线程安全
