@@ -1,78 +1,3 @@
-* [spring](#spring)
-    * [架构图](#架构图)
-    * [模块](#模块)
-        * [Core Container](#core-container)
-        * [Data Access/Integration](#data-accessintegration)
-        * [Web](#web)
-        * [面向切面编程(AOP和Aspects)](#面向切面编程aop和aspects)
-        * [设备(Instrumentation)](#设备instrumentation)
-        * [消息(Messaging)](#消息messaging)
-        * [测试(Test)](#测试test)
-    * [IOC](#ioc)
-        * [IOC是什么？](#ioc是什么)
-        * [使用IOC的好处](#使用ioc的好处)
-    * [BeanFactory 和 ApplicationContext有什么区别](#beanfactory-和-applicationcontext有什么区别)
-        * [依赖关系](#依赖关系)
-        * [加载方式](#加载方式)
-        * [创建方式](#创建方式)
-        * [注册方式](#注册方式)
-        * [Spring IoC的初始化过程](#spring-ioc的初始化过程)
-            * [IOC粗略总结](#ioc粗略总结)
-            * [重要的组件](#重要的组件)
-            * [源码解析](#源码解析)
-        * [Spring bean的生命周期](#spring-bean的生命周期)
-        * [bean的作用域](#bean的作用域)
-            * [singleton](#singleton)
-            * [prototype](#prototype)
-            * [request](#request)
-            * [session](#session)
-            * [global session](#global-session)
-        * [循环依赖问题](#循环依赖问题)
-            * [三级缓存](#三级缓存)
-            * [解决循环依赖](#解决循环依赖)
-    * [Spring框架中的单例bean是否线程安全](#spring框架中的单例bean是否线程安全)
-    * [AOP](#aop)
-        * [AOP原理](#aop原理)
-        * [JDK动态代理](#jdk动态代理)
-        * [CGLib动态代理](#cglib动态代理)
-        * [AOP术语](#aop术语)
-            * [连接点(Join point)](#连接点join-point)
-            * [切点(Poincut)](#切点poincut)
-            * [增强/通知(Advice)](#增强通知advice)
-            * [织入(Weaving)](#织入weaving)
-            * [引入/引介(Introduction)](#引入引介introduction)
-            * [切面(Aspect)](#切面aspect)
-        * [Spring对AOP的支持](#spring对aop的支持)
-    * [怎么定义一个注解](#怎么定义一个注解)
-        * [引入依赖](#引入依赖)
-        * [定义注解](#定义注解)
-            * [元注解](#元注解)
-                * [@Retention](#retention)
-                * [@Target](#target)
-                * [@Documented](#documented)
-                * [@Inherited](#inherited)
-        * [示例](#示例)
-    * [事务](#事务)
-        * [Spring 支持两种方式的事务管理](#spring-支持两种方式的事务管理)
-            * [1、编程式事务管理](#1编程式事务管理)
-            * [2、注解](#2注解)
-        * [事务的传播性 Propagation](#事务的传播性-propagation)
-        * [spring事务失效的场景](#spring事务失效的场景)
-    * [spring使用的设计模式](#spring使用的设计模式)
-        * [简单工厂](#简单工厂)
-        * [工厂方法](#工厂方法)
-        * [单例模式](#单例模式)
-        * [适配器模式](#适配器模式)
-        * [装饰器模式](#装饰器模式)
-        * [代理模式](#代理模式)
-    * [spring中properties和yml的加载顺序](#spring中properties和yml的加载顺序)
-    * [使用@Autowired注解自动装配的过程是怎样的？](#使用autowired注解自动装配的过程是怎样的)
-    * [@Autowired和@Resource之间的区别](#autowired和resource之间的区别)
-    * [Spring中BeanFactory与FactoryBean的区别](#spring中beanfactory与factorybean的区别)
-        * [BeanFactory](#beanfactory)
-        * [FactoryBean](#factorybean)
-* [参考文章](#参考文章)
-
 # spring
 
 ## 架构图
@@ -202,12 +127,14 @@ BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProc
 - `BeanFactory`
     - spring的基础bean容器
     - 相当于存放所有bean的容器
+    - 主要负责管理和提供各种 bean 的生命周期
 - `ApplicationContext`
     - BeanFactory 的子接口，在 BeanFactory 的基础上构建，是相对比较高级的 IoC 容器实现。包含 BeanFactory
       的所有功能，还提供了其他高级的特性，比如：事件发布、国际化信息支持、统一资源加载策略等。正常情况下，我们都是使用的 ApplicationContext
     - 相当于丰富了beanfactory的功能，这里理解为上下文就好
 - `FactoryBean`
-
+    - FactoryBean 是 Spring 提供的一个接口，允许开发者通过实现该接口来创建复杂的 bean 对象。
+    - 用于自定义对象的创建过程
 #### 源码解析
 
 首先抛开其他组件的启动，我们只需要引入spring-context就可以启动一个容器了
