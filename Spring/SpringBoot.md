@@ -1,18 +1,3 @@
-
-* [springboot](#springboot)
-  * [springboot启动流程](#springboot启动流程)
-    * [启动类上注解：@SpringBootApplication](#启动类上注解springbootapplication)
-      * [@SpringBootConfiguration](#springbootconfiguration)
-      * [@EnableAutoConfiguration](#enableautoconfiguration)
-      * [@ComponentScan](#componentscan)
-    * [启动类中的main方法：org.springframework.boot.SpringApplication#run(java.lang.Class&lt;?&gt;, java.lang.String...)](#启动类中的main方法orgspringframeworkbootspringapplicationrunavalangstring)
-  * [怎么让Spring把Body变成一个对象](#怎么让spring把body变成一个对象)
-  * [SpringBoot的starter实现原理是什么？](#springboot的starter实现原理是什么)
-  * [Spring Boot 可执行 Jar 包运行原理](#spring-boot-可执行-jar-包运行原理)
-    * [打可执行 Jar 包](#打可执行-jar-包)
-    * [可执行 Jar 包内部结构](#可执行-jar-包内部结构)
-    * [JarLauncher](#jarlauncher)
-
 # springboot
 ## springboot启动流程
 ### 启动类上注解：@SpringBootApplication
@@ -239,6 +224,8 @@ Spring Boot 有一个很方便的功能就是可以将应用打成可执行的 J
 
 ```
 我们先来重点关注两个地方：META-INF 下面的 Jar 包描述文件和 BOOT-INF 这个目录。
+
+MANIFEST.MF 文件
 ```properties
 Manifest-Version: 1.0
 Archiver-Version: Plexus Archiver
