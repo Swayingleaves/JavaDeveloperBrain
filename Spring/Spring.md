@@ -274,9 +274,19 @@ Spring Bean的生命周期分为四个阶段和多个扩展点。扩展点又可
 四个阶段
 
 - 实例化 Instantiation
+  - Spring 容器根据 bean 的定义创建一个 bean 实例。这可以通过调用构造函数或使用工厂方法实现。
 - 属性赋值 Populate
+    - Spring 容器将配置的属性值注入到 bean 中，这个过程可以通过依赖注入来完成，包括简单类型属性和引用其他 bean。
 - 初始化 Initialization
+    - 在 bean 属性设置完成后，Spring 调用初始化方法。可以通过以下方式实现：
+        - @PostConstruct 注解的方法。
+        - 实现 InitializingBean 接口，重写 afterPropertiesSet() 方法。
+        - 在配置文件中指定初始化方法。
 - 销毁 Destruction
+    - 当 bean 的生命周期结束时，Spring 容器负责调用销毁方法。可以通过以下方式实现：
+        - @PreDestroy 注解的方法。
+        - 实现 DisposableBean 接口，重写 destroy() 方法。
+        - 在配置文件中指定销毁方法。
 
 多个扩展点
 
