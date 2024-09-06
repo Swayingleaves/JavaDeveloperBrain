@@ -84,3 +84,110 @@ Secret：用于存储敏感信息（如密码、证书），提供更安全的�
 ### 8.命名空间
 - kubectl get pods -n <namespace>：在指定命名空间中获取资源。
 - kubectl create namespace <namespace>：创建一个新的命名空间。
+
+## 案例：使用k8s启动一个springboot服务
+
+使用 Kubernetes 启动一个 Spring Boot 服务的流程如下：
+
+### 1. **准备 Spring Boot 应用**
+
+确保你已经有一个打包好的 Spring Boot 应用，通常以 JAR 文件形式存在。可以使用 Maven 或 Gradle 进行构建。
+
+### 2. **编写 Dockerfile**
+
+在 Spring Boot 源码根目录下创建一个 `Dockerfile` 文件。
+
+```dockerfile
+# 使用 Java 基础镜像
+FROM openjdk:11-jre-slim
+# 复制 JAR 文件到镜像中
+COPY target/your-spring-boot-app.jar app.jar
+# 运行应用
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+### 3. **构建 Docker 镜像**
+
+在命令行中，导航到项目根目录并执行以下命令：
+
+```bash
+docker build -t your-image-name:latest .
+```
+
+### 4. **推送 Docker 镜像到容器仓库**
+
+将 Docker 镜像上传到公共或私有 Docker 仓库（如 Docker Hub）。
+
+```bash
+docker tag your-image-name:latest your-repo/your-image-name:latest
+docker push your-repo/your-image-name:latest
+```
+
+### 5. **编写 Kubernetes 部署配置**
+
+创建一个名为 `deployment.yaml` 的文件，定义 Deployment 和 Service。
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-container
+          image: your-repo/your-image-name:latest
+          ports:
+            - containerPort: 8080 # 根据应用的端口进行修改
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30000 # 可用的节点端口
+  selector:
+    app: springboot-app
+```
+
+### 6. **部署到 Kubernetes**
+
+使用 kubectl 命令将配置应用到 Kubernetes 集群。
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+### 7. **查看部署状态**
+
+使用以下命令查看应用的状态：
+
+```bash
+kubectl get pods
+kubectl get services
+```
+
+### 8. **访问 Spring Boot 服务**
+
+通过集群的节点 IP 和端口访问 Spring Boot 应用：
+
+```bash
+http://<node-ip>:30000
+```
+
+### 总结
+
+以上步骤完成了使用 Kubernetes 启动 Spring Boot 服务的流程，包括 Docker 镜像的构建、上传和 Kubernetes 配置的创建与应用。确保 Kubernetes 集群已成功运行，并已正确配置网络访问。
