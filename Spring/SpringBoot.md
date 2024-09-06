@@ -141,38 +141,38 @@ Spring Boot的启动流程大致如下：
 
 1. 引导类（Main Class）
 Spring Boot应用通常包含一个主类，使用@SpringBootApplication注解标记。该注解结合了@Configuration、@EnableAutoConfiguration和@ComponentScan注解。
-
+```java
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
-2. SpringApplication.run()
-调用SpringApplication.run()方法，起始启动过程：
+```
+2. SpringApplication.run()调用SpringApplication.run()方法，起始启动过程：创建SpringApplication实例：并设置初始属性。
 
-创建SpringApplication实例：并设置初始属性。
-3. 准备环境（prepareEnvironment）
-创建ConfigurableEnvironment对象，设置应用程序的属性和环境变量。
-4. 创建上下文（createApplicationContext）
-根据应用类型创建ApplicationContext（常用的如AnnotationConfigServletWebServerApplicationContext）。
-5. 注册Listeners（registerListeners）
-注册各种ApplicationListener，比如监听Spring应用的事件（如ApplicationEnvironmentPreparedEvent、ApplicationPreparedEvent等）。
-6. 准备上下文（prepareContext）
-设置上下文的属性、环境和资源等，进行初始化。
-7. 加载Sources（load）
-根据注解（如@SpringBootApplication）加载配置类，进行组件扫描并注册到Spring容器。
-8. 执行自动配置（auto-configuration）
-通过@EnableAutoConfiguration，Spring Boot会根据classpath中的库自动配置Bean。例如，检测到Tomcat会自动配置相应的Servlet。
-9. 刷新上下文（refreshContext）
-触发上下文的刷新，完成所有Bean的初始化和配置。
-10. 调用CommandLine runners和Application runners
-如果定义了CommandLineRunner或ApplicationRunner，会在上下文刷新后执行。
-11. 启动嵌入式容器
-如果应用是Web应用，Spring Boot会启动嵌入式Tomcat、Jetty或Undertow等。
-12. 应用就绪
-最后，Spring Boot应用进入就绪状态，等待请求或事件。
-总结
+3. 准备环境（prepareEnvironment）创建ConfigurableEnvironment对象，设置应用程序的属性和环境变量。
+
+4. 创建上下文（createApplicationContext）根据应用类型创建ApplicationContext（常用的如AnnotationConfigServletWebServerApplicationContext）。
+
+5. 注册Listeners（registerListeners）注册各种ApplicationListener，比如监听Spring应用的事件（如ApplicationEnvironmentPreparedEvent、ApplicationPreparedEvent等）。
+
+6. 准备上下文（prepareContext）设置上下文的属性、环境和资源等，进行初始化。
+
+7. 加载Sources（load）根据注解（如@SpringBootApplication）加载配置类，进行组件扫描并注册到Spring容器。
+
+8. 执行自动配置（auto-configuration）通过@EnableAutoConfiguration，Spring Boot会根据classpath中的库自动配置Bean。例如，检测到Tomcat会自动配置相应的Servlet。
+
+9. 刷新上下文（refreshContext）触发上下文的刷新，完成所有Bean的初始化和配置。
+
+10. 调用CommandLine runners和Application runners如果定义了CommandLineRunner或ApplicationRunner，会在上下文刷新后执行。
+
+11. 启动嵌入式容器如果应用是Web应用，Spring Boot会启动嵌入式Tomcat、Jetty或Undertow等。
+
+12. 应用就绪最后，Spring Boot应用进入就绪状态，等待请求或事件。
+
+**总结**
+
 Spring Boot的启动过程整合了多个步骤，通过自动配置和注解简化了Spring应用的开发过程。整个过程涉及环境处理、上下文创建、Bean注册和必要的监听器等，使得开发者可以专注于业务逻辑，而无需关注复杂的配置。
 
 ## 怎么让Spring把Body变成一个对象
