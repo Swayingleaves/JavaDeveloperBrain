@@ -19,16 +19,35 @@ Kubernetes 目前在GitHub进行维护。
 # 基本概念
 ![](../img/容器技术/k8s/k8s基本概念.png)
 
-- 节点（Node）：一个节点是一个运行 Kubernetes 中的主机。
-- 容器组（Pod）：一个 Pod 对应于由若干容器组成的一个容器组，同个组内的容器共享一个存储卷(volume)。
-- 容器组生命周期（pos-states）：包含所有容器状态集合，包括容器组状态类型，容器组生命周期，事件，重启策略，以及 replication controllers。
-- Replication Controllers：主要负责指定数量的 pod 在同一时间一起运行。
-- 服务（services）：一个 Kubernetes 服务是容器组逻辑的高级抽象，同时也对外提供访问容器组的策略。
-- 卷（volumes）：一个卷就是一个目录，容器对其有访问权限。
-- 标签（labels）：标签是用来连接一组对象的，比如容器组。标签可以被用来组织和选择子对象。
-- 接口权限（accessing_the_api）：端口，IP 地址和代理的防火墙规则。
-- web 界面（ux）：用户可以通过 web 界面操作 Kubernetes。
-- 命令行操作（cli）：kubectl命令。
+1. Pod
+最小的可部署单位，一个 Pod 可以包含一个或多个紧密相关的容器。
+容器共享网络和存储资源。
+2. Node
+Kubernetes 集群中的工作机器，可以是虚拟机或物理机。
+每个 Node 包含运行 Pod 的必要组件，如 Kubelet、Kube-proxy 和容器运行时。
+3. ReplicaSet
+确保在任何时间都有指定数量的 Pod 副本在运行。
+提供负载均衡和高可用性。
+4. Deployment
+用于管理应用的声明式更新。
+可控制 ReplicaSet 的创建和扩缩容。
+5. Service
+定义一组 Pod 的访问策略，通过一个固定的 IP 和 DNS 名称提供负载均衡。
+支持多种类型，如 ClusterIP、NodePort 和 LoadBalancer。
+6. Namespace
+用于在同一集群中隔离资源，适合不同环境（如开发、测试、生产）。
+逻辑上分隔资源，便于访问控制。
+7. Volume
+持久化存储的基础，Pod 的存储方案。
+支持多种类型的存储，如 NFS、PVC 等。
+8. ConfigMap 和 Secret
+ConfigMap：用于存储非敏感的配置信息，以键值对的形式提供给容器。
+Secret：用于存储敏感信息（如密码、证书），提供更安全的处理方式。
+9. Ingress
+管理外部用户访问服务的规则，可以提供负载均衡、SSL 终端等功能。
+通常用于 HTTP/HTTPS 流量的路由。
+10. Cluster
+由多个 Node 组成的整体，Kubernetes 控制器在集群中管理和调度资源。
 
 ## k8s架构
 
