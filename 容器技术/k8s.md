@@ -29,3 +29,39 @@ Kubernetes 目前在GitHub进行维护。
 - 接口权限（accessing_the_api）：端口，IP 地址和代理的防火墙规则。
 - web 界面（ux）：用户可以通过 web 界面操作 Kubernetes。
 - 命令行操作（cli）：kubectl命令。
+
+## k8s架构
+
+![](../img/容器技术/k8s/k8s架构.png)
+
+## 常用的命令
+
+以下是一些常用的 kubectl 命令，用于管理 Kubernetes 集群中的资源：
+### 1.查看资源
+- kubectl get pods：获取所有 Pod 的信息。
+- kubectl get services：获取所有服务的信息。
+- kubectl get deployments：获取所有部署的信息。
+- kubectl get nodes：获取所有节点的信息。
+### 2.查看详细信息
+
+- kubectl describe pod <pod_name>：显示特定 Pod 的详细信息。
+- kubectl describe service <service_name>：显示特定服务的详细信息。
+### 3.创建资源
+- kubectl create -f <filename>：从配置文件创建资源。
+- kubectl apply -f <filename>：应用配置文件以创建或更新资源。
+### 4.删除资源
+- kubectl delete pod <pod_name>：删除特定的 Pod。
+- kubectl delete service <service_name>：删除特定的服务。
+- kubectl delete deployment <deployment_name>：删除特定的部署。
+### 5.日志和执行命令
+- kubectl logs <pod_name>：获取 Pod 的日志。
+- kubectl exec -it <pod_name> -- /bin/bash：在运行中的 Pod 中执行交互式 shell。
+### 6.扩展和缩放
+- kubectl scale deployment <deployment_name> --replicas=<num>：扩展或缩小部署的副本数量。
+- kubectl autoscale deployment <deployment_name> --min=<min> --max=<max> --cpu-percent=<percent>：基于 CPU 使用情况自动扩展部署。
+### 7.更新资源
+- kubectl edit <resource_type> <resource_name>：编辑资源的配置。
+- kubectl rollout restart deployment <deployment_name>：重启部署以应用更新。
+### 8.命名空间
+- kubectl get pods -n <namespace>：在指定命名空间中获取资源。
+- kubectl create namespace <namespace>：创建一个新的命名空间。
