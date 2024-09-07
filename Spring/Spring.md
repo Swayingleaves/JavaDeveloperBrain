@@ -680,6 +680,29 @@ public class AccountController {
 }
 ```
 
+### @Autowired原理
+@Autowired 是 Spring 框架中用于自动装配依赖的一种注解。它简化了依赖注入的过程，允许 Spring 通过类型或名称自动查找并注入所需的 Bean
+
+1. 组件扫描：
+
+- Spring 启动时，会根据配置（如 @ComponentScan）扫描指定的包，查找被 @Component、@Service、@Repository、@Controller 等注解标记的类，并将其注册为 Spring 的 Bean。
+
+2. 依赖解析：
+
+- 当 Spring 容器创建一个 Bean 时，如果该 Bean 的属性标注了 @Autowired，Spring 将对这些属性进行依赖解析。
+- Spring 会查找容器中匹配的 Bean，依据优先顺序：
+    - 根据类型匹配（默认方式）。
+    - 如果有多个同类型的 Bean，可以使用 @Qualifier 指定具体的 Bean 名称。
+
+3. 注入：
+
+一旦找到匹配的 Bean，Spring 会通过反射将其注入到标注了 @Autowired 的属性中。
+
+4. 生命周期管理：
+
+Spring 还会管理这些 Bean 的生命周期，包括初始化和销毁等操作。
+
+
 ## 事务
 
 ### Spring 支持两种方式的事务管理
