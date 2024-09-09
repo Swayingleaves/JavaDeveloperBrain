@@ -1,25 +1,3 @@
-
-* [Kafka](#kafka)
-    * [架构图](#架构图)
-    * [概念](#概念)
-        * [topic](#topic)
-        * [partition](#partition)
-            * [partiton命名规则](#partiton命名规则)
-            * [kafka 为什么要将 Topic 进行分区？](#kafka-为什么要将-topic-进行分区)
-        * [segment](#segment)
-            * [index对应log关系](#index对应log关系)
-        * [offset](#offset)
-        * [broker](#broker)
-        * [producer](#producer)
-        * [consumer](#consumer)
-    * [Kafka零拷贝](#kafka零拷贝)
-    * [常见问题](#常见问题)
-    * [kafka中zookeeper的作用](#kafka中zookeeper的作用)
-    * [kafka的consumer是拉模式还是推模式](#kafka的consumer是拉模式还是推模式)
-    * [kafka生产者丢消息情况](#kafka生产者丢消息情况)
-    * [kafka消费者者丢消息情况](#kafka消费者者丢消息情况)
-* [参考文章](#参考文章)
-
 # Kafka
 ## 架构图
 ![](../img/消息队列/kafka/架构图.png)
@@ -309,6 +287,13 @@ zookeeper.connect=zk1:2181,zk2:2181,zk3:2181 # Zookeeper集群地址
 - RangePartitioner：范围分区策略，根据消息key的范围将消息分配到不同的分区。需要在创建主题时指定分区边界。
 - StickyPartitioner：粘性分区策略，将消息发送到同一个分区，直到该分区的消息数量超过阈值，才会将消息发送到下一个分区。这个策略可以用来保证消息的顺序性。
 - CustomPartitioner：自定义分区策略，用户可以根据自己的业务逻辑自定义分区策略。
+
+## kafka怎么顺序消费
+Kafka 的顺序消费保证基于 Partition。如果你希望严格保证消息的顺序，应该：
+
+- 将相关消息发送到同一个 Partition（通过设置相同的 key）。
+- 确保消费者线程对单个 Partition 进行消费。
+- 合理设置生产者和消费者的配置。
 
 # 参考文章
 - https://blog.51cto.com/u_15239532/2858247

@@ -1,40 +1,3 @@
-* [Map](#map)
-  * [HashMap](#hashmap)
-  * [特点](#特点)
-  * [结构](#结构)
-    * [Node[] table，即哈希桶数组](#node-table即哈希桶数组)
-    * [hash冲突使用链地址法](#hash冲突使用链地址法)
-    * [HashMap的容量为什么要初始化为2的n次幂](#hashmap的容量为什么要初始化为2的n次幂)
-    * [插入](#插入)
-      * [为什么计算hash要无符号右移16位](#为什么计算hash要无符号右移16位)
-      * [为什么计算hash是异或](#为什么计算hash是异或)
-      * [插入流程](#插入流程)
-      * [插入代码](#插入代码)
-    * [查找](#查找)
-    * [扩容](#扩容)
-    * [jdk1.7多线程扩容死循环问题](#jdk17多线程扩容死循环问题)
-      * [在单线程情况下，假设A、B、C三个节点处在一个链表上，扩容后依然处在一个链表上，代码执行过程如下：](#在单线程情况下假设abc三个节点处在一个链表上扩容后依然处在一个链表上代码执行过程如下)
-      * [多线程下扩容](#多线程下扩容)
-    * [jdk1.8的扩容](#jdk18的扩容)
-    * [为什么要使用红黑树而不是AVL](#为什么要使用红黑树而不是avl)
-  * [LinkedHashMap](#linkedhashmap)
-    * [复杂度](#复杂度)
-  * [TreeMap](#treemap)
-    * [复杂度](#复杂度-1)
-  * [ConcurrentHashMap](#concurrenthashmap)
-    * [ConcurrentHashMap扩容机制](#concurrenthashmap扩容机制)
-      * [1、ConcurrentHashMap 在 JDK 1.7 中的实现](#1concurrenthashmap-在-jdk-17-中的实现)
-        * [put 方法](#put-方法)
-      * [2、ConcurrentHashMap 在 JDK 1.8 中的实现](#2concurrenthashmap-在-jdk-18-中的实现)
-        * [putVal 方法](#putval-方法)
-        * [initTable方法](#inittable方法)
-        * [addCount方法](#addcount方法)
-        * [transfer 扩容方法](#transfer-扩容方法)
-  * [HashTable](#hashtable)
-  * [IdentityHashMap](#identityhashmap)
-  * [WeakHashMap](#weakhashmap)
-* [参考文章](#参考文章)
-
 # Map
 ![](../img/基础/Java容器类关系图.png)
 ## HashMap
@@ -399,6 +362,10 @@ JDK1.8 中，由于多线程对HashMap进行put操作，调用了HashMap#putVal(
   - 虽然AVL的查找时间由于树高度更低而更快，但是插入和删除花费时间比红黑树更长，在hashmap这种情况下更适用红黑树
 ### 为什么不是B+树
 - b+树的特点是矮胖，这样叶子结点可以存储大量数据，减少磁盘IO，并不是说不可以，但是相对应用场景来讲，用红黑树更加适合
+
+### 为什么不使用跳表
+- 跳表的随机性：跳表的层次结构是基于随机的，它并不能像红黑树那样提供严格的平衡性。尽管跳表的时间复杂度也是 O(log n)，但跳表实现依赖随机数生成来构建多级索引，可能会导致性能不如红黑树稳定。
+- 空间开销：跳表需要维护多层索引，会增加额外的空间消耗，特别是在 HashMap 中，每个桶原本只是链表结构，如果改为跳表，整个结构变得更复杂，需要更多的指针和索引，内存开销增加。
 
 ### 如果HashMap里有100万条数据，remove掉90万条，HashMap的数组会不会变小
 在Java中，HashMap的数组大小在HashMap创建时确定，并且通常不会自动缩小。因此，当你从HashMap中删除大量条目后，HashMap的数组大小不会减小，但是HashMap的占用内存大小也不会一直增加。
