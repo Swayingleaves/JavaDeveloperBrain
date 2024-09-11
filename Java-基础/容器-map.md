@@ -13,8 +13,14 @@
     - 源码的注释，根据泊松分布原理发生冲突 并且链表长度为8的概率已经非常小了不到千万分之一
 - 底层是散列表+红黑树。初始容量为16，装载因子为0.75，每次扩容2倍
   - 为什么是0.75，时间和空间的权衡，如果太小比如0.5那么空间为一半的时候就发生扩容，浪费空间，太大如1，满了才扩容，hash冲突的概率大大增加，那为什么不是0.6或者0.8呢，这里估计是调优得出的参数 可以看看这篇文章 https://segmentfault.com/a/1190000023308658
-  - <img src="../img/hashmap/HashMap扩容.png" width="50" />
-  <!-- - ![](../img/hashmap/HashMap链表结构.png) -->
+    <div style="text-align: center;">
+        <img src="../img/hashmap/HashMap扩容.png" width="50" />
+    </div>
+  - ![](../img/hashmap/HashMap链表结构.png)
+
+<div style="text-align: center;">
+        <img src="../img/hashmap/HashMap扩容.png" width="50" />
+</div>
 
 ## 结构
 ### Node[] table，即哈希桶数组
