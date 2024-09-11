@@ -32,48 +32,7 @@ static class Node<K,V> implements Map.Entry<K,V> {
         }
     }
 ```
-### hash冲突使用链地址法
-- 链接地址法的思路是将哈希值相同的元素构成一个同义词的单链表
-- `int threshold; `            // 扩容阈值
-  - `threshold`就是在此Load factor和length(数组长度)对应下允许的最大元素数目，超过这个数目就重新resize(扩容)，扩容后的HashMap容量是之前容量的两倍
-- `final float loadFactor;`    // 负载因子
-  - 0.75
-- `transient int modCount;`  // 出现线程问题时，负责及时抛异常
-- `transient int size;`     // HashMap中实际存在的Node数量
-- 解决hash冲突的几种方法 https://cloud.tencent.com/developer/article/1672781
-### HashMap的容量为什么要初始化为2的n次幂
-```java
-static final int tableSizeFor(int cap) {
-    int n = cap - 1;
-    n |= n >>> 1;
-    n |= n >>> 2;
-    n |= n >>> 4;
-    n |= n >>> 8;
-    n |= n >>> 16;
-    return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
-}
- ```
-- 向集合中添加元素时，会使用(n - 1) & hash的计算方法来得出该元素在集合中的位置
-- 扩容时调用resize()方法中的部分源码，可以看出会新建一个tab，然后遍历旧的tab，将旧的元素经过e.hash & (newCap - 1)的计算添加进新的tab中，还是用(n - 1) & hash的计算方法
-
-可见这个(n - 1) & hash的计算方法有着千丝万缕的关系，符号&是按位与的计算，这是位运算，特别高效，按位与&的计算方法是，只有当对应位置的数据都为1时，运算结果也为1，当HashMap的容量是2的n次幂时，(n-1)的2进制也就是1111111***111这样形式的，这样与添加元素的hash值进行位运算时，能够充分的散列，使得添加的元素均匀分布在HashMap的每个位置上，减少hash碰撞
-
 ### 插入
-#### 为什么计算hash要无符号右移16位
-- Key的哈希值会与该值的高16位做异或操作，进一步增加随机性，如果只是单纯的返回hashcode，做运算的始终是低16位，而hashmap长度大多数小于2的16次方
-```java
-    static final int hash(Object key) {
-        int h;
-        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-    }
-```
-#### 为什么计算hash是异或
-- 按位与运算符（&）
-  - 两位同时为“1”，结果才为“1”，否则为0，结果偏向于0
-- 按位或运算符（|）
-  - 参加运算的两个对象只要有一个为1，其值为1。结果偏向于1
-- 异或运算符（^）
-  - 参加运算的两个对象，如果两个相应位为“异”（值不同），则该位结果为1，否则为0。所以更好的扰动了
 #### 插入流程
 - ①.判断键值对数组table[i]是否为空或为null，否则执行resize()进行扩容； 
 - ②.根据键值key计算hash值得到插入的数组索引i，如果table[i]==null，直接新建节点添加，转向⑥，如果table[i]不为空，转向③； 
@@ -86,6 +45,11 @@ static final int tableSizeFor(int cap) {
 
 #### 插入代码
 ```java
+
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}
 
 public V put(K key, V value) {
     //对key做hash
@@ -147,6 +111,49 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
     return null;
 }
 ```
+
+#### hash冲突使用链地址法
+- 链接地址法的思路是将哈希值相同的元素构成一个同义词的单链表
+- `int threshold; `            // 扩容阈值
+  - `threshold`就是在此Load factor和length(数组长度)对应下允许的最大元素数目，超过这个数目就重新resize(扩容)，扩容后的HashMap容量是之前容量的两倍
+- `final float loadFactor;`    // 负载因子
+  - 0.75
+- `transient int modCount;`  // 出现线程问题时，负责及时抛异常
+- `transient int size;`     // HashMap中实际存在的Node数量
+- 解决hash冲突的几种方法 https://cloud.tencent.com/developer/article/1672781
+#### HashMap的容量为什么要初始化为2的n次幂
+```java
+static final int tableSizeFor(int cap) {
+    int n = cap - 1;
+    n |= n >>> 1;
+    n |= n >>> 2;
+    n |= n >>> 4;
+    n |= n >>> 8;
+    n |= n >>> 16;
+    return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+ ```
+- 向集合中添加元素时，会使用(n - 1) & hash的计算方法来得出该元素在集合中的位置
+- 扩容时调用resize()方法中的部分源码，可以看出会新建一个tab，然后遍历旧的tab，将旧的元素经过e.hash & (newCap - 1)的计算添加进新的tab中，还是用(n - 1) & hash的计算方法
+
+可见这个(n - 1) & hash的计算方法有着千丝万缕的关系，符号&是按位与的计算，这是位运算，特别高效，按位与&的计算方法是，只有当对应位置的数据都为1时，运算结果也为1，当HashMap的容量是2的n次幂时，(n-1)的2进制也就是1111111***111这样形式的，这样与添加元素的hash值进行位运算时，能够充分的散列，使得添加的元素均匀分布在HashMap的每个位置上，减少hash碰撞
+
+#### 为什么计算hash要无符号右移16位
+- Key的哈希值会与该值的高16位做异或操作，进一步增加随机性，如果只是单纯的返回hashcode，做运算的始终是低16位，而hashmap长度大多数小于2的16次方
+```java
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
+```
+#### 为什么计算hash是异或
+- 按位与运算符（&）
+  - 两位同时为“1”，结果才为“1”，否则为0，结果偏向于0
+- 按位或运算符（|）
+  - 参加运算的两个对象只要有一个为1，其值为1。结果偏向于1
+- 异或运算符（^）
+  - 参加运算的两个对象，如果两个相应位为“异”（值不同），则该位结果为1，否则为0。所以更好的扰动了
+
 ### 查找
 ```java
 public V get(Object key) {
